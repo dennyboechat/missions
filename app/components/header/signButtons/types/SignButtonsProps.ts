@@ -1,4 +1,4 @@
 export interface SignButtonsProps {
-    onSignInClick: () => void;
-    onSignUpClick: () => void;
+  onSignInClick: () => void;
+  onSignUpClick: () => void;
 }

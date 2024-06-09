@@ -1,14 +1,14 @@
 // Multivariate Dependencies
-import type { Metadata } from 'next';
-import { ClerkProvider } from '@clerk/nextjs'
+import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 
 // Components
-import { HeaderPanel } from './components/header/HeaderPanel';
+import { HeaderPanel } from "./components/header/HeaderPanel";
 
 // Styles
-import { Theme } from '@radix-ui/themes';
-import '@radix-ui/themes/styles.css';
-import './styles/globals.css';
+import { Theme } from "@radix-ui/themes";
+import "@radix-ui/themes/styles.css";
+import "./styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Missions",

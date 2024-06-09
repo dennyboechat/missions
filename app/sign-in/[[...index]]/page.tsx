@@ -1,10 +1,13 @@
 // Multivariate Dependencies
-import { SignIn } from '@clerk/nextjs';
+import { SignIn } from "@clerk/nextjs";
 
 // Styles
-import styles from '../../styles/login.module.css';
+import styles from "../../styles/login.module.css";
 
-export default () =>
-    <div className={styles.login_form}>
-        <SignIn />
-    </div>
+const SignInPage = () => (
+  <div className={styles.login_form}>
+    <SignIn />
+  </div>
+);
+
+export default SignInPage;

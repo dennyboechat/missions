@@ -1,1 +1,1 @@
-export { SignUpDialog } from './components/SignUpDialog';
+export { SignUpDialog } from "./components/SignUpDialog";

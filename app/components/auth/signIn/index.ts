@@ -1,1 +1,1 @@
-export { SignInDialog } from './components/SignInDialog';
+export { SignInDialog } from "./components/SignInDialog";

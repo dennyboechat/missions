@@ -1,3 +1,3 @@
 export interface SignInDialogProps {
-    onClose: () => void;
+  onClose: () => void;
 }

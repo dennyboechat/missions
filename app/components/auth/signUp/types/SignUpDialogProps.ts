@@ -1,3 +1,3 @@
 export interface SignUpDialogProps {
-    onClose: () => void;
+  onClose: () => void;
 }
