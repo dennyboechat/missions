@@ -1,0 +1,17 @@
+/* Hide Clerk sign in/up brand references */
+.cl-internal-11ttlho,
+.cl-internal-180wb59,
+.cl-headerSubtitle,
+.cl-internal-lqfubk {
+    display: none;
+}
+
+/* Hide Clerk sign in/up links in dialogues */
+div[role=dialog] .cl-footerAction {
+    display: none;
+}
+
+/* Hide Clerk sign in/up form shadows in dialogues */
+div[role=dialog] .cl-cardBox {
+    box-shadow: none;
+}
