@@ -1,13 +1,15 @@
 // Components
-import { Container, Grid, Button } from "@radix-ui/themes";
-import { CardButton } from "../components/ui/CardButton";
+import { Container, Grid } from "@radix-ui/themes";
+import { ProjectCardButton } from "../components/ui/ProjectCardButton";
 
 const DashboardPage = () => (
   <Container>
-    <Grid columns={{ initial: "1", md: "3", lg: "5" }} gap="3">
-      <CardButton>
-        <Button>{"go"}</Button>
-      </CardButton>
+    <Grid columns={{ xs: '1', sm: "3", md: "3", lg: "5" }} gap="3">
+      <ProjectCardButton isAddNew />
+      <ProjectCardButton
+        projectName="Project Name"
+        projectDescription="Project Description here"
+      />
     </Grid>
   </Container>
 );
