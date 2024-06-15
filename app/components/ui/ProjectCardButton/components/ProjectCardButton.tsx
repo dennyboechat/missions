@@ -10,19 +10,20 @@ import { ProjectCardButtonProps } from "../types/ProjectCardButtonProps";
 
 export const ProjectCardButton = ({
   isAddNew,
+  projectId,
   projectName,
   projectDescription,
 }: ProjectCardButtonProps) => (
   <Card asChild size="3" variant="surface">
     {isAddNew ? (
-      <Link href="project" className={styles.new_card}>
+      <Link href="/project" className={styles.new_card}>
         <PlusIcon color="black" height="50" width="50" />
         <Text as="p" size="3">
           New project
         </Text>
       </Link>
     ) : (
-      <Link href="project/[id]">
+      <Link href={`/project/${projectId}`}>
         {projectName}
         <Text as="p" size="1">
           {projectDescription}

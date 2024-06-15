@@ -1,5 +1,6 @@
 // Multivariate Dependencies
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { ClerkProvider } from "@clerk/nextjs";
 
 // Components
@@ -27,6 +28,7 @@ export default function RootLayout({
           <Theme>
             <HeaderPanel />
             {children}
+            <Analytics />
           </Theme>
         </body>
       </html>

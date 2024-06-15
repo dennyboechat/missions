@@ -2,7 +2,7 @@
 
 // Components
 import { Container, Grid, Heading, Link, Button } from "@radix-ui/themes";
-import { InputTextField } from "../components/ui/InputTextField";
+import { ProjectFields } from "../components/project";
 
 // Database
 import { insertProject } from "../database/project";
@@ -10,8 +10,10 @@ import { insertProject } from "../database/project";
 // Hooks
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
+import { useRouter } from 'next/navigation'
 
 const ProjectNew = () => {
+  const router = useRouter();
   const { user } = useUser();
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -21,28 +23,26 @@ const ProjectNew = () => {
   }
 
   const onCreateButtonClick = async () => {
-    await insertProject({
+    const insertedProject = await insertProject({
       projectName: projectName,
       projectDescription: projectDescription,
       ownerId: user.id,
     });
+    router.push(`/project/${insertedProject?.projectId}`);
   };
 
   return (
     <Container>
       <Grid gap="2">
         <Heading>New project</Heading>
-        <InputTextField
-          label="Project name"
-          placeholder="Hope Mission Africa, Med Aid Fiji"
-          value={projectName}
-          onBlur={(e) => setProjectName(e.target.value)}
-        />
-        <InputTextField
-          label="Project description"
-          placeholder="Bringing better healthcare to underserved communities in Africa"
-          value={projectDescription}
-          onBlur={(e) => setProjectDescription(e.target.value)}
+        <ProjectFields
+          projectName={projectName}
+          projectDescription={projectDescription}
+          onProjectNameChange={(e) => setProjectName(e.target.value)}
+          onProjectDescriptionChange={(e) =>
+            setProjectDescription(e.target.value)
+          }
+          showPlaceholders
         />
         <Button onClick={onCreateButtonClick}>{"Create"}</Button>
       </Grid>

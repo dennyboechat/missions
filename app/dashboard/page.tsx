@@ -35,13 +35,14 @@ const DashboardPage = () => {
 
   return (
     <Container>
-      <Grid columns={{ xs: "1", sm: "3", md: "3", lg: "5" }} gap="3">
+      <Grid columns={{ xs: "1", sm: "3", md: "4", lg: "5" }} gap="3">
         <ProjectCardButton isAddNew />
         {projects &&
           projects.map(({ projectId, projectName, projectDescription }) => {
             return (
               <ProjectCardButton
                 key={projectId}
+                projectId={projectId}
                 projectName={projectName}
                 projectDescription={projectDescription}
               />

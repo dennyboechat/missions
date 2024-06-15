@@ -1,5 +1,13 @@
+// Types
+import {
+  ProjectId,
+  ProjectName,
+  ProjectDescription,
+} from "../../../../types/ProjectTypes";
+
 export interface ProjectCardButtonProps {
   isAddNew?: boolean;
-  projectName?: string;
-  projectDescription?: string;
+  projectId?: ProjectId;
+  projectName?: ProjectName;
+  projectDescription?: ProjectDescription;
 }
