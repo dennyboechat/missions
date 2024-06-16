@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { ClerkProvider } from "@clerk/nextjs";
 
 // Components
-import { HeaderPanel } from "./components/header/HeaderPanel";
+import { HeaderPanel } from "./components/header/headerPanel";
 
 // Styles
 import { Theme } from "@radix-ui/themes";

@@ -2,9 +2,9 @@
 
 // Components
 import { Grid, Link } from "@radix-ui/themes";
-import { SignUpDialog } from "../auth/signUp";
-import { SignInDialog } from "../auth/signIn";
-import { SignButtons } from "./signButtons";
+import { SignUpDialog } from "../../../auth/signUp";
+import { SignInDialog } from "../../../auth/signIn";
+import { SignButtons } from "../../signButtons";
 
 // Hooks
 import { useState } from "react";

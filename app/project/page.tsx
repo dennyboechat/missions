@@ -5,7 +5,7 @@ import { Container, Grid, Heading, Link, Button } from "@radix-ui/themes";
 import { ProjectFields } from "../components/project";
 
 // Database
-import { insertProject } from "../database/project";
+import { insertProject } from "../database/project/InsertProject";
 
 // Hooks
 import { useUser } from "@clerk/nextjs";

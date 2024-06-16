@@ -12,7 +12,7 @@ import {
 } from "../../types/ProjectTypes";
 
 // Database
-import { getProject } from "../../database/project";
+import { getProject } from "../../database/project/GetProject";
 
 // Hooks
 import { useState, useEffect } from "react";
