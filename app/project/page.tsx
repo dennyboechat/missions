@@ -26,14 +26,14 @@ const ProjectNew = () => {
   }
 
   const onCreateButtonClick = async () => {
-    if (isValidProject({projectName})) {
+    if (isValidProject({ projectName })) {
       const insertedProject = await insertProject({
         projectName: projectName,
         projectDescription: projectDescription,
         ownerId: user.id,
       });
 
-      router.push(`/project/${insertedProject?.projectId}`);
+      router.push(`/project-patients/${insertedProject?.projectId}`);
     }
   };
 
@@ -50,7 +50,16 @@ const ProjectNew = () => {
           }
           showPlaceholders
         />
-        <Button onClick={onCreateButtonClick}>{"Create"}</Button>
+        <Grid columns="2">
+          <Button onClick={onCreateButtonClick}>{"Create"}</Button>
+          <Button
+            variant="soft"
+            color="gray"
+            onClick={() => router.push("/dashboard")}
+          >
+            Cancel
+          </Button>
+        </Grid>
       </Grid>
       <Link href="/dashboard">{"< Dashboard"}</Link>
     </Container>

@@ -23,7 +23,7 @@ export const ProjectCardButton = ({
         </Text>
       </Link>
     ) : (
-      <Link href={`/project/${projectId}`}>
+      <Link href={`/project-patients/${projectId}`}>
         {projectName}
         <Text as="p" size="1">
           {projectDescription}

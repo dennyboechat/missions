@@ -3,13 +3,11 @@
 // Components
 import { Container, Link, Button } from "@radix-ui/themes";
 import { ProjectFields } from "../../components/projectFields";
+import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
+import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
 
 // Types
-import {
-  Project,
-  ProjectName,
-  ProjectDescription,
-} from "../../types/ProjectTypes";
+import { ProjectName, ProjectDescription } from "../../types/ProjectTypes";
 
 // Database
 import { getProject } from "../../database/project/GetProject";
@@ -26,6 +24,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
     useState<ProjectDescription>("");
 
   const { id: projectId } = params;
+  const projectMenuItems = <ProjectMenuItems projectId={projectId} activeMenuItem="project" />;
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -46,19 +45,21 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
   };
 
   return (
-    <Container>
-      <ProjectFields
-        projectName={projectName}
-        projectDescription={projectDescription}
-        onProjectNameChange={(e) => setProjectName(e.target.value)}
-        onProjectDescriptionChange={(e) =>
-          setProjectDescription(e.target.value)
-        }
-        projectId={projectId}
-      />
-      <Button onClick={onDeleteProject}>Delete Project</Button>
-      <Link href="/dashboard">{"< Dashboard"}</Link>
-    </Container>
+    <SideMenuLayout menuItems={projectMenuItems}>
+      <Container>
+        <ProjectFields
+          projectName={projectName}
+          projectDescription={projectDescription}
+          onProjectNameChange={(e) => setProjectName(e.target.value)}
+          onProjectDescriptionChange={(e) =>
+            setProjectDescription(e.target.value)
+          }
+          projectId={projectId}
+        />
+        <Button onClick={onDeleteProject}>Delete Project</Button>
+        <Link href="/dashboard">{"< Dashboard"}</Link>
+      </Container>
+    </SideMenuLayout>
   );
 };
 

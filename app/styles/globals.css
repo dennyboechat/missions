@@ -15,3 +15,9 @@ div[role="dialog"] .cl-footerAction {
 div[role="dialog"] .cl-cardBox {
   box-shadow: none;
 }
+
+/* Active menu item */
+.ps-menuitem-root .ps-active,
+.ps-active > a.ps-menu-button:hover {
+  background-color: #eaeaea;
+}
