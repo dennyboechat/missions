@@ -1,8 +1,8 @@
 "use client";
 
 // Components
-import { Container, Link } from "@radix-ui/themes";
-import { ProjectFields } from "../../components/project";
+import { Container, Link, Button } from "@radix-ui/themes";
+import { ProjectFields } from "../../components/projectFields";
 
 // Types
 import {
@@ -13,28 +13,37 @@ import {
 
 // Database
 import { getProject } from "../../database/project/GetProject";
+import { deleteProject } from "../../database/project/DeleteProject";
 
 // Hooks
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const ProjectId = ({ params }: { params: { id: string } }) => {
+  const router = useRouter();
   const [projectName, setProjectName] = useState<ProjectName>("");
   const [projectDescription, setProjectDescription] =
     useState<ProjectDescription>("");
 
-  const { id } = params;
+  const { id: projectId } = params;
 
   useEffect(() => {
     const fetchProjects = async () => {
-      if (id) {
-        const projectData = await getProject({ projectId: id });
+      if (projectId) {
+        const projectData = await getProject({ projectId: projectId });
         setProjectName(projectData?.projectName ?? "");
         setProjectDescription(projectData?.projectDescription ?? "");
       }
     };
 
     fetchProjects();
-  }, [id]);
+  }, [projectId]);
+
+  const onDeleteProject = async () => {
+    await deleteProject({ projectId: projectId });
+
+    router.push("/dashboard");
+  };
 
   return (
     <Container>
@@ -45,7 +54,9 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
         onProjectDescriptionChange={(e) =>
           setProjectDescription(e.target.value)
         }
+        projectId={projectId}
       />
+      <Button onClick={onDeleteProject}>Delete Project</Button>
       <Link href="/dashboard">{"< Dashboard"}</Link>
     </Container>
   );

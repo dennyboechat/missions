@@ -18,7 +18,8 @@ export const getProjects = async ({
       FROM 
         project 
       WHERE 
-        owner_id = ${ownerId}`;
+        owner_id = ${ownerId}
+    `;
 
     const projects: Project[] = response.rows.map((row) => ({
       projectId: row.project_id,

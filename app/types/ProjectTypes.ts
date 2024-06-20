@@ -15,6 +15,12 @@ export interface NewProject {
   ownerId: ProjectOwnerId;
 }
 
+export interface UpdateProject {
+  projectId: ProjectId;
+  field: string;
+  value: string;
+}
+
 export interface Project extends NewProject {
   projectId: ProjectId;
 }

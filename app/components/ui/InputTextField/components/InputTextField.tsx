@@ -8,14 +8,20 @@ export const InputTextField = ({
   label,
   placeholder,
   value,
+  maxLength = 255,
+  autoFocus,
+  required,
   onBlur,
 }: InputTextFieldProps) => (
   <Grid>
-    <Text>{label}</Text>
+    <Text>{`${label}${required ? ' *' : ''}`}</Text>
     <TextField.Root
       onBlur={onBlur}
       defaultValue={value}
       placeholder={placeholder}
+      maxLength={maxLength} 
+      autoFocus={autoFocus}
+      required={required}
     />
   </Grid>
 );

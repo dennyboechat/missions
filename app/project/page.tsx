@@ -2,7 +2,7 @@
 
 // Components
 import { Container, Grid, Heading, Link, Button } from "@radix-ui/themes";
-import { ProjectFields } from "../components/project";
+import { ProjectFields } from "../components/projectFields";
 
 // Database
 import { insertProject } from "../database/project/InsertProject";
@@ -10,7 +10,10 @@ import { insertProject } from "../database/project/InsertProject";
 // Hooks
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
+
+// Utils
+import { isValidProject } from "../utils/isValidProject";
 
 const ProjectNew = () => {
   const router = useRouter();
@@ -23,12 +26,15 @@ const ProjectNew = () => {
   }
 
   const onCreateButtonClick = async () => {
-    const insertedProject = await insertProject({
-      projectName: projectName,
-      projectDescription: projectDescription,
-      ownerId: user.id,
-    });
-    router.push(`/project/${insertedProject?.projectId}`);
+    if (isValidProject({projectName})) {
+      const insertedProject = await insertProject({
+        projectName: projectName,
+        projectDescription: projectDescription,
+        ownerId: user.id,
+      });
+
+      router.push(`/project/${insertedProject?.projectId}`);
+    }
   };
 
   return (

@@ -9,4 +9,5 @@ export interface ProjectFieldsProps {
     event: React.FocusEvent<HTMLInputElement>
   ) => void;
   showPlaceholders?: boolean;
+  projectId?: string;
 }

@@ -4,22 +4,24 @@
 import { sql } from "@vercel/postgres";
 
 // Types
-import { Project, ProjectId } from "../../types/ProjectTypes";
+import { Project, UpdateProject } from "../../types/ProjectTypes";
 
-export const getProject = async ({
+export const updateProject = async ({
   projectId,
-}: {
-  projectId: ProjectId;
-}): Promise<Project | undefined> => {
+  field,
+  value,
+}: UpdateProject): Promise<Project | undefined> => {
   try {
-    const response = await sql`
-      SELECT 
-        * 
-      FROM 
+    const query = `
+      UPDATE 
         project 
+      SET 
+        ${field} = $1
       WHERE 
-        project_id = ${projectId}
+        project_id = $2
     `;
+
+    const response = await sql.query(query, [value, projectId]);
 
     const projects: Project[] = response.rows.map((row) => ({
       projectId: row.project_id,
@@ -28,7 +30,7 @@ export const getProject = async ({
       ownerId: row.owner_id,
     }));
 
-    return projects && projects.length > 0 ? projects[0] : undefined;
+    return projects?.length > 0 ? projects[0] : undefined;
   } catch (error) {
     console.error(error);
   }
