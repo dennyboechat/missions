@@ -1,3 +1,5 @@
+"use client";
+
 // Components
 import { MenuItem } from "react-pro-sidebar";
 
@@ -6,12 +8,17 @@ import { ProjectMenuItemsProps } from "../types/ProjectMenuItemsProps";
 
 // Hooks
 import { useUser } from "@clerk/nextjs";
+import { useProject } from "../../../../lib/ProjectContext";
+import { useState, useEffect } from "react";
 
 export const ProjectMenuItems = ({
   projectId,
   activeMenuItem,
 }: ProjectMenuItemsProps) => {
   const { user } = useUser();
+  const { project } = useProject();
+
+  const isProjectEditable = project && project.ownerId === user?.id;
 
   return (
     <>
@@ -27,12 +34,14 @@ export const ProjectMenuItems = ({
       >
         Users
       </MenuItem>
-      <MenuItem
-        href={`/project/${projectId}`}
-        active={activeMenuItem === "project"}
-      >
-        Project
-      </MenuItem>
+      {isProjectEditable && (
+        <MenuItem
+          href={`/project/${projectId}`}
+          active={activeMenuItem === "project"}
+        >
+          Project
+        </MenuItem>
+      )}
     </>
   );
 };

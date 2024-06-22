@@ -9,6 +9,13 @@ export type ProjectDescription = string;
 
 export type ProjectOwnerId = UserId;
 
+export interface Project {
+  projectId: ProjectId;
+  projectName: ProjectName;
+  projectDescription: ProjectDescription;
+  ownerId: ProjectOwnerId;
+}
+
 export interface NewProject {
   projectName: ProjectName;
   projectDescription?: ProjectDescription;
@@ -19,8 +26,4 @@ export interface UpdateProject {
   projectId: ProjectId;
   field: string;
   value: string;
-}
-
-export interface Project extends NewProject {
-  projectId: ProjectId;
 }

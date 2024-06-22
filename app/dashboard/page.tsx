@@ -38,14 +38,9 @@ const DashboardPage = () => {
       <Grid columns={{ xs: "1", sm: "3", md: "4", lg: "5" }} gap="3">
         <ProjectCardButton isAddNew />
         {projects &&
-          projects.map(({ projectId, projectName, projectDescription }) => {
+          projects.map((project) => {
             return (
-              <ProjectCardButton
-                key={projectId}
-                projectId={projectId}
-                projectName={projectName}
-                projectDescription={projectDescription}
-              />
+              <ProjectCardButton key={project.projectId} project={project} />
             );
           })}
       </Grid>

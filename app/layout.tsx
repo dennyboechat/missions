@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ProjectProvider } from "./lib/ProjectContext";
 
 // Components
 import { HeaderPanel } from "./components/header/headerPanel";
@@ -26,8 +27,10 @@ export default function RootLayout({
       <html lang="en">
         <body>
           <Theme>
-            <HeaderPanel />
-            {children}
+            <ProjectProvider>
+              <HeaderPanel />
+              {children}
+            </ProjectProvider>
             <Analytics />
           </Theme>
         </body>
