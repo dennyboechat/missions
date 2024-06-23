@@ -1,11 +1,11 @@
 "use client";
 
 // Multivariate Dependencies
-import { createContext, useContext, useState, useMemo } from "react";
+import { createContext, useContext, useState } from "react";
 
 // Types
 import type { Project } from "../types/ProjectTypes";
-import type { ProjectContextType } from "./types/ProjectProviderProps";
+import type { ProjectContextType } from "./types/ProjectContextType";
 
 // Hooks
 import { useEffect } from "react";
@@ -24,12 +24,10 @@ export const ProjectProvider = ({
 
   useEffect(() => {
     const storedProject = localStorage.getItem("project");
-    if (storedProject) {
-      setProjectState(JSON.parse(storedProject));
-    }
+    setProjectState(storedProject ? JSON.parse(storedProject) : undefined);
   }, []);
 
-  const setProject = (newProject: Project) => {
+  const setProject = (newProject: Project | undefined) => {
     setProjectState(newProject);
     localStorage.setItem(
       "project",
@@ -47,7 +45,7 @@ export const ProjectProvider = ({
 export const useProject = () => {
   const context = useContext(ProjectContext);
   if (!context) {
-    throw new Error("You need to wrap ProjectStateProvider.");
+    throw new Error("You need to wrap ProjectProvider.");
   }
   return context;
 };

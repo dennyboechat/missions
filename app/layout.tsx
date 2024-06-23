@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ProjectProvider } from "./lib/ProjectContext";
+import { PopupMessageProvider } from "./lib/PopupMessage";
 
 // Components
 import { HeaderPanel } from "./components/header/headerPanel";
+import { PopupMessage } from "./components/ui/PopupMessage";
 
 // Styles
 import { Theme } from "@radix-ui/themes";
@@ -28,8 +30,11 @@ export default function RootLayout({
         <body>
           <Theme>
             <ProjectProvider>
-              <HeaderPanel />
-              {children}
+              <PopupMessageProvider>
+                <HeaderPanel />
+                {children}
+                <PopupMessage />
+              </PopupMessageProvider>
             </ProjectProvider>
             <Analytics />
           </Theme>

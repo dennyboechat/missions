@@ -10,4 +10,5 @@ export interface ProjectFieldsProps {
   ) => void;
   showPlaceholders?: boolean;
   projectId?: string;
+  isProjectNameInvalid?: boolean;
 }

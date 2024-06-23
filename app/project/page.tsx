@@ -11,28 +11,35 @@ import { insertProject } from "../database/project/InsertProject";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useProject } from "../lib/ProjectContext";
 
 // Utils
-import { isValidProject } from "../utils/isValidProject";
+import { isValidProjectName } from "../utils/isValidProjectName";
 
 const ProjectNew = () => {
   const router = useRouter();
   const { user } = useUser();
+  const { setProject } = useProject();
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
+  const [isProjectNameInvalid, setIsProjectNameInvalid] = useState(false);
 
   if (!user) {
     return null;
   }
 
   const onCreateButtonClick = async () => {
-    if (isValidProject({ projectName })) {
+    const isValidProject = isValidProjectName({ projectName });
+    setIsProjectNameInvalid(!isValidProject);
+
+    if (isValidProject) {
       const insertedProject = await insertProject({
         projectName: projectName,
         projectDescription: projectDescription,
         ownerId: user.id,
       });
 
+      setProject(insertedProject);
       router.push(`/project-patients/${insertedProject?.projectId}`);
     }
   };
@@ -48,6 +55,7 @@ const ProjectNew = () => {
           onProjectDescriptionChange={(e) =>
             setProjectDescription(e.target.value)
           }
+          isProjectNameInvalid={isProjectNameInvalid}
           showPlaceholders
         />
         <Grid columns="2">

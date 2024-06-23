@@ -9,6 +9,13 @@ import { ProjectFieldsProps } from "../types/ProjectFieldsProps";
 // Database
 import { updateProject } from "../../../database/project/UpdateProject";
 
+// Utils
+import { isValidProjectName } from "../../../utils/isValidProjectName";
+
+// Hooks
+import {useState} from 'react';
+import { usePopupMessage } from "../../../lib/PopupMessage";
+
 export const ProjectFields = ({
   projectName,
   projectDescription,
@@ -16,18 +23,27 @@ export const ProjectFields = ({
   onProjectDescriptionChange,
   showPlaceholders,
   projectId,
+  isProjectNameInvalid,
 }: ProjectFieldsProps) => {
+  const { setMessage } = usePopupMessage();
+  const [isNameInvalid, setIsNameInvalid] = useState(isProjectNameInvalid);
+
   const onProjectNameChanged = async (
     e: React.FocusEvent<HTMLInputElement>
   ) => {
     onProjectNameChange(e);
 
-    if (projectId && projectName !== e.target.value) {
+    const isValidName = isValidProjectName({ projectName: e.target.value });
+    setIsNameInvalid(!isValidName);
+
+    if (isValidName && projectId && projectName !== e.target.value) {
       await updateProject({
         projectId,
         field: "project_name",
         value: e.target.value,
       });
+
+      setMessage('Saved');
     }
   };
 
@@ -42,6 +58,8 @@ export const ProjectFields = ({
         field: "project_description",
         value: e.target.value,
       });
+
+      setMessage('Saved');
     }
   };
 
@@ -56,6 +74,7 @@ export const ProjectFields = ({
         autoFocus
         required
         onBlur={(e) => onProjectNameChanged(e)}
+        errorMessage={isNameInvalid ? 'Required field' : ''}
       />
       <InputTextField
         label="Project description"

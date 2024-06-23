@@ -1,10 +1,20 @@
 "use client";
 
 // Components
-import { Container, Link, Button } from "@radix-ui/themes";
+import {
+  Container,
+  Grid,
+  Link,
+  Button,
+  Box,
+  Text,
+  Popover,
+} from "@radix-ui/themes";
 import { ProjectFields } from "../../components/projectFields";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
+import { ProjectHeader } from "../../components/ui/ProjectHeader";
+import { PopupConfirmation } from "../../components/ui/PopupConfirmation";
 
 // Types
 import { ProjectName, ProjectDescription } from "../../types/ProjectTypes";
@@ -24,7 +34,9 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
     useState<ProjectDescription>("");
 
   const { id: projectId } = params;
-  const projectMenuItems = <ProjectMenuItems projectId={projectId} activeMenuItem="project" />;
+  const projectMenuItems = (
+    <ProjectMenuItems projectId={projectId} activeMenuItem="project" />
+  );
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -44,8 +56,29 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
     router.push("/dashboard");
   };
 
+  const projectHeader = <ProjectHeader />;
+
+  const deleteProjectPopupConfirmation = (
+    <Box>
+      <Text>{"Confirm the project deletion?"}</Text>
+      <Text as="p">
+        {
+          "This action cannot be undone and all data, including from patients, will be deleted."
+        }
+      </Text>
+      <Grid columns="2">
+        <Button onClick={onDeleteProject}>{"Confirm"}</Button>
+        <Popover.Close>
+          <Button variant="soft" color="gray">
+            Cancel
+          </Button>
+        </Popover.Close>
+      </Grid>
+    </Box>
+  );
+
   return (
-    <SideMenuLayout menuItems={projectMenuItems}>
+    <SideMenuLayout menuItems={projectMenuItems} header={projectHeader}>
       <Container>
         <ProjectFields
           projectName={projectName}
@@ -56,7 +89,9 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
           }
           projectId={projectId}
         />
-        <Button onClick={onDeleteProject}>Delete Project</Button>
+        <PopupConfirmation content={deleteProjectPopupConfirmation}>
+          <Button>Delete Project</Button>
+        </PopupConfirmation>
         <Link href="/dashboard">{"< Dashboard"}</Link>
       </Container>
     </SideMenuLayout>

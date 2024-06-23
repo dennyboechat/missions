@@ -5,6 +5,7 @@ export interface InputTextFieldProps {
     maxLength?: number;
     autoFocus?: boolean;
     required?: boolean;
+    errorMessage?: string;
     onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   }
   
