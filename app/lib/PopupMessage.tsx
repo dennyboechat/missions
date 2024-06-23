@@ -1,21 +1,20 @@
 "use client";
 
 // Multivariate Dependencies
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 // Types
 import { PopupMessageContextType } from "./types/PopupMessageContextType";
 
-const PopupMessageContext = createContext<PopupMessageContextType>({
+const defaultContextValue: PopupMessageContextType = {
   message: undefined,
-  setMessage: () => {},
-});
+  setMessage: (message?: string) => {},
+};
 
-export const PopupMessageProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+const PopupMessageContext =
+  createContext<PopupMessageContextType>(defaultContextValue);
+
+export const PopupMessageProvider = ({ children }: { children: ReactNode }) => {
   const [message, setMessage] = useState<string | undefined>();
 
   return (

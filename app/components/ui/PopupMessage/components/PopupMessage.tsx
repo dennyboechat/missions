@@ -16,7 +16,9 @@ export const PopupMessage = () => {
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
-        setMessage(null);
+        if (setMessage) {
+          setMessage(undefined);
+        }
       }, 3000); // 3 seconds
 
       return () => clearTimeout(timer);
