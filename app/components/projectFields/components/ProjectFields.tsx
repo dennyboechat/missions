@@ -31,7 +31,9 @@ export const ProjectFields = ({
   const onProjectNameChanged = async (
     e: React.FocusEvent<HTMLInputElement>
   ) => {
-    onProjectNameChange(e);
+    if (onProjectNameChange) {
+      onProjectNameChange(e);
+    }
 
     const isValidName = isValidProjectName({ projectName: e.target.value });
     setIsNameInvalid(!isValidName);
@@ -43,14 +45,18 @@ export const ProjectFields = ({
         value: e.target.value,
       });
 
-      setMessage('Saved');
+      if (setMessage) {
+        setMessage('Saved');
+      }
     }
   };
 
   const onProjectDescriptionChanged = async (
     e: React.FocusEvent<HTMLInputElement>
   ) => {
-    onProjectDescriptionChange(e);
+    if (onProjectDescriptionChange) {
+      onProjectDescriptionChange(e);
+    }
 
     if (projectId && projectDescription !== e.target.value) {
       await updateProject({
@@ -59,7 +65,9 @@ export const ProjectFields = ({
         value: e.target.value,
       });
 
-      setMessage('Saved');
+      if (setMessage) {
+        setMessage('Saved');
+      }
     }
   };
 
