@@ -16,6 +16,9 @@ import { useProject } from "../lib/ProjectContext";
 // Utils
 import { isValidProjectName } from "../utils/isValidProjectName";
 
+// Styles
+import styles from "../styles/content.module.css";
+
 const ProjectNew = () => {
   const router = useRouter();
   const { user } = useUser();
@@ -45,7 +48,7 @@ const ProjectNew = () => {
   };
 
   return (
-    <Container>
+    <Container className={styles.content}>
       <Grid gap="2">
         <Heading>New project</Heading>
         <ProjectFields

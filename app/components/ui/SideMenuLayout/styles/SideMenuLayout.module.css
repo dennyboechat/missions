@@ -4,4 +4,16 @@
   -webkit-line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
+  padding: 10px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    display: none;
+  }
+}
+
+.sidebar {
+  height: 100vh;
 }

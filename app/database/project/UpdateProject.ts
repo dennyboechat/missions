@@ -19,6 +19,8 @@ export const updateProject = async ({
         ${field} = $1
       WHERE 
         project_id = $2
+      RETURNING 
+        project_id, project_name, project_description, owner_id
     `;
 
     const response = await sql.query(query, [value, projectId]);

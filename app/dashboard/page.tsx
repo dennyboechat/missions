@@ -14,6 +14,9 @@ import { Project } from "../types/ProjectTypes";
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 
+// Styles
+import styles from "../styles/content.module.css";
+
 const DashboardPage = () => {
   const { user } = useUser();
   const [projects, setProjects] = useState<Project[]>([]);
@@ -34,7 +37,7 @@ const DashboardPage = () => {
   }
 
   return (
-    <Container>
+    <Container className={styles.content}>
       <Grid columns={{ xs: "1", sm: "3", md: "4", lg: "5" }} gap="3">
         <ProjectCardButton isAddNew />
         {projects &&

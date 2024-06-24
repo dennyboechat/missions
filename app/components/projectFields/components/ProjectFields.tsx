@@ -15,6 +15,7 @@ import { isValidProjectName } from "../../../utils/isValidProjectName";
 // Hooks
 import {useState} from 'react';
 import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useProject } from "../../../lib/ProjectContext";
 
 export const ProjectFields = ({
   projectName,
@@ -25,6 +26,7 @@ export const ProjectFields = ({
   projectId,
   isProjectNameInvalid,
 }: ProjectFieldsProps) => {
+  const { setProject } = useProject();
   const { setMessage } = usePopupMessage();
   const [isNameInvalid, setIsNameInvalid] = useState(isProjectNameInvalid);
 
@@ -39,11 +41,15 @@ export const ProjectFields = ({
     setIsNameInvalid(!isValidName);
 
     if (isValidName && projectId && projectName !== e.target.value) {
-      await updateProject({
+      const updatedProject = await updateProject({
         projectId,
         field: "project_name",
         value: e.target.value,
       });
+
+      if (setProject) {
+        setProject(updatedProject);
+      }
 
       if (setMessage) {
         setMessage('Saved');

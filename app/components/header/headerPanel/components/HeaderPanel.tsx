@@ -11,6 +11,9 @@ import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
+// Styles
+import styles from "../styles/HeaderPanel.module.css";
+
 export const HeaderPanel = () => {
   const router = useRouter();
   const currentPath = usePathname();
@@ -38,7 +41,7 @@ export const HeaderPanel = () => {
 
   return (
     <>
-      <Grid columns="auto 1fr auto" gap="3" height="30px">
+      <Grid columns="auto 1fr auto" gap="3" height="50px" className={styles.header_panel}>
         <Link href={logoLink}>Logo</Link>
         <div></div>
         <SignButtons onSignInClick={onSignIn} onSignUpClick={onSignUp} />

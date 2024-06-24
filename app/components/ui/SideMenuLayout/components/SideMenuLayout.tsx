@@ -1,5 +1,3 @@
-"use client";
-
 // Components
 import { Grid, Box } from "@radix-ui/themes";
 import { Sidebar, Menu } from "react-pro-sidebar";
@@ -10,20 +8,57 @@ import { SideMenuLayoutProps } from "../types/SideMenuLayoutProps";
 // Styles
 import styles from "../styles/SideMenuLayout.module.css";
 
+// Hooks
+import { useEffect, useState } from "react";
+import { useMounted } from "@/app/lib/useMounted";
+
 export const SideMenuLayout = ({
   menuItems,
   header,
   children,
-}: SideMenuLayoutProps) => (
-  <>
-    <Box width="200px" height="50px" className={styles.header}>
-      {header}
-    </Box>
-    <Grid columns="auto 1fr">
-      <Sidebar width="200px">
+}: SideMenuLayoutProps) => {
+  const mounted = useMounted();
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const smallScreenResolution = 768;
+
+      setCollapsed(
+        typeof window !== "undefined" &&
+          window.innerWidth <= smallScreenResolution
+      );
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize);
+    }
+
+    handleResize();
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", handleResize);
+      }
+    };
+  }, []);
+
+  if (!mounted) return null;
+
+  return (
+    <Grid columns="auto 1fr" gapX="20px">
+      <Sidebar
+        width="200px"
+        collapsed={collapsed}
+        className={styles.sidebar}
+        backgroundColor="#F9F9F9"
+      >
+        <Box width="200px" height="60px" className={styles.header}>
+          {header}
+        </Box>
         <Menu>{menuItems}</Menu>
       </Sidebar>
       {children}
     </Grid>
-  </>
-);
+  );
+};

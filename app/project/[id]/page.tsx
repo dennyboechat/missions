@@ -27,6 +27,9 @@ import { deleteProject } from "../../database/project/DeleteProject";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+// Styles
+import styles from "../../styles/content.module.css";
+
 const ProjectId = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const [projectName, setProjectName] = useState<ProjectName>("");
@@ -79,7 +82,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
 
   return (
     <SideMenuLayout menuItems={projectMenuItems} header={projectHeader}>
-      <Container>
+      <Container className={styles.content}>
         <ProjectFields
           projectName={projectName}
           projectDescription={projectDescription}

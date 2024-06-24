@@ -6,6 +6,9 @@ import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
 import { ProjectHeader } from "../../components/ui/ProjectHeader";
 
+// Styles
+import styles from "../../styles/content.module.css";
+
 const ProjectUsers = ({ params }: { params: { id: string } }) => {
   const { id: projectId } = params;
   const projectMenuItems = (
@@ -15,7 +18,7 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
 
   return (
     <SideMenuLayout menuItems={projectMenuItems} header={projectHeader}>
-      <Container>
+      <Container className={styles.content}>
         <Heading>Users</Heading>
         <Link href="/dashboard">{"< Dashboard"}</Link>
       </Container>

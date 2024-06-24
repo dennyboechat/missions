@@ -9,9 +9,5 @@ import { useProject } from "../../../../lib/ProjectContext";
 export const ProjectHeader = () => {
   const { project } = useProject();
 
-  return (
-    <Box>
-      <Text>{project?.projectName}</Text>
-    </Box>
-  );
+  return <Text>{project?.projectName}</Text>;
 };
