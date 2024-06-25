@@ -3,6 +3,7 @@
 // Components
 import { Container, Grid, Heading, Link, Button } from "@radix-ui/themes";
 import { ProjectFields } from "../components/projectFields";
+import { ContentHeader } from "../components/ui/ContentHeader";
 
 // Database
 import { insertProject } from "../database/project/InsertProject";
@@ -50,7 +51,7 @@ const ProjectNew = () => {
   return (
     <Container className={styles.content}>
       <Grid gap="2">
-        <Heading>New project</Heading>
+        <ContentHeader text="New Project" />
         <ProjectFields
           projectName={projectName}
           projectDescription={projectDescription}

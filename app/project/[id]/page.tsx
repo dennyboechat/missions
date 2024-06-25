@@ -9,12 +9,13 @@ import {
   Box,
   Text,
   Popover,
+  Heading,
 } from "@radix-ui/themes";
 import { ProjectFields } from "../../components/projectFields";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
-import { ProjectHeader } from "../../components/ui/ProjectHeader";
 import { PopupConfirmation } from "../../components/ui/PopupConfirmation";
+import { ContentHeader } from "../../components/ui/ContentHeader";
 
 // Types
 import { ProjectName, ProjectDescription } from "../../types/ProjectTypes";
@@ -26,12 +27,14 @@ import { deleteProject } from "../../database/project/DeleteProject";
 // Hooks
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useProject } from "../../lib/ProjectContext";
 
 // Styles
 import styles from "../../styles/content.module.css";
 
 const ProjectId = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
+  const { project } = useProject();
   const [projectName, setProjectName] = useState<ProjectName>("");
   const [projectDescription, setProjectDescription] =
     useState<ProjectDescription>("");
@@ -59,8 +62,6 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
     router.push("/dashboard");
   };
 
-  const projectHeader = <ProjectHeader />;
-
   const deleteProjectPopupConfirmation = (
     <Box>
       <Text>{"Confirm the project deletion?"}</Text>
@@ -70,7 +71,9 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
         }
       </Text>
       <Grid columns="2">
-        <Button onClick={onDeleteProject}>{"Confirm"}</Button>
+        <Button color="red" onClick={onDeleteProject}>
+          {"Confirm"}
+        </Button>
         <Popover.Close>
           <Button variant="soft" color="gray">
             Cancel
@@ -81,8 +84,9 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
   );
 
   return (
-    <SideMenuLayout menuItems={projectMenuItems} header={projectHeader}>
+    <SideMenuLayout menuItems={projectMenuItems} header={project?.projectName ?? ''}>
       <Container className={styles.content}>
+        <ContentHeader text="Project" />
         <ProjectFields
           projectName={projectName}
           projectDescription={projectDescription}
@@ -92,9 +96,21 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
           }
           projectId={projectId}
         />
-        <PopupConfirmation content={deleteProjectPopupConfirmation}>
-          <Button>Delete Project</Button>
-        </PopupConfirmation>
+        <Grid
+          gridRow="1fr 1fr auto"
+          gapY="10px"
+          className={styles.delete_section}
+        >
+          <Heading size="4">Delete Project</Heading>
+          <Text as="p">
+            {
+              "The project will be permanently deleted, including its data like patients. This action is irreversible and can not be undone."
+            }
+          </Text>
+          <PopupConfirmation content={deleteProjectPopupConfirmation}>
+            <Button color="red">Delete Project</Button>
+          </PopupConfirmation>
+        </Grid>
         <Link href="/dashboard">{"< Dashboard"}</Link>
       </Container>
     </SideMenuLayout>

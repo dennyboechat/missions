@@ -45,7 +45,7 @@ export const ProjectMenuItems = ({
           href={`/project/${projectId}`}
           active={activeMenuItem === "project"}
         >
-          Project
+          Settings
         </MenuItem>
       )}
     </>

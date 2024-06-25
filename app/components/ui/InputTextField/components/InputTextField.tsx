@@ -4,6 +4,9 @@ import { Grid, Container, Text, TextField } from "@radix-ui/themes";
 // Types
 import { InputTextFieldProps } from "../types/InputTextFieldProps";
 
+// Styles
+import styles from "../styles/InputTextField.module.css";
+
 export const InputTextField = ({
   label,
   placeholder,
@@ -25,7 +28,7 @@ export const InputTextField = ({
       required={required}
     />
     <Container height="25px">
-      <Text>{errorMessage}</Text>
+      <Text className={styles.required_field}>{errorMessage}</Text>
     </Container>
   </Grid>
 );

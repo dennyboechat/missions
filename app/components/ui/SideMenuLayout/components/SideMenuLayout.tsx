@@ -1,5 +1,5 @@
 // Components
-import { Grid, Box } from "@radix-ui/themes";
+import { Grid, Box, Text } from "@radix-ui/themes";
 import { Sidebar, Menu } from "react-pro-sidebar";
 
 // Types
@@ -51,10 +51,10 @@ export const SideMenuLayout = ({
         width="200px"
         collapsed={collapsed}
         className={styles.sidebar}
-        backgroundColor="#F9F9F9"
+        backgroundColor="#fff"
       >
-        <Box width="200px" height="60px" className={styles.header}>
-          {header}
+        <Box width="200px" height="70px">
+          <Text className={styles.header}>{header}</Text>
         </Box>
         <Menu>{menuItems}</Menu>
       </Sidebar>

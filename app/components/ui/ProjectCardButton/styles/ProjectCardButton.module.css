@@ -8,11 +8,6 @@
 }
 
 .new_card_bottom_section {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  text-overflow: ellipsis;
   align-self: baseline;
   justify-self: center;
 }
@@ -33,4 +28,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   align-self: self-end;
+}
+
+@media (max-width: 768px) {
+  .card {
+    height: 130px;
+  }
+
+  .project_name,
+  .project_description {
+    -webkit-line-clamp: 2;
+  }
 }
