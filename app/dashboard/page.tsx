@@ -17,6 +17,9 @@ import { useUser } from "@clerk/nextjs";
 // Styles
 import styles from "../styles/content.module.css";
 
+// Database
+import { insertUser } from "../database/user/InsertUser";
+
 const DashboardPage = () => {
   const { user } = useUser();
   const [projects, setProjects] = useState<Project[]>([]);
@@ -24,12 +27,38 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       if (user) {
-        const projectsData = await getProjects({ ownerId: user.id });
+        const { id: userId } = user;
+        const projectsData = await getProjects({ ownerId: userId });
         setProjects(projectsData ?? []);
       }
     };
 
+    const insertAppUser = async () => {
+      if (user) {
+        const { id: userId, fullName, primaryEmailAddress, createdAt } = user;
+        const currentTime = new Date();
+        const timeDifference =
+          currentTime.getMilliseconds() - (createdAt?.getMilliseconds() ?? 0);
+        const fiveMinutesInMilli = 5 * 60 * 1000;
+
+        // The user database storing check occurs within 5 minutes after user sign up
+        // It avoids the database check every time this page is loaded
+        if (timeDifference < fiveMinutesInMilli) {
+          try {
+            await insertUser({
+              userId: userId ?? "",
+              userName: fullName ?? "",
+              userEmail: primaryEmailAddress?.emailAddress ?? "",
+            });
+          } catch (error) {
+            console.error("Error during sign-up process.", error);
+          }
+        }
+      }
+    };
+
     fetchProjects();
+    insertAppUser();
   }, [user]);
 
   if (!user) {

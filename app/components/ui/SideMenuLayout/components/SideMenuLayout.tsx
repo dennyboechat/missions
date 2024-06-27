@@ -53,8 +53,8 @@ export const SideMenuLayout = ({
         className={styles.sidebar}
         backgroundColor="#fff"
       >
-        <Box width="200px" height="70px">
-          <Text className={styles.header}>{header}</Text>
+        <Box width="200px" height="70px" className={styles.header}>
+          <Text className={styles.header_text}>{header}</Text>
         </Box>
         <Menu>{menuItems}</Menu>
       </Sidebar>

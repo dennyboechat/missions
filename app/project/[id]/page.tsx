@@ -84,7 +84,10 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
   );
 
   return (
-    <SideMenuLayout menuItems={projectMenuItems} header={project?.projectName ?? ''}>
+    <SideMenuLayout
+      menuItems={projectMenuItems}
+      header={project?.projectName ?? ""}
+    >
       <Container className={styles.content}>
         <ContentHeader text="Project" />
         <ProjectFields
@@ -101,7 +104,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
           gapY="10px"
           className={styles.delete_section}
         >
-          <Heading size="4">Delete Project</Heading>
+          <Heading size="4">{"Delete Project"}</Heading>
           <Text as="p">
             {
               "The project will be permanently deleted, including its data like patients. This action is irreversible and can not be undone."
