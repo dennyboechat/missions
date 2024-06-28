@@ -19,6 +19,8 @@ export const getProjects = async ({
         project 
       WHERE 
         owner_id = ${ownerId}
+      ORDER BY
+        project_id DESC  
     `;
 
     const projects: Project[] = response.rows.map((row) => ({

@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Container, Table, Link } from "@radix-ui/themes";
+import { Container, Table, Link, Switch } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
 import { ContentHeader } from "../../components/ui/ContentHeader";
@@ -12,15 +12,19 @@ import styles from "../../styles/content.module.css";
 // Hooks
 import { useProject } from "../../lib/ProjectContext";
 import { useState, useEffect } from "react";
+import { usePopupMessage } from "../../lib/PopupMessage";
 
 // Database
 import { getProjectUsers } from "../../database/project-user/GetProjectUsers";
+import { updateProjectUser } from "../../database/project-user/UpdateProjectUser";
 
 // Types
 import { ProjectUser } from "../../types/ProjectUserTypes";
+import { ProjectUserId } from "../../types/ProjectUserTypes";
 
 const ProjectUsers = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
+  const { setMessage } = usePopupMessage();
   const [projectUsers, setProjectUsers] = useState<ProjectUser[]>([]);
 
   const { id: projectId } = params;
@@ -40,6 +44,25 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
 
     fetchProjects();
   }, [project]);
+
+  const onActiveUserSwitchClick = async ({
+    projectUserId,
+    isUserActive,
+  }: {
+    projectUserId: ProjectUserId;
+    isUserActive: boolean;
+  }) => {
+    if (project) {
+      await updateProjectUser({
+        projectUserId,
+        isUserActive: isUserActive,
+      });
+
+      if (setMessage) {
+        setMessage("Saved");
+      }
+    }
+  };
 
   return (
     <SideMenuLayout
@@ -63,7 +86,15 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
                   <Table.RowHeaderCell>{userName}</Table.RowHeaderCell>
                   <Table.Cell>{userEmail}</Table.Cell>
                   <Table.Cell>
-                    {isUserActive ? "Active" : "Inactive"}
+                    <Switch
+                      defaultChecked={isUserActive}
+                      onCheckedChange={(checked) =>
+                        onActiveUserSwitchClick({
+                          projectUserId,
+                          isUserActive: checked,
+                        })
+                      }
+                    />
                   </Table.Cell>
                 </Table.Row>
               )
