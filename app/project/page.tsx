@@ -27,12 +27,14 @@ const ProjectNew = () => {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [isProjectNameInvalid, setIsProjectNameInvalid] = useState(false);
+  const [isCreatingProject, setIsCreatingProject] = useState(false);
 
   if (!user) {
     return null;
   }
 
   const onCreateButtonClick = async () => {
+    setIsCreatingProject(true);
     const isValidProject = isValidProjectName({ projectName });
     setIsProjectNameInvalid(!isValidProject);
 
@@ -45,6 +47,8 @@ const ProjectNew = () => {
 
       setProject(insertedProject);
       router.push(`/project-patients/${insertedProject?.projectId}`);
+    } else {
+      setIsCreatingProject(false);
     }
   };
 
@@ -63,13 +67,16 @@ const ProjectNew = () => {
           showPlaceholders
         />
         <Grid columns="2">
-          <Button onClick={onCreateButtonClick}>{"Create"}</Button>
+          <Button onClick={onCreateButtonClick} disabled={isCreatingProject}>
+            {"Create"}
+          </Button>
           <Button
             variant="soft"
             color="gray"
             onClick={() => router.push("/dashboard")}
+            disabled={isCreatingProject}
           >
-            Cancel
+            {"Cancel"}
           </Button>
         </Grid>
       </Grid>

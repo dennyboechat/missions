@@ -38,6 +38,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
   const [projectName, setProjectName] = useState<ProjectName>("");
   const [projectDescription, setProjectDescription] =
     useState<ProjectDescription>("");
+  const [isDeletingProject, setIsDeletingProject] = useState(false);
 
   const { id: projectId } = params;
   const projectMenuItems = (
@@ -57,8 +58,8 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
   }, [projectId]);
 
   const onDeleteProject = async () => {
+    setIsDeletingProject(true);
     await deleteProject({ projectId: projectId });
-
     router.push("/dashboard");
   };
 
@@ -71,12 +72,12 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
         }
       </Text>
       <Grid columns="2">
-        <Button color="red" onClick={onDeleteProject}>
+        <Button color="red" onClick={onDeleteProject} disabled={isDeletingProject}>
           {"Confirm"}
         </Button>
         <Popover.Close>
-          <Button variant="soft" color="gray">
-            Cancel
+          <Button variant="soft" color="gray" disabled={isDeletingProject}>
+            {'Cancel'}
           </Button>
         </Popover.Close>
       </Grid>
@@ -111,7 +112,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
             }
           </Text>
           <PopupConfirmation content={deleteProjectPopupConfirmation}>
-            <Button color="red">Delete Project</Button>
+            <Button color="red">{"Delete Project"}</Button>
           </PopupConfirmation>
         </Grid>
         <Link href="/dashboard">{"< Dashboard"}</Link>
