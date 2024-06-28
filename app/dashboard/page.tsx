@@ -67,7 +67,10 @@ const DashboardPage = () => {
 
   return (
     <Container className={styles.content}>
-      <Grid columns={{ xs: "1", sm: "3", md: "4", lg: "5" }} gap="3">
+      <Grid
+        columns={{ initial: "1", xs: "2", sm: "3", md: "4", lg: "5" }}
+        gap="3"
+      >
         <ProjectCardButton isAddNew />
         {projects &&
           projects.map((project) => {

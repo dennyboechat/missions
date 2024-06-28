@@ -30,22 +30,24 @@ export const ProjectMenuItems = ({
         href={`/project-patients/${projectId}`}
         active={activeMenuItem === "project-patients"}
       >
-        Patients
+        {"Patients"}
       </MenuItem>
-      <MenuItem
-        icon={projectUsersIcon}
-        href={`/project-users/${projectId}`}
-        active={activeMenuItem === "project-users"}
-      >
-        Users
-      </MenuItem>
+      {isProjectEditable && (
+        <MenuItem
+          icon={projectUsersIcon}
+          href={`/project-users/${projectId}`}
+          active={activeMenuItem === "project-users"}
+        >
+          {"Users"}
+        </MenuItem>
+      )}
       {isProjectEditable && (
         <MenuItem
           icon={projectIcon}
           href={`/project/${projectId}`}
           active={activeMenuItem === "project"}
         >
-          Settings
+          {"Settings"}
         </MenuItem>
       )}
     </>

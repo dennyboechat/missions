@@ -70,16 +70,17 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
           "This action cannot be undone and all data, including from patients, will be deleted."
         }
       </Text>
-      <Grid columns="2" gap="10px">
+      <Grid columns="2" gapX="10px">
         <Button
           color="red"
           onClick={onDeleteProject}
           disabled={isDeletingProject}
+          variant="outline"
         >
           {"Confirm"}
         </Button>
         <Popover.Close>
-          <Button variant="soft" color="gray" disabled={isDeletingProject}>
+          <Button variant="outline" color="gray" disabled={isDeletingProject}>
             {"Cancel"}
           </Button>
         </Popover.Close>
@@ -114,9 +115,11 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
               "The project will be permanently deleted, including its data like patients. This action is irreversible and can not be undone."
             }
           </Text>
-          <Grid width={{ xs: "auto", sm: "150px" }}>
+          <Grid width={{ initial: "auto", sm: "150px" }}>
             <PopupConfirmation content={deleteProjectPopupConfirmation}>
-              <Button color="red">{"Delete Project"}</Button>
+              <Button color="red" variant="outline">
+                {"Delete Project"}
+              </Button>
             </PopupConfirmation>
           </Grid>
         </Grid>

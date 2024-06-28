@@ -1,15 +1,17 @@
 "use client";
 
 // Components
-import { Grid, Link } from "@radix-ui/themes";
+import { Grid, Link, Button } from "@radix-ui/themes";
 import { SignUpDialog } from "../../../auth/signUp";
 import { SignInDialog } from "../../../auth/signIn";
 import { SignButtons } from "../../signButtons";
+import { ChevronLeftIcon } from "@radix-ui/react-icons";
 
 // Hooks
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { useProject } from "../../../../lib/ProjectContext";
 
 // Styles
 import styles from "../styles/HeaderPanel.module.css";
@@ -18,6 +20,7 @@ export const HeaderPanel = () => {
   const router = useRouter();
   const currentPath = usePathname();
   const { user } = useUser();
+  const { project } = useProject();
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
 
@@ -41,23 +44,57 @@ export const HeaderPanel = () => {
 
   let breadcrumb = <span />;
 
-  const projectLinks = ["/project-patients/", 'project-users', 'project']
-  const hasDashboardLink = projectLinks.some(path => currentPath.includes(path));
+  const projectLinks = ["/project-patients/", "project-users", "project"];
+  const hasDashboardLink = projectLinks.some((path) =>
+    currentPath.includes(path)
+  );
 
   if (hasDashboardLink) {
-    breadcrumb = <Link href="/dashboard">{"Dashboard"}</Link>;
+    breadcrumb = (
+      <Button
+        variant="surface"
+        title="Go back to dashboard"
+        onClick={() => {
+          router.push("/dashboard");
+        }}
+      >
+        <ChevronLeftIcon height="20" width="20" />
+      </Button>
+    );
+  } else {
+    const patientLinks = ["patients-personal"];
+    const hasPatientLink = patientLinks.some((path) =>
+      currentPath.includes(path)
+    );
+
+    if (hasPatientLink && project) {
+      const { projectId } = project;
+      breadcrumb = (
+        <Button
+          variant="surface"
+          title="Go back to project"
+          onClick={() => {
+            router.push(`/project-patients/${projectId}`);
+          }}
+        >
+          <ChevronLeftIcon height="20" width="20" />
+        </Button>
+      );
+    }
   }
 
   return (
     <>
       <Grid
-        columns="auto 1fr auto"
+        columns={{ initial: "80px 1fr auto", sm: "200px 1fr auto" }}
         gap="3"
+        align="center"
         height="50px"
-        className={styles.header_panel}
       >
-        <Link href={logoLink}>Logo</Link>
-        {breadcrumb}
+        <Link className={styles.header_logo} href={logoLink}>
+          Logo
+        </Link>
+        <div>{breadcrumb}</div>
         <SignButtons onSignInClick={onSignIn} onSignUpClick={onSignUp} />
       </Grid>
       {showSignUp && <SignUpDialog onClose={() => setShowSignUp(false)} />}

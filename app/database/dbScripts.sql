@@ -22,3 +22,12 @@ CREATE TABLE IF NOT EXISTS project_user (
     CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE,
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES app_user(user_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS patient_personal (
+    patient_personal_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    project_id UUID NOT NULL,
+    patient_full_name VARCHAR(255) NOT NULL,
+    is_patient_male BOOLEAN NOT NULL,
+    patient_date_of_birth DATE,
+    CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE
+);

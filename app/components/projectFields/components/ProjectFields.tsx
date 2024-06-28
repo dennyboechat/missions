@@ -1,6 +1,7 @@
 "use client";
 
 // Components
+import { Grid } from "@radix-ui/themes";
 import { InputTextField } from "../../../components/ui/InputTextField";
 
 // Types
@@ -13,7 +14,7 @@ import { updateProject } from "../../../database/project/UpdateProject";
 import { isValidProjectName } from "../../../utils/isValidProjectName";
 
 // Hooks
-import {useState} from 'react';
+import { useState } from "react";
 import { usePopupMessage } from "../../../lib/PopupMessage";
 import { useProject } from "../../../lib/ProjectContext";
 
@@ -52,7 +53,7 @@ export const ProjectFields = ({
       }
 
       if (setMessage) {
-        setMessage('Saved');
+        setMessage("Saved");
       }
     }
   };
@@ -72,13 +73,13 @@ export const ProjectFields = ({
       });
 
       if (setMessage) {
-        setMessage('Saved');
+        setMessage("Saved");
       }
     }
   };
 
   return (
-    <>
+    <Grid gap="10px" width={{ initial: "auto", sm: "500px" }}>
       <InputTextField
         label="Project name"
         placeholder={
@@ -88,7 +89,7 @@ export const ProjectFields = ({
         autoFocus
         required
         onBlur={(e) => onProjectNameChanged(e)}
-        errorMessage={isNameInvalid ? 'Required field' : ''}
+        errorMessage={isNameInvalid ? "Required field" : ""}
       />
       <InputTextField
         label="Project description"
@@ -100,6 +101,6 @@ export const ProjectFields = ({
         value={projectDescription}
         onBlur={(e) => onProjectDescriptionChanged(e)}
       />
-    </>
+    </Grid>
   );
 };

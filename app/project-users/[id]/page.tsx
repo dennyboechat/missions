@@ -70,13 +70,16 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
       header={project?.projectName ?? ""}
     >
       <Container className={styles.content}>
-        <ContentHeader text="Users" subText="All users that have access to this project." />
+        <ContentHeader
+          text="Users"
+          subText="All users who have access to this project."
+        />
         <Table.Root>
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Email</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Active</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{"Name"}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{"Email"}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{"Active"}</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>

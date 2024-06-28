@@ -69,13 +69,17 @@ const ProjectNew = () => {
         <Grid
           columns={{ xs: "1", sm: "2" }}
           gap="10px"
-          width={{ xs: "auto", sm: "300px" }}
+          width={{ xs: "auto", sm: "500px" }}
         >
-          <Button onClick={onCreateButtonClick} disabled={isCreatingProject}>
+          <Button
+            onClick={onCreateButtonClick}
+            disabled={isCreatingProject}
+            variant="outline"
+          >
             {"Create"}
           </Button>
           <Button
-            variant="soft"
+            variant="outline"
             color="gray"
             onClick={() => router.push("/dashboard")}
             disabled={isCreatingProject}
