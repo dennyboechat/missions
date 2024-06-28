@@ -39,11 +39,25 @@ export const HeaderPanel = () => {
     }
   };
 
+  let breadcrumb = <span />;
+
+  const projectLinks = ["/project-patients/", 'project-users', 'project']
+  const hasDashboardLink = projectLinks.some(path => currentPath.includes(path));
+
+  if (hasDashboardLink) {
+    breadcrumb = <Link href="/dashboard">{"Dashboard"}</Link>;
+  }
+
   return (
     <>
-      <Grid columns="auto 1fr auto" gap="3" height="50px" className={styles.header_panel}>
+      <Grid
+        columns="auto 1fr auto"
+        gap="3"
+        height="50px"
+        className={styles.header_panel}
+      >
         <Link href={logoLink}>Logo</Link>
-        <div></div>
+        {breadcrumb}
         <SignButtons onSignInClick={onSignIn} onSignUpClick={onSignUp} />
       </Grid>
       {showSignUp && <SignUpDialog onClose={() => setShowSignUp(false)} />}

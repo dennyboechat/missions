@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Container, Grid, Heading, Link, Button } from "@radix-ui/themes";
+import { Container, Grid, Button } from "@radix-ui/themes";
 import { ProjectFields } from "../components/projectFields";
 import { ContentHeader } from "../components/ui/ContentHeader";
 
@@ -66,7 +66,11 @@ const ProjectNew = () => {
           isProjectNameInvalid={isProjectNameInvalid}
           showPlaceholders
         />
-        <Grid columns="2">
+        <Grid
+          columns={{ xs: "1", sm: "2" }}
+          gap="10px"
+          width={{ xs: "auto", sm: "300px" }}
+        >
           <Button onClick={onCreateButtonClick} disabled={isCreatingProject}>
             {"Create"}
           </Button>
@@ -80,7 +84,6 @@ const ProjectNew = () => {
           </Button>
         </Grid>
       </Grid>
-      <Link href="/dashboard">{"< Dashboard"}</Link>
     </Container>
   );
 };

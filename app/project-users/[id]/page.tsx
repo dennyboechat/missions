@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Container, Table, Link, Switch } from "@radix-ui/themes";
+import { Container, Table, Switch } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
 import { ContentHeader } from "../../components/ui/ContentHeader";
@@ -70,7 +70,7 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
       header={project?.projectName ?? ""}
     >
       <Container className={styles.content}>
-        <ContentHeader text="Users" />
+        <ContentHeader text="Users" subText="All users that have access to this project." />
         <Table.Root>
           <Table.Header>
             <Table.Row>
@@ -101,7 +101,6 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
             )}
           </Table.Body>
         </Table.Root>
-        <Link href="/dashboard">{"< Dashboard"}</Link>
       </Container>
     </SideMenuLayout>
   );

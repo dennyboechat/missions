@@ -4,7 +4,6 @@
 import {
   Container,
   Grid,
-  Link,
   Button,
   Box,
   Text,
@@ -65,19 +64,23 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
 
   const deleteProjectPopupConfirmation = (
     <Box>
-      <Text>{"Confirm the project deletion?"}</Text>
+      <Text weight="bold">{"Confirm the project deletion?"}</Text>
       <Text as="p">
         {
           "This action cannot be undone and all data, including from patients, will be deleted."
         }
       </Text>
-      <Grid columns="2">
-        <Button color="red" onClick={onDeleteProject} disabled={isDeletingProject}>
+      <Grid columns="2" gap="10px">
+        <Button
+          color="red"
+          onClick={onDeleteProject}
+          disabled={isDeletingProject}
+        >
           {"Confirm"}
         </Button>
         <Popover.Close>
           <Button variant="soft" color="gray" disabled={isDeletingProject}>
-            {'Cancel'}
+            {"Cancel"}
           </Button>
         </Popover.Close>
       </Grid>
@@ -111,11 +114,12 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
               "The project will be permanently deleted, including its data like patients. This action is irreversible and can not be undone."
             }
           </Text>
-          <PopupConfirmation content={deleteProjectPopupConfirmation}>
-            <Button color="red">{"Delete Project"}</Button>
-          </PopupConfirmation>
+          <Grid width={{ xs: "auto", sm: "150px" }}>
+            <PopupConfirmation content={deleteProjectPopupConfirmation}>
+              <Button color="red">{"Delete Project"}</Button>
+            </PopupConfirmation>
+          </Grid>
         </Grid>
-        <Link href="/dashboard">{"< Dashboard"}</Link>
       </Container>
     </SideMenuLayout>
   );

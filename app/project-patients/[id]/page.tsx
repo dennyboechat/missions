@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Container, Heading, Link } from "@radix-ui/themes";
+import { Container } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
 import { ContentHeader } from "../../components/ui/ContentHeader";
@@ -26,7 +26,6 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
     >
       <Container className={styles.content}>
         <ContentHeader text="Patients" />
-        <Link href="/dashboard">{"< Dashboard"}</Link>
       </Container>
     </SideMenuLayout>
   );
