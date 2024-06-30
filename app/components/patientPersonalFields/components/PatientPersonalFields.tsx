@@ -2,8 +2,8 @@
 
 // Components
 import { Grid, RadioGroup } from "@radix-ui/themes";
-import { InputTextField } from "../../../components/ui/InputTextField";
-import { RadioField } from "../../../components/ui/RadioField";
+import { InputTextField } from "../../ui/InputTextField";
+import { RadioField } from "../../ui/RadioField";
 
 // Types
 import { PatientPersonalFieldsProps } from "../types/PatientPersonalFieldsProps";

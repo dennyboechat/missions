@@ -2,10 +2,10 @@
 
 // Components
 import { Container } from "@radix-ui/themes";
-import { ContentHeader } from "../../components/ui/ContentHeader";
+import { ContentHeader } from "../../components/ContentHeader";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
-import { ProjectMenuItems } from "../../components/ui/PatientMenuItems";
-import { PatientPersonalFields } from "../../components/patientPersonalFields";
+import { PatientMenuItems } from "../../components/PatientMenuItems";
+import { PatientPersonalFields } from "../../components/PatientPersonalFields";
 
 // Styles
 import styles from "../../styles/content.module.css";
@@ -46,7 +46,7 @@ const PatientsPersonal = ({ params }: { params: { id: string } }) => {
   }
 
   const patientMenuItems = (
-    <ProjectMenuItems
+    <PatientMenuItems
       patientPersonalId={patientPersonalId}
       activeMenuItem="patients-personal"
     />
@@ -58,7 +58,7 @@ const PatientsPersonal = ({ params }: { params: { id: string } }) => {
 
   const gender = patientPersonalFields.isPatientMale ? "male" : "female";
 
-  const subHeader = `${patientAge ?? ""} yo - ${gender}`;
+  const subHeader = `${patientAge ?? ""}yo - ${gender}`;
 
   return (
     <SideMenuLayout

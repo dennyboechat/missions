@@ -7,7 +7,7 @@ import { PersonIcon } from "@radix-ui/react-icons";
 // Types
 import { PatientMenuItemsProps } from "../types/PatientMenuItemsProps";
 
-export const ProjectMenuItems = ({
+export const PatientMenuItems = ({
   patientPersonalId,
   activeMenuItem,
 }: PatientMenuItemsProps) => {
@@ -19,7 +19,7 @@ export const ProjectMenuItems = ({
       href={`/patients-personal/${patientPersonalId}`}
       active={activeMenuItem === "patients-personal"}
     >
-      {"Patients"}
+      {"Personal"}
     </MenuItem>
   );
 };

@@ -3,8 +3,8 @@
 // Components
 import { Container, Table, Switch } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
-import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
-import { ContentHeader } from "../../components/ui/ContentHeader";
+import { ProjectMenuItems } from "../../components/ProjectMenuItems";
+import { ContentHeader } from "../../components/ContentHeader";
 import { DataTable } from "../../components/ui/DataTable";
 
 // Styles

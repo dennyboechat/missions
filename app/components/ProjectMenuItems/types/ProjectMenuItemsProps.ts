@@ -1,5 +1,5 @@
 // Types
-import { ProjectId } from "../../../../types/ProjectTypes";
+import { ProjectId } from "../../../types/ProjectTypes";
 
 export interface ProjectMenuItemsProps {
   projectId: ProjectId;

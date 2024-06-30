@@ -2,7 +2,7 @@
 
 // Components
 import { Grid } from "@radix-ui/themes";
-import { InputTextField } from "../../../components/ui/InputTextField";
+import { InputTextField } from "../../ui/InputTextField";
 
 // Types
 import { ProjectFieldsProps } from "../types/ProjectFieldsProps";

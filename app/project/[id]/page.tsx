@@ -10,11 +10,11 @@ import {
   Popover,
   Heading,
 } from "@radix-ui/themes";
-import { ProjectFields } from "../../components/projectFields";
+import { ProjectFields } from "../../components/ProjectFields";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
-import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
+import { ProjectMenuItems } from "../../components/ProjectMenuItems";
 import { PopupConfirmation } from "../../components/ui/PopupConfirmation";
-import { ContentHeader } from "../../components/ui/ContentHeader";
+import { ContentHeader } from "../../components/ContentHeader";
 
 // Types
 import { ProjectName, ProjectDescription } from "../../types/ProjectTypes";

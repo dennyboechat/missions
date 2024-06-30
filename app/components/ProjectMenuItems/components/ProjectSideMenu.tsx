@@ -9,7 +9,7 @@ import { ProjectMenuItemsProps } from "../types/ProjectMenuItemsProps";
 
 // Hooks
 import { useUser } from "@clerk/nextjs";
-import { useProject } from "../../../../lib/ProjectContext";
+import { useProject } from "../../../lib/ProjectContext";
 
 export const ProjectMenuItems = ({
   projectId,

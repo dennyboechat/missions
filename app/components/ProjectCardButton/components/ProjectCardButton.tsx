@@ -11,7 +11,7 @@ import styles from "../styles/ProjectCardButton.module.css";
 import { ProjectCardButtonProps } from "../types/ProjectCardButtonProps";
 
 // Hooks
-import { useProject } from "../../../../lib/ProjectContext";
+import { useProject } from "../../../lib/ProjectContext";
 
 export const ProjectCardButton = ({
   isAddNew,

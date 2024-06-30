@@ -2,7 +2,7 @@
 
 // Components
 import { Container, Grid } from "@radix-ui/themes";
-import { ProjectCardButton } from "../components/ui/ProjectCardButton";
+import { ProjectCardButton } from "../components/ProjectCardButton";
 
 // Database
 import { getProjects } from "../database/project/GetProjects";

@@ -1,5 +1,5 @@
 // Types
-import { PatientPersonalId } from "../../../../types/PatientPersonalTypes";
+import { PatientPersonalId } from "../../../types/PatientPersonalTypes";
 
 export interface PatientMenuItemsProps {
   patientPersonalId: PatientPersonalId;
