@@ -16,5 +16,5 @@ export interface PatientPersonal {
 export interface UpdatePatientPersonal {
   patientPersonalId: PatientPersonalId;
   field: string;
-  value: string;
+  value: string | boolean;
 }

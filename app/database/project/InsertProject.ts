@@ -16,7 +16,7 @@ export const insertProject = async ({
       INSERT INTO 
         project (project_name, project_description, owner_id) 
       VALUES 
-        (${projectName}, ${projectDescription}, ${ownerId})
+        (${projectName.trim()}, ${projectDescription?.trim()}, ${ownerId})
       RETURNING 
         project_id, project_name, project_description, owner_id
     `;

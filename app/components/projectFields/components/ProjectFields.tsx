@@ -37,11 +37,10 @@ export const ProjectFields = ({
     if (onProjectNameChange) {
       onProjectNameChange(e);
     }
-
-    const isValidName = isValidProjectName({ projectName: e.target.value });
-    setIsNameInvalid(!isValidName);
-
     const newValue = e.target.value;
+
+    const isValidName = isValidProjectName({ projectName: newValue });
+    setIsNameInvalid(!isValidName);
 
     if (isValidName && projectId && projectName !== newValue) {
       const updatedProject = await updateProject({

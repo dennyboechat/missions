@@ -5,7 +5,7 @@ import { Grid, Container, Text, TextField } from "@radix-ui/themes";
 import { InputTextFieldProps } from "../types/InputTextFieldProps";
 
 // Styles
-import styles from "../styles/InputTextField.module.css";
+import styles from "../../../../styles/fields.module.css";
 
 export const InputTextField = ({
   label,

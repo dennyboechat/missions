@@ -1,8 +1,9 @@
 "use client";
 
 // Components
-import { Grid } from "@radix-ui/themes";
+import { Grid, RadioGroup } from "@radix-ui/themes";
 import { InputTextField } from "../../../components/ui/InputTextField";
+import { RadioField } from "../../../components/ui/RadioField";
 
 // Types
 import { PatientPersonalFieldsProps } from "../types/PatientPersonalFieldsProps";
@@ -23,13 +24,14 @@ export const PatientPersonalFields = ({
 }: PatientPersonalFieldsProps) => {
   const { setMessage } = usePopupMessage();
   const [isFullNameInvalid, setIsFullNameInvalid] = useState(false);
-  const { patientPersonalId, patientFullName } = patientPersonalFields;
+  const { patientPersonalId, patientFullName, isPatientMale } =
+    patientPersonalFields;
 
   const onFieldChanged = async (e: React.FocusEvent<HTMLInputElement>) => {
-    const isValidName = isValidFullName({ fullName: e.target.value });
-    setIsFullNameInvalid(!isValidName);
-    
     const newValue = e.target.value;
+
+    const isValidName = isValidFullName({ fullName: newValue });
+    setIsFullNameInvalid(!isValidName);
 
     if (isValidName && patientFullName !== newValue) {
       const updatedPatientPerson = await updatePatientPersonal({
@@ -46,6 +48,29 @@ export const PatientPersonalFields = ({
     }
   };
 
+  const genderItems = (
+    <>
+      <RadioGroup.Item value="male">{"Male"}</RadioGroup.Item>
+      <RadioGroup.Item value="female">{"Female"}</RadioGroup.Item>
+    </>
+  );
+
+  const patientGender = isPatientMale ? "male" : "female";
+
+  const onPatientGenderChange = async (value: string) => {
+    const updatedPatientPerson = await updatePatientPersonal({
+      patientPersonalId,
+      field: "is_patient_male",
+      value: value === 'male',
+    });
+
+    setPatientPersonalFields(updatedPatientPerson);
+
+    if (setMessage) {
+      setMessage("Saved");
+    }
+  };
+
   return (
     <Grid gap="10px" width={{ xs: "auto", sm: "500px" }}>
       <InputTextField
@@ -55,6 +80,14 @@ export const PatientPersonalFields = ({
         required
         onBlur={(e) => onFieldChanged(e)}
         errorMessage={isFullNameInvalid ? "Required field" : ""}
+      />
+      <RadioField
+        name="gender"
+        label="Gender"
+        items={genderItems}
+        value={patientGender}
+        onChange={(value) => onPatientGenderChange(value)}
+        required
       />
     </Grid>
   );

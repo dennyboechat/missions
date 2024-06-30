@@ -26,7 +26,8 @@ export const updatePatientPersonal = async ({
         patient_personal_id, project_id, patient_full_name, is_patient_male, patient_date_of_birth
     `;
 
-    const response = await sql.query(query, [value.trim(), patientPersonalId]);
+    const validatedValue = typeof value === 'string' ? value.trim() : value;
+    const response = await sql.query(query, [validatedValue, patientPersonalId]);
 
     const patientPersonals: PatientPersonal[] = response.rows.map((row) => ({
       patientPersonalId: row.patient_personal_id,

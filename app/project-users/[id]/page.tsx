@@ -5,6 +5,7 @@ import { Container, Table, Switch } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
 import { ContentHeader } from "../../components/ui/ContentHeader";
+import { DataTable } from "../../components/ui/DataTable";
 
 // Styles
 import styles from "../../styles/content.module.css";
@@ -64,6 +65,14 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
     }
   };
 
+  const tableHeader = (
+    <Table.Row>
+      <Table.ColumnHeaderCell>{"Name"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Email"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Active"}</Table.ColumnHeaderCell>
+    </Table.Row>
+  );
+
   return (
     <SideMenuLayout
       menuItems={projectMenuItems}
@@ -74,36 +83,27 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
           text="Users"
           subText="All users who have access to this project."
         />
-        <Table.Root>
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell>{"Name"}</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>{"Email"}</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>{"Active"}</Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {projectUsers.map(
-              ({ projectUserId, userName, userEmail, isUserActive }) => (
-                <Table.Row key={projectUserId}>
-                  <Table.RowHeaderCell>{userName}</Table.RowHeaderCell>
-                  <Table.Cell>{userEmail}</Table.Cell>
-                  <Table.Cell>
-                    <Switch
-                      defaultChecked={isUserActive}
-                      onCheckedChange={(checked) =>
-                        onActiveUserSwitchClick({
-                          projectUserId,
-                          isUserActive: checked,
-                        })
-                      }
-                    />
-                  </Table.Cell>
-                </Table.Row>
-              )
-            )}
-          </Table.Body>
-        </Table.Root>
+        <DataTable tableHeader={tableHeader}>
+          {projectUsers.map(
+            ({ projectUserId, userName, userEmail, isUserActive }) => (
+              <Table.Row key={projectUserId}>
+                <Table.RowHeaderCell>{userName}</Table.RowHeaderCell>
+                <Table.Cell>{userEmail}</Table.Cell>
+                <Table.Cell>
+                  <Switch
+                    defaultChecked={isUserActive}
+                    onCheckedChange={(checked) =>
+                      onActiveUserSwitchClick({
+                        projectUserId,
+                        isUserActive: checked,
+                      })
+                    }
+                  />
+                </Table.Cell>
+              </Table.Row>
+            )
+          )}
+        </DataTable>
       </Container>
     </SideMenuLayout>
   );

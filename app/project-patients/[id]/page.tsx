@@ -5,6 +5,7 @@ import { Container, Table, Link } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ui/ProjectMenuItems";
 import { ContentHeader } from "../../components/ui/ContentHeader";
+import { DataTable } from "../../components/ui/DataTable";
 
 // Styles
 import styles from "../../styles/content.module.css";
@@ -44,6 +45,12 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
     <ProjectMenuItems projectId={projectId} activeMenuItem="project-patients" />
   );
 
+  const tableHeader =     <Table.Row>
+  <Table.ColumnHeaderCell>{"Full Name"}</Table.ColumnHeaderCell>
+  <Table.ColumnHeaderCell>{"Date of Birth"}</Table.ColumnHeaderCell>
+  <Table.ColumnHeaderCell>{"Gender"}</Table.ColumnHeaderCell>
+</Table.Row>;
+
   return (
     <SideMenuLayout
       menuItems={projectMenuItems}
@@ -51,15 +58,7 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
     >
       <Container className={styles.content}>
         <ContentHeader text="Patients" />
-        <Table.Root>
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell>{"Full Name"}</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>{"Date of Birth"}</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>{"Gender"}</Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
+        <DataTable tableHeader={tableHeader}>  
             {projectPersonals.map(
               ({
                 patientPersonalId,
@@ -80,8 +79,7 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
                 </Table.Row>
               )
             )}
-          </Table.Body>
-        </Table.Root>
+        </DataTable>
       </Container>
     </SideMenuLayout>
   );
