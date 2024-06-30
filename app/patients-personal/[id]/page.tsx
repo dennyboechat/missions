@@ -58,7 +58,7 @@ const PatientsPersonal = ({ params }: { params: { id: string } }) => {
 
   const gender = patientPersonalFields.isPatientMale ? "male" : "female";
 
-  const subHeader = `${patientAge ?? ""}yo - ${gender}`;
+  const subHeader = `${patientAge ?? ""}yo ${gender}`;
 
   return (
     <SideMenuLayout
