@@ -17,14 +17,14 @@ import { getPatientPersonal } from "../../database/patient-personal/GetPatientPe
 import { useState, useEffect } from "react";
 
 // Types
-import { PatientPersonal } from "../../types/PatientPersonalTypes";
+import { PatientPersonalTypes } from "../../types/PatientPersonalTypes";
 
 // Utils
 import { getAge } from "../../utils/getAge";
 
-const PatientsPersonal = ({ params }: { params: { id: string } }) => {
+const PatientPersonal = ({ params }: { params: { id: string } }) => {
   const [patientPersonalFields, setPatientPersonalFields] =
-    useState<PatientPersonal>();
+    useState<PatientPersonalTypes>();
 
   const { id: patientPersonalId } = params;
 
@@ -48,7 +48,7 @@ const PatientsPersonal = ({ params }: { params: { id: string } }) => {
   const patientMenuItems = (
     <PatientMenuItems
       patientPersonalId={patientPersonalId}
-      activeMenuItem="patients-personal"
+      activeMenuItem="patient-personal"
     />
   );
 
@@ -78,4 +78,4 @@ const PatientsPersonal = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default PatientsPersonal;
+export default PatientPersonal;

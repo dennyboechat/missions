@@ -3,5 +3,5 @@ import { PatientPersonalId } from "../../../types/PatientPersonalTypes";
 
 export interface PatientMenuItemsProps {
   patientPersonalId: PatientPersonalId;
-  activeMenuItem: "patients-personal";
+  activeMenuItem: "patient-personal" | "patient-dentistry";
 }

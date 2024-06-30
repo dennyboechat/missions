@@ -31,3 +31,12 @@ CREATE TABLE IF NOT EXISTS patient_personal (
     patient_date_of_birth DATE,
     CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS patient_dentistry (
+    patient_dentistry_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    patient_personal_id UUID NOT NULL,
+    appointment_notes VARCHAR(2550),
+    appointment_date DATE,
+    is_child_dental_map BOOLEAN NOT NULL,
+    CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
+);

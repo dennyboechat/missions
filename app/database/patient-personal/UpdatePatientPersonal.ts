@@ -5,7 +5,7 @@ import { sql } from "@vercel/postgres";
 
 // Types
 import {
-  PatientPersonal,
+  PatientPersonalTypes,
   UpdatePatientPersonal,
 } from "../../types/PatientPersonalTypes";
 
@@ -13,7 +13,7 @@ export const updatePatientPersonal = async ({
   patientPersonalId,
   field,
   value,
-}: UpdatePatientPersonal): Promise<PatientPersonal | undefined> => {
+}: UpdatePatientPersonal): Promise<PatientPersonalTypes | undefined> => {
   try {
     const query = `
       UPDATE 
@@ -29,7 +29,7 @@ export const updatePatientPersonal = async ({
     const validatedValue = typeof value === 'string' ? value.trim() : value;
     const response = await sql.query(query, [validatedValue, patientPersonalId]);
 
-    const patientPersonals: PatientPersonal[] = response.rows.map((row) => ({
+    const patientPersonals: PatientPersonalTypes[] = response.rows.map((row) => ({
       patientPersonalId: row.patient_personal_id,
       projectId: row.project_id,
       patientFullName: row.patient_full_name,

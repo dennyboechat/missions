@@ -5,7 +5,7 @@ export type PatientPersonalId = string;
 
 export type PatientPersonalFullName = string;
 
-export interface PatientPersonal {
+export interface PatientPersonalTypes {
   patientPersonalId: PatientPersonalId;
   projectId: ProjectId;
   patientFullName: PatientPersonalFullName;

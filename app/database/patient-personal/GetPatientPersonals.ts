@@ -5,13 +5,13 @@ import { sql } from "@vercel/postgres";
 
 // Types
 import { ProjectId } from "../../types/ProjectTypes";
-import { PatientPersonal } from "../../types/PatientPersonalTypes";
+import { PatientPersonalTypes } from "../../types/PatientPersonalTypes";
 
 export const getPatientPersonals = async ({
   projectId,
 }: {
   projectId: ProjectId;
-}): Promise<PatientPersonal[] | undefined> => {
+}): Promise<PatientPersonalTypes[] | undefined> => {
   try {
     const response = await sql`
       SELECT 
@@ -24,7 +24,7 @@ export const getPatientPersonals = async ({
         patient_full_name DESC  
     `;
 
-    const patientPersonals: PatientPersonal[] = response.rows.map((row) => ({
+    const patientPersonals: PatientPersonalTypes[] = response.rows.map((row) => ({
       patientPersonalId: row.patient_personal_id,
       projectId: row.project_id,
       patientFullName: row.patient_full_name,

@@ -62,7 +62,7 @@ export const HeaderPanel = () => {
       </Button>
     );
   } else {
-    const patientLinks = ["patients-personal"];
+    const patientLinks = ["patient-personal", "patient-dentistry"];
     const hasPatientLink = patientLinks.some((path) =>
       currentPath.includes(path)
     );

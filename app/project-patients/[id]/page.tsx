@@ -18,11 +18,11 @@ import { useProject } from "../../lib/ProjectContext";
 import { getPatientPersonals } from "../../database/patient-personal/GetPatientPersonals";
 
 // Types
-import { PatientPersonal } from "../../types/PatientPersonalTypes";
+import { PatientPersonalTypes } from "../../types/PatientPersonalTypes";
 
 const ProjectPatients = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
-  const [projectPersonals, setProjectPersonals] = useState<PatientPersonal[]>(
+  const [projectPersonals, setProjectPersonals] = useState<PatientPersonalTypes[]>(
     []
   );
 
@@ -68,7 +68,7 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
               }) => (
                 <Table.Row key={patientPersonalId}>
                   <Table.RowHeaderCell>
-                    <Link href={`/patients-personal/${patientPersonalId}`}>
+                    <Link href={`/patient-personal/${patientPersonalId}`}>
                       {patientFullName}
                     </Link>
                   </Table.RowHeaderCell>
