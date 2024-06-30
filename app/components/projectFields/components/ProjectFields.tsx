@@ -41,11 +41,13 @@ export const ProjectFields = ({
     const isValidName = isValidProjectName({ projectName: e.target.value });
     setIsNameInvalid(!isValidName);
 
-    if (isValidName && projectId && projectName !== e.target.value) {
+    const newValue = e.target.value;
+
+    if (isValidName && projectId && projectName !== newValue) {
       const updatedProject = await updateProject({
         projectId,
         field: "project_name",
-        value: e.target.value,
+        value: newValue,
       });
 
       if (setProject) {

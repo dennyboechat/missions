@@ -4,24 +4,24 @@
 import { sql } from "@vercel/postgres";
 
 // Types
-import {
-  PatientPersonal,
-  PatientPersonalId,
-} from "../../types/PatientPersonalTypes";
+import { ProjectId } from "../../types/ProjectTypes";
+import { PatientPersonal } from "../../types/PatientPersonalTypes";
 
-export const getPatientPersonal = async ({
-  patientPersonalId,
+export const getPatientPersonals = async ({
+  projectId,
 }: {
-  patientPersonalId: PatientPersonalId;
-}): Promise<PatientPersonal | undefined> => {
+  projectId: ProjectId;
+}): Promise<PatientPersonal[] | undefined> => {
   try {
     const response = await sql`
       SELECT 
         * 
-      FROM
+      FROM 
         patient_personal 
       WHERE 
-        patient_personal_id = ${patientPersonalId}
+        project_id = ${projectId}
+      ORDER BY
+        patient_full_name DESC  
     `;
 
     const patientPersonals: PatientPersonal[] = response.rows.map((row) => ({
@@ -32,9 +32,7 @@ export const getPatientPersonal = async ({
       patientDateOfBirth: row.patient_date_of_birth,
     }));
 
-    return patientPersonals && patientPersonals.length > 0
-      ? patientPersonals[0]
-      : undefined;
+    return patientPersonals;
   } catch (error) {
     console.error(error);
   }

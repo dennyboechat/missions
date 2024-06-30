@@ -45,7 +45,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
   );
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProject = async () => {
       if (projectId) {
         const projectData = await getProject({ projectId: projectId });
         setProjectName(projectData?.projectName ?? "");
@@ -53,7 +53,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
       }
     };
 
-    fetchProjects();
+    fetchProject();
   }, [projectId]);
 
   const onDeleteProject = async () => {

@@ -23,7 +23,7 @@ export const updateProject = async ({
         project_id, project_name, project_description, owner_id
     `;
 
-    const response = await sql.query(query, [value, projectId]);
+    const response = await sql.query(query, [value.trim(), projectId]);
 
     const projects: Project[] = response.rows.map((row) => ({
       projectId: row.project_id,

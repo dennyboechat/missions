@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import { useProject } from "../../lib/ProjectContext";
 
 // Database
-import { getPatientPersonals } from "../../database/patient-personal/GetPatientPersonal";
+import { getPatientPersonals } from "../../database/patient-personal/GetPatientPersonals";
 
 // Types
 import { PatientPersonal } from "../../types/PatientPersonalTypes";

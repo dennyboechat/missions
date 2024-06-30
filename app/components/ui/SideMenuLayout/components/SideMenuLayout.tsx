@@ -15,6 +15,8 @@ import { useMounted } from "@/app/lib/useMounted";
 export const SideMenuLayout = ({
   menuItems,
   header,
+  subHeader,
+  isBoldHeader,
   children,
 }: SideMenuLayoutProps) => {
   const mounted = useMounted();
@@ -53,8 +55,13 @@ export const SideMenuLayout = ({
         className={styles.sidebar}
         backgroundColor="#fff"
       >
-        <Box width="200px" height="70px" className={styles.header}>
-          <Text className={styles.header_text}>{header}</Text>
+        <Box
+          width="200px"
+          height={subHeader ? "90px" : "70px"}
+          className={styles.header}
+        >
+          <Text weight={isBoldHeader ? 'bold' : 'regular'} className={styles.header_text}>{header}</Text>
+          <Text className={styles.header_text}>{subHeader}</Text>
         </Box>
         <Menu>{menuItems}</Menu>
       </Sidebar>

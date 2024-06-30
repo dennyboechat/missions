@@ -52,7 +52,7 @@ export const HeaderPanel = () => {
   if (hasDashboardLink) {
     breadcrumb = (
       <Button
-        variant="surface"
+        variant="outline"
         title="Go back to dashboard"
         onClick={() => {
           router.push("/dashboard");
@@ -71,7 +71,7 @@ export const HeaderPanel = () => {
       const { projectId } = project;
       breadcrumb = (
         <Button
-          variant="surface"
+          variant="outline"
           title="Go back to project"
           onClick={() => {
             router.push(`/project-patients/${projectId}`);
