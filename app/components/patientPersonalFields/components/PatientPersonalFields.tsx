@@ -15,7 +15,7 @@ import { usePopupMessage } from "../../../lib/PopupMessage";
 
 // Utils
 import { isValidFullName } from "../utils/isValidFullName";
-import { formatDate } from "../../../utils/formatDate";
+import { getFormattedDate } from "../../../utils/getFormattedDate";
 import { getCurrentDate } from "../../../utils/getCurrentDate";
 
 // Database
@@ -96,7 +96,7 @@ export const PatientPersonalFields = ({
     }
   };
 
-  const dateOfBirth = formatDate(patientDateOfBirth);
+  const dateOfBirth = getFormattedDate(patientDateOfBirth);
 
   return (
     <Grid gap="10px" width={{ xs: "auto", sm: "500px" }}>

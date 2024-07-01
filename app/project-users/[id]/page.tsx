@@ -23,10 +23,14 @@ import { updateProjectUser } from "../../database/project-user/UpdateProjectUser
 import { ProjectUser } from "../../types/ProjectUserTypes";
 import { ProjectUserId } from "../../types/ProjectUserTypes";
 
+// Utils
+import { getFilteredProjectUsers } from "../../utils/getFilteredProjectUsers";
+
 const ProjectUsers = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
   const { setMessage } = usePopupMessage();
   const [projectUsers, setProjectUsers] = useState<ProjectUser[]>([]);
+  const [searchText, setSearchText] = useState<string | undefined>();
 
   const { id: projectId } = params;
   const projectMenuItems = (
@@ -73,6 +77,11 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
     </Table.Row>
   );
 
+  const filteredProjectUsers = getFilteredProjectUsers({
+    projectUsers,
+    filterText: searchText,
+  });
+
   return (
     <SideMenuLayout
       menuItems={projectMenuItems}
@@ -83,8 +92,12 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
           text="Users"
           subText="All users who have access to this project."
         />
-        <DataTable tableHeader={tableHeader}>
-          {projectUsers.map(
+        <DataTable
+          tableHeader={tableHeader}
+          onSearchTextChange={(text) => setSearchText(text)}
+          isSearchAutoFocus
+        >
+          {filteredProjectUsers.map(
             ({ projectUserId, userName, userEmail, isUserActive }) => (
               <Table.Row key={projectUserId}>
                 <Table.RowHeaderCell>{userName}</Table.RowHeaderCell>

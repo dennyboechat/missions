@@ -11,6 +11,7 @@ export interface ProjectUser {
   userName: string;
   userEmail: string;
   isUserActive: boolean;
+  filterOrder?: number;
 }
 
 export interface UpdateProjectUser {

@@ -20,11 +20,16 @@ import { getPatientPersonals } from "../../database/patient-personal/GetPatientP
 // Types
 import { PatientPersonalTypes } from "../../types/PatientPersonalTypes";
 
+// Utils
+import { getFilteredPatientPersonals } from "../../utils/getFilteredPatientPersonals";
+import { getLocaleFormattedDate } from "../../utils/getLocaleFormattedDate";
+
 const ProjectPatients = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
-  const [projectPersonals, setProjectPersonals] = useState<PatientPersonalTypes[]>(
-    []
-  );
+  const [patientPersonals, setPatientPersonals] = useState<
+    PatientPersonalTypes[]
+  >([]);
+  const [searchText, setSearchText] = useState<string | undefined>();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -33,7 +38,7 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
         const projectPersonalsData = await getPatientPersonals({
           projectId: projectId,
         });
-        setProjectPersonals(projectPersonalsData ?? []);
+        setPatientPersonals(projectPersonalsData ?? []);
       }
     };
 
@@ -45,11 +50,18 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
     <ProjectMenuItems projectId={projectId} activeMenuItem="project-patients" />
   );
 
-  const tableHeader =     <Table.Row>
-  <Table.ColumnHeaderCell>{"Full Name"}</Table.ColumnHeaderCell>
-  <Table.ColumnHeaderCell>{"Date of Birth"}</Table.ColumnHeaderCell>
-  <Table.ColumnHeaderCell>{"Gender"}</Table.ColumnHeaderCell>
-</Table.Row>;
+  const tableHeader = (
+    <Table.Row>
+      <Table.ColumnHeaderCell>{"Full Name"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Date of Birth"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Gender"}</Table.ColumnHeaderCell>
+    </Table.Row>
+  );
+
+  const filteredPatientPersonals = getFilteredPatientPersonals({
+    patientPersonals,
+    filterText: searchText,
+  });
 
   return (
     <SideMenuLayout
@@ -58,27 +70,31 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
     >
       <Container className={styles.content}>
         <ContentHeader text="Patients" />
-        <DataTable tableHeader={tableHeader}>  
-            {projectPersonals.map(
-              ({
-                patientPersonalId,
-                patientFullName,
-                patientDateOfBirth,
-                isPatientMale,
-              }) => (
-                <Table.Row key={patientPersonalId}>
-                  <Table.RowHeaderCell>
-                    <Link href={`/patient-personal/${patientPersonalId}`}>
-                      {patientFullName}
-                    </Link>
-                  </Table.RowHeaderCell>
-                  <Table.Cell>
-                    {new Intl.DateTimeFormat().format(patientDateOfBirth)}
-                  </Table.Cell>
-                  <Table.Cell>{isPatientMale ? "Male" : "Female"}</Table.Cell>
-                </Table.Row>
-              )
-            )}
+        <DataTable
+          tableHeader={tableHeader}
+          onSearchTextChange={(text) => setSearchText(text)}
+          isSearchAutoFocus
+        >
+          {filteredPatientPersonals.map(
+            ({
+              patientPersonalId,
+              patientFullName,
+              patientDateOfBirth,
+              isPatientMale,
+            }) => (
+              <Table.Row key={patientPersonalId}>
+                <Table.RowHeaderCell>
+                  <Link href={`/patient-personal/${patientPersonalId}`}>
+                    {patientFullName}
+                  </Link>
+                </Table.RowHeaderCell>
+                <Table.Cell>
+                  {getLocaleFormattedDate({ date: patientDateOfBirth })}
+                </Table.Cell>
+                <Table.Cell>{isPatientMale ? "Male" : "Female"}</Table.Cell>
+              </Table.Row>
+            )
+          )}
         </DataTable>
       </Container>
     </SideMenuLayout>
