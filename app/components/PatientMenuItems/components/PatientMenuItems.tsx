@@ -11,17 +11,18 @@ export const PatientMenuItems = ({
   patientPersonalId,
   activeMenuItem,
 }: PatientMenuItemsProps) => {
-  const personalIcon = <PersonIcon />;
+  const summaryIcon = <FrameIcon />;
   const dentistryIcon = <FrameIcon />;
+  const personalIcon = <PersonIcon />;
 
   return (
     <>
-      <MenuItem
-        icon={personalIcon}
-        href={`/patient-personal/${patientPersonalId}`}
-        active={activeMenuItem === "patient-personal"}
+    <MenuItem
+        icon={summaryIcon}
+        href={`/patient-summary/${patientPersonalId}`}
+        active={activeMenuItem === "patient-summary"}
       >
-        {"Personal"}
+        {"Summary"}
       </MenuItem>
       <MenuItem
         icon={dentistryIcon}
@@ -29,6 +30,13 @@ export const PatientMenuItems = ({
         active={activeMenuItem === "patient-dentistry"}
       >
         {"Dentistry"}
+      </MenuItem>
+      <MenuItem
+        icon={personalIcon}
+        href={`/patient-personal/${patientPersonalId}`}
+        active={activeMenuItem === "patient-personal"}
+      >
+        {"Personal"}
       </MenuItem>
     </>
   );

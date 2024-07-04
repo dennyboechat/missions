@@ -20,7 +20,7 @@ import { useState, useEffect } from "react";
 import { PatientPersonalTypes } from "../../types/PatientPersonalTypes";
 
 // Utils
-import { getAge } from "../../utils/getAge";
+import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 
 const PatientPersonal = ({ params }: { params: { id: string } }) => {
   const [patientPersonalFields, setPatientPersonalFields] =
@@ -52,13 +52,10 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
     />
   );
 
-  const patientAge = getAge({
-    date: patientPersonalFields.patientDateOfBirth,
+  const subHeader = getSideMenuSubHeader({
+    patientDateOfBirth: patientPersonalFields.patientDateOfBirth,
+    isPatientMale: patientPersonalFields.isPatientMale,
   });
-
-  const gender = patientPersonalFields.isPatientMale ? "male" : "female";
-
-  const subHeader = `${patientAge ?? ""}yo ${gender}`;
 
   return (
     <SideMenuLayout

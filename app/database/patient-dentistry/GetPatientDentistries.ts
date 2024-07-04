@@ -18,11 +18,13 @@ export const getPatientDentistries = async ({
       SELECT 
         * 
       FROM
-        patient_dentistry 
+        patient_personal
+      LEFT JOIN
+        patient_dentistry ON patient_dentistry.patient_personal_id = patient_personal.patient_personal_id
       WHERE 
-        patient_personal_id = ${patientPersonalId}
+        patient_personal.patient_personal_id = ${patientPersonalId}
       ORDER BY
-        appointment_date DESC   
+        patient_dentistry.appointment_date DESC   
     `;
 
     const patientDentistries: PatientDentistryTypes[] = response.rows.map(
@@ -32,6 +34,10 @@ export const getPatientDentistries = async ({
         appointmentNotes: row.appointment_notes,
         appointmentDate: row.appointment_date,
         isChildDentalMap: row.is_child_dental_map,
+        projectId: row.project_id,
+        patientFullName: row.patient_full_name,
+        isPatientMale: row.is_patient_male,
+        patientDateOfBirth: row.patient_date_of_birth,
       })
     );
 

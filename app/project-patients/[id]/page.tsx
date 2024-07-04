@@ -23,6 +23,7 @@ import { PatientPersonalTypes } from "../../types/PatientPersonalTypes";
 // Utils
 import { getFilteredPatientPersonals } from "../../utils/getFilteredPatientPersonals";
 import { getLocaleFormattedDate } from "../../utils/getLocaleFormattedDate";
+import { getGenderLabel } from "../../utils/getGenderLabel";
 
 const ProjectPatients = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
@@ -84,14 +85,14 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
             }) => (
               <Table.Row key={patientPersonalId}>
                 <Table.RowHeaderCell>
-                  <Link href={`/patient-personal/${patientPersonalId}`}>
+                  <Link href={`/patient-summary/${patientPersonalId}`}>
                     {patientFullName}
                   </Link>
                 </Table.RowHeaderCell>
                 <Table.Cell>
                   {getLocaleFormattedDate({ date: patientDateOfBirth })}
                 </Table.Cell>
-                <Table.Cell>{isPatientMale ? "Male" : "Female"}</Table.Cell>
+                <Table.Cell>{getGenderLabel({ isPatientMale })}</Table.Cell>
               </Table.Row>
             )
           )}

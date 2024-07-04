@@ -47,7 +47,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchProject = async () => {
       if (projectId) {
-        const projectData = await getProject({ projectId: projectId });
+        const projectData = await getProject({ projectId });
         setProjectName(projectData?.projectName ?? "");
         setProjectDescription(projectData?.projectDescription ?? "");
       }
