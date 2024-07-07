@@ -10,7 +10,7 @@ import {
   Popover,
   Heading,
 } from "@radix-ui/themes";
-import { ProjectFields } from "../../components/ProjectFields";
+// import { ProjectFields } from "../../components/ProjectFields";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ProjectMenuItems";
 import { PopupConfirmation } from "../../components/ui/PopupConfirmation";
@@ -95,7 +95,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
     >
       <Container className={styles.content}>
         <ContentHeader text="Project" />
-        <ProjectFields
+        {/* <ProjectFields
           projectName={projectName}
           projectDescription={projectDescription}
           onProjectNameChange={(e) => setProjectName(e.target.value)}
@@ -103,7 +103,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
             setProjectDescription(e.target.value)
           }
           projectId={projectId}
-        />
+        /> */}
         <Grid
           gridRow="1fr 1fr auto"
           gapY="10px"
