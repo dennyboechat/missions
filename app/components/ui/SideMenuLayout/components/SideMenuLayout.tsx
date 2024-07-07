@@ -48,7 +48,7 @@ export const SideMenuLayout = ({
   if (!mounted) return null;
 
   return (
-    <Grid columns="auto 1fr" gapX="20px">
+    <Grid columns="auto 1fr" gapX="3">
       <Sidebar
         width="200px"
         collapsed={collapsed}

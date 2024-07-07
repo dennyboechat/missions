@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Grid, Link, Button } from "@radix-ui/themes";
+import { Grid, Box, Link, Button } from "@radix-ui/themes";
 import { SignUpDialog } from "../../../auth/signUp";
 import { SignInDialog } from "../../../auth/signIn";
 import { SignButtons } from "../../signButtons";
@@ -42,7 +42,7 @@ export const HeaderPanel = () => {
     }
   };
 
-  let breadcrumb = <span />;
+  let backButton = <span />;
 
   const projectLinks = ["/project-patients/", "project-users", "project"];
   const hasDashboardLink = projectLinks.some((path) =>
@@ -50,7 +50,7 @@ export const HeaderPanel = () => {
   );
 
   if (hasDashboardLink) {
-    breadcrumb = (
+    backButton = (
       <Button
         variant="outline"
         title="Go back to dashboard"
@@ -59,6 +59,7 @@ export const HeaderPanel = () => {
         }}
       >
         <ChevronLeftIcon height="20" width="20" />
+        {"Back"}
       </Button>
     );
   } else {
@@ -73,7 +74,7 @@ export const HeaderPanel = () => {
 
     if (hasPatientLink && project) {
       const { projectId } = project;
-      breadcrumb = (
+      backButton = (
         <Button
           variant="outline"
           title="Go back to project"
@@ -82,6 +83,7 @@ export const HeaderPanel = () => {
           }}
         >
           <ChevronLeftIcon height="20" width="20" />
+          {"Back"}
         </Button>
       );
     }
@@ -98,7 +100,7 @@ export const HeaderPanel = () => {
         <Link className={styles.header_logo} href={logoLink}>
           Logo
         </Link>
-        <div>{breadcrumb}</div>
+        <Box>{backButton}</Box>
         <SignButtons onSignInClick={onSignIn} onSignUpClick={onSignUp} />
       </Grid>
       {showSignUp && <SignUpDialog onClose={() => setShowSignUp(false)} />}
