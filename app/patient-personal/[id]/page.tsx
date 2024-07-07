@@ -5,7 +5,7 @@ import { Container } from "@radix-ui/themes";
 import { ContentHeader } from "../../components/ContentHeader";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { PatientMenuItems } from "../../components/PatientMenuItems";
-import { PatientPersonalFields } from "../../components/PatientPersonalFields";
+import { PatientPersonalFields } from "../../components/PatientPersonalFields1";
 
 // Styles
 import styles from "../../styles/content.module.css";
