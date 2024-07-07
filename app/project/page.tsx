@@ -2,7 +2,7 @@
 
 // Components
 import { Container, Grid, Button } from "@radix-ui/themes";
-import { ProjectFields } from "../components/ProjectFields1";
+import { ProjectFields } from "../components/ProjectFields";
 import { ContentHeader } from "../components/ContentHeader";
 
 // Database
