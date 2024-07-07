@@ -10,7 +10,7 @@ import {
   Popover,
   Heading,
 } from "@radix-ui/themes";
-import { ProjectFields } from "../../components/ProjectFields";
+import { ProjectFields } from "../../components/ProjectFields1";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ProjectMenuItems";
 import { PopupConfirmation } from "../../components/ui/PopupConfirmation";
