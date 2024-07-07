@@ -5,7 +5,7 @@ import { Container } from "@radix-ui/themes";
 import { ContentHeader } from "../../components/ContentHeader";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { PatientMenuItems } from "../../components/PatientMenuItems";
-import { PatientPersonalFields } from "../../components/PatientPersonalFields";
+// import { PatientPersonalFields } from "../../components/PatientPersonalFields";
 
 // Styles
 import styles from "../../styles/content.module.css";
@@ -66,10 +66,10 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
     >
       <Container className={styles.content}>
         <ContentHeader text="Personal Data" />
-        <PatientPersonalFields
+        {/* <PatientPersonalFields
           patientPersonalFields={patientPersonalFields}
           setPatientPersonalFields={setPatientPersonalFields}
-        />
+        /> */}
       </Container>
     </SideMenuLayout>
   );
