@@ -2,7 +2,7 @@
 
 // Components
 import { Container, Grid, Button } from "@radix-ui/themes";
-// import { ProjectFields } from "../components/ProjectFields";
+import { ProjectFields } from "../components/ProjectFields";
 import { ContentHeader } from "../components/ContentHeader";
 
 // Database
@@ -56,7 +56,7 @@ const ProjectNew = () => {
     <Container className={styles.content}>
       <Grid gap="2">
         <ContentHeader text="New Project" />
-        {/* <ProjectFields
+        <ProjectFields
           projectName={projectName}
           projectDescription={projectDescription}
           onProjectNameChange={(e) => setProjectName(e.target.value)}
@@ -65,7 +65,7 @@ const ProjectNew = () => {
           }
           isProjectNameInvalid={isProjectNameInvalid}
           showPlaceholders
-        /> */}
+        />
         <Grid
           columns={{ xs: "1", sm: "2" }}
           gap="10px"
