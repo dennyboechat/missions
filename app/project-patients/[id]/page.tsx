@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Container, Table, Link } from "@radix-ui/themes";
+import { Container, Table, Link, Button } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ProjectMenuItems";
 import { ContentHeader } from "../../components/ContentHeader";
@@ -12,6 +12,7 @@ import styles from "../../styles/content.module.css";
 
 // Hooks
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useProject } from "../../lib/ProjectContext";
 
 // Database
@@ -26,6 +27,7 @@ import { getLocaleFormattedDate } from "../../utils/getLocaleFormattedDate";
 import { getGenderLabel } from "../../utils/getGenderLabel";
 
 const ProjectPatients = ({ params }: { params: { id: string } }) => {
+  const router = useRouter();
   const { project } = useProject();
   const [patientPersonals, setPatientPersonals] = useState<
     PatientPersonalTypes[]
@@ -71,6 +73,13 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
     >
       <Container className={styles.content}>
         <ContentHeader text="Patients" />
+        <Button
+          onClick={() => {
+            router.push(`/project-patient/${projectId}`);
+          }}
+        >
+          {"Add patient"}
+        </Button>
         <DataTable
           tableHeader={tableHeader}
           onSearchTextChange={(text) => setSearchText(text)}

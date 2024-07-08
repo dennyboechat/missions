@@ -30,7 +30,7 @@ export const DataTable = ({
 
   return (
     <>
-      <Grid columns={{ initial: "1", sm: "2" }}>
+      <Grid columns={{ initial: "1", sm: "60% 40%" }}>
         <span />
         <TextField.Root
           placeholder="Search..."

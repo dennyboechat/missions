@@ -2,11 +2,21 @@
 import { Dispatch, SetStateAction } from "react";
 
 // Types
-import { PatientPersonalTypes } from "../../../types/PatientPersonalTypes";
+import {
+  PatientPersonalId,
+  PatientPersonalFullName,
+} from "../../../types/PatientPersonalTypes";
+import { ProjectId } from "../../../types/ProjectTypes";
+
+export interface PatientPersonalFieldsTypes {
+  patientPersonalId?: PatientPersonalId;
+  projectId: ProjectId;
+  patientFullName?: PatientPersonalFullName;
+  isPatientMale?: boolean;
+  patientDateOfBirth?: Date;
+}
 
 export interface PatientPersonalFieldsProps {
-  patientPersonalFields: PatientPersonalTypes;
-  setPatientPersonalFields: Dispatch<
-    SetStateAction<PatientPersonalTypes | undefined>
-  >;
+  patientPersonalFields: PatientPersonalFieldsTypes;
+  setPatientPersonalFields: Dispatch<SetStateAction<PatientPersonalFieldsTypes>>;
 }

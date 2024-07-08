@@ -44,7 +44,7 @@ export const HeaderPanel = () => {
 
   let backButton = <span />;
 
-  const projectLinks = ["/project-patients/", "project-users", "project"];
+  const projectLinks = ["/project-patients/", "/project-users/", "/project/"];
   const hasDashboardLink = projectLinks.some((path) =>
     currentPath.includes(path)
   );
@@ -64,9 +64,10 @@ export const HeaderPanel = () => {
     );
   } else {
     const patientLinks = [
-      "patient-personal",
-      "patient-dentistry",
-      "patient-summary",
+      "/patient-personal/",
+      "/patient-dentistry/",
+      "/patient-summary/",
+      "/project-patient/",
     ];
     const hasPatientLink = patientLinks.some((path) =>
       currentPath.includes(path)
@@ -77,7 +78,7 @@ export const HeaderPanel = () => {
       backButton = (
         <Button
           variant="outline"
-          title="Go back to project"
+          title="Go back to patients"
           onClick={() => {
             router.push(`/project-patients/${projectId}`);
           }}

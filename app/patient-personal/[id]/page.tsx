@@ -17,14 +17,20 @@ import { getPatientPersonal } from "../../database/patient-personal/GetPatientPe
 import { useState, useEffect } from "react";
 
 // Types
-import { PatientPersonalTypes } from "../../types/PatientPersonalTypes";
+import type { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFields/types/PatientPersonalFieldsProps";
 
 // Utils
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 
 const PatientPersonal = ({ params }: { params: { id: string } }) => {
   const [patientPersonalFields, setPatientPersonalFields] =
-    useState<PatientPersonalTypes>();
+    useState<PatientPersonalFieldsTypes>({
+      patientPersonalId: "",
+      projectId: "",
+      patientFullName: "",
+      isPatientMale: undefined,
+      patientDateOfBirth: undefined,
+    });
 
   const { id: patientPersonalId } = params;
 
@@ -34,14 +40,21 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
         const patientPersonalData = await getPatientPersonal({
           patientPersonalId: patientPersonalId,
         });
-        setPatientPersonalFields(patientPersonalData);
+
+        if (patientPersonalData) {
+          setPatientPersonalFields(patientPersonalData);
+        } else {
+          console.error(
+            `Could not find patient personal with id ${patientPersonalData}`
+          );
+        }
       }
     };
 
     fetchPatientPersonal();
   }, [patientPersonalId]);
 
-  if (!patientPersonalFields) {
+  if (!patientPersonalFields.patientPersonalId) {
     return null;
   }
 

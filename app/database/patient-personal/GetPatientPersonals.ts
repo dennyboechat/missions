@@ -21,7 +21,7 @@ export const getPatientPersonals = async ({
       WHERE 
         project_id = ${projectId}
       ORDER BY
-        patient_full_name DESC  
+        patient_full_name ASC  
     `;
 
     const patientPersonals: PatientPersonalTypes[] = response.rows.map((row) => ({

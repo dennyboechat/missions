@@ -27,6 +27,7 @@ export const PatientPersonalFields = ({
 }: PatientPersonalFieldsProps) => {
   const { setMessage } = usePopupMessage();
   const [isFullNameInvalid, setIsFullNameInvalid] = useState(false);
+
   const {
     patientPersonalId,
     patientFullName,
@@ -40,17 +41,32 @@ export const PatientPersonalFields = ({
     const isValidName = isValidFullName({ fullName: newValue });
     setIsFullNameInvalid(!isValidName);
 
-    if (isValidName && patientFullName !== newValue) {
-      const updatedPatientPerson = await updatePatientPersonal({
-        patientPersonalId,
-        field: "patient_full_name",
-        value: newValue,
-      });
+    if (isValidName) {
+      if (patientPersonalId && patientFullName !== newValue) {
+        const updatedPatientPerson = await updatePatientPersonal({
+          patientPersonalId,
+          field: "patient_full_name",
+          value: newValue,
+        });
 
-      setPatientPersonalFields(updatedPatientPerson);
+        if (updatedPatientPerson) {
+          setPatientPersonalFields(updatedPatientPerson);
 
-      if (setMessage) {
-        setMessage("Saved");
+          if (setMessage) {
+            setMessage("Saved");
+          }
+        } else {
+          console.error(
+            `Could not update patient full name by id ${patientPersonalId}`
+          );
+        }
+      } else {
+        setPatientPersonalFields((prevFields) => {
+          return {
+            ...prevFields,
+            patientFullName: newValue,
+          };
+        });
       }
     }
   };
@@ -62,19 +78,37 @@ export const PatientPersonalFields = ({
     </>
   );
 
-  const patientGender = isPatientMale ? "male" : "female";
+  const patientGender =
+    isPatientMale === undefined ? undefined : isPatientMale ? "male" : "female";
 
   const onGenderChange = async (value: string) => {
-    const updatedPatientPerson = await updatePatientPersonal({
-      patientPersonalId,
-      field: "is_patient_male",
-      value: value === "male",
-    });
+    const isMale = value === "male";
 
-    setPatientPersonalFields(updatedPatientPerson);
+    if (patientPersonalId) {
+      const updatedPatientPerson = await updatePatientPersonal({
+        patientPersonalId,
+        field: "is_patient_male",
+        value: isMale,
+      });
 
-    if (setMessage) {
-      setMessage("Saved");
+      if (updatedPatientPerson) {
+        setPatientPersonalFields(updatedPatientPerson);
+
+        if (setMessage) {
+          setMessage("Saved");
+        }
+      } else {
+        console.error(
+          `Could not update patient gender by id ${patientPersonalId}`
+        );
+      }
+    } else {
+      setPatientPersonalFields((prevFields) => {
+        return {
+          ...prevFields,
+          isPatientMale: isMale,
+        };
+      });
     }
   };
 
@@ -83,16 +117,33 @@ export const PatientPersonalFields = ({
   ) => {
     const newValue = e.target.value;
 
-    const updatedPatientPerson = await updatePatientPersonal({
-      patientPersonalId,
-      field: "patient_date_of_birth",
-      value: newValue,
-    });
+    if (patientPersonalId) {
+      const updatedPatientPerson = await updatePatientPersonal({
+        patientPersonalId,
+        field: "patient_date_of_birth",
+        value: newValue,
+      });
 
-    setPatientPersonalFields(updatedPatientPerson);
+      if (updatedPatientPerson) {
+        setPatientPersonalFields(updatedPatientPerson);
 
-    if (setMessage) {
-      setMessage("Saved");
+        if (setMessage) {
+          setMessage("Saved");
+        }
+      } else {
+        console.error(
+          `Could not update patient date of birth by id ${patientPersonalId}`
+        );
+      }
+    } else {
+      const dateValue = new Date(newValue);
+
+      setPatientPersonalFields((prevFields) => {
+        return {
+          ...prevFields,
+          patientDateOfBirth: dateValue,
+        };
+      });
     }
   };
 

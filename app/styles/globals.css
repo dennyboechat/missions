@@ -4,6 +4,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+button {
+  cursor: pointer !important;
+}
+
 /* Hide Clerk sign in/up brand references */
 .cl-internal-11ttlho,
 .cl-internal-180wb59,
