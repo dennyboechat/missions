@@ -1,20 +1,23 @@
 "use client";
 
 // Components
-import { Container } from "@radix-ui/themes";
+import { Container, Grid, Button, Box, Text, Popover } from "@radix-ui/themes";
 import { ContentHeader } from "../../components/ContentHeader";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { PatientMenuItems } from "../../components/PatientMenuItems";
 import { PatientPersonalFields } from "../../components/PatientPersonalFields";
+import { PopupConfirmation } from "../../components/ui/PopupConfirmation";
 
 // Styles
 import styles from "../../styles/content.module.css";
 
 // Database
 import { getPatientPersonal } from "../../database/patient-personal/GetPatientPersonal";
+import { deletePatientPersonal } from "../../database/patient-personal/DeletePatientPersonal";
 
 // Hooks
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 // Types
 import type { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFields/types/PatientPersonalFieldsProps";
@@ -23,6 +26,7 @@ import type { PatientPersonalFieldsTypes } from "../../components/PatientPersona
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 
 const PatientPersonal = ({ params }: { params: { id: string } }) => {
+  const router = useRouter();
   const [patientPersonalFields, setPatientPersonalFields] =
     useState<PatientPersonalFieldsTypes>({
       patientPersonalId: "",
@@ -31,6 +35,7 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
       isPatientMale: undefined,
       patientDateOfBirth: undefined,
     });
+  const [isDeletingPatient, setIsDeletingPatient] = useState(false);
 
   const { id: patientPersonalId } = params;
 
@@ -70,6 +75,34 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
     isPatientMale: patientPersonalFields.isPatientMale,
   });
 
+  const onDeletePatient = async () => {
+    setIsDeletingPatient(true);
+    await deletePatientPersonal({ patientPersonalId });
+    router.push(`/project-patients/${patientPersonalFields.projectId}`);
+  };
+
+  const deletePatientPopupConfirmation = (
+    <Box>
+      <Text weight="bold">{"Confirm the patient deletion?"}</Text>
+      <Text as="p">{"This action cannot be undone."}</Text>
+      <Grid columns="2" gapX="10px">
+        <Button
+          color="red"
+          onClick={onDeletePatient}
+          disabled={isDeletingPatient}
+          variant="outline"
+        >
+          {"Confirm"}
+        </Button>
+        <Popover.Close>
+          <Button variant="outline" color="gray" disabled={isDeletingPatient}>
+            {"Cancel"}
+          </Button>
+        </Popover.Close>
+      </Grid>
+    </Box>
+  );
+
   return (
     <SideMenuLayout
       menuItems={patientMenuItems}
@@ -83,6 +116,13 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
           patientPersonalFields={patientPersonalFields}
           setPatientPersonalFields={setPatientPersonalFields}
         />
+        <Grid width={{ initial: "auto", sm: "150px" }}>
+          <PopupConfirmation content={deletePatientPopupConfirmation}>
+            <Button color="red" variant="outline">
+              {"Delete patient"}
+            </Button>
+          </PopupConfirmation>
+        </Grid>
       </Container>
     </SideMenuLayout>
   );

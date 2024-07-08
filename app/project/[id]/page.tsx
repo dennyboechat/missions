@@ -58,7 +58,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
 
   const onDeleteProject = async () => {
     setIsDeletingProject(true);
-    await deleteProject({ projectId: projectId });
+    await deleteProject({ projectId });
     router.push("/dashboard");
   };
 
@@ -118,7 +118,7 @@ const ProjectId = ({ params }: { params: { id: string } }) => {
           <Grid width={{ initial: "auto", sm: "150px" }}>
             <PopupConfirmation content={deleteProjectPopupConfirmation}>
               <Button color="red" variant="outline">
-                {"Delete Project"}
+                {"Delete project"}
               </Button>
             </PopupConfirmation>
           </Grid>
