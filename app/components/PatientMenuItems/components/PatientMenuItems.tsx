@@ -2,22 +2,29 @@
 
 // Components
 import { MenuItem } from "react-pro-sidebar";
-import { PersonIcon, FrameIcon } from "@radix-ui/react-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // Types
 import { PatientMenuItemsProps } from "../types/PatientMenuItemsProps";
+
+// Icons
+import {
+  faTooth,
+  faListCheck,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 
 export const PatientMenuItems = ({
   patientPersonalId,
   activeMenuItem,
 }: PatientMenuItemsProps) => {
-  const summaryIcon = <FrameIcon />;
-  const dentistryIcon = <FrameIcon />;
-  const personalIcon = <PersonIcon />;
+  const summaryIcon = <FontAwesomeIcon icon={faListCheck} />;
+  const dentistryIcon = <FontAwesomeIcon icon={faTooth} />;
+  const personalIcon = <FontAwesomeIcon icon={faUser} />;
 
   return (
     <>
-    <MenuItem
+      <MenuItem
         icon={summaryIcon}
         href={`/patient-summary/${patientPersonalId}`}
         active={activeMenuItem === "patient-summary"}

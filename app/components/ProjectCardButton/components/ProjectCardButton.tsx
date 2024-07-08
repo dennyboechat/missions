@@ -2,7 +2,7 @@
 
 // Components
 import { Grid, Card, Text, Link } from "@radix-ui/themes";
-import { PlusIcon } from "@radix-ui/react-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // Styles
 import styles from "../styles/ProjectCardButton.module.css";
@@ -12,6 +12,9 @@ import { ProjectCardButtonProps } from "../types/ProjectCardButtonProps";
 
 // Hooks
 import { useProject } from "../../../lib/ProjectContext";
+
+// Icons
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 export const ProjectCardButton = ({
   isAddNew,
@@ -24,8 +27,13 @@ export const ProjectCardButton = ({
       {isAddNew ? (
         <Link href="/project">
           <Grid height="100%">
-            <PlusIcon className={styles.new_card_upper_section} color="black" height="50" width="50" />
-            <Text className={styles.new_card_bottom_section}>{"New project"}</Text>
+            <FontAwesomeIcon
+              icon={faPlus}
+              className={styles.new_card_upper_section}
+            />
+            <Text className={styles.new_card_bottom_section}>
+              {"New project"}
+            </Text>
           </Grid>
         </Link>
       ) : (

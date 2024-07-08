@@ -2,7 +2,7 @@
 
 // Components
 import { MenuItem } from "react-pro-sidebar";
-import { PersonIcon, GearIcon, AccessibilityIcon } from "@radix-ui/react-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // Types
 import { ProjectMenuItemsProps } from "../types/ProjectMenuItemsProps";
@@ -10,6 +10,13 @@ import { ProjectMenuItemsProps } from "../types/ProjectMenuItemsProps";
 // Hooks
 import { useUser } from "@clerk/nextjs";
 import { useProject } from "../../../lib/ProjectContext";
+
+// Icons
+import {
+  faUserGroup,
+  faUserLock,
+  faGear,
+} from "@fortawesome/free-solid-svg-icons";
 
 export const ProjectMenuItems = ({
   projectId,
@@ -19,9 +26,9 @@ export const ProjectMenuItems = ({
   const { project } = useProject();
 
   const isProjectEditable = project && project.ownerId === user?.id;
-  const projectPatientsIcon = <AccessibilityIcon />;
-  const projectUsersIcon = <PersonIcon />;
-  const projectIcon = <GearIcon />;
+  const projectPatientsIcon = <FontAwesomeIcon icon={faUserGroup} />;
+  const projectUsersIcon = <FontAwesomeIcon icon={faUserLock} />;
+  const projectIcon = <FontAwesomeIcon icon={faGear} />;
 
   return (
     <>

@@ -5,7 +5,7 @@ import { Grid, Box, Link, Button } from "@radix-ui/themes";
 import { SignUpDialog } from "../../../auth/signUp";
 import { SignInDialog } from "../../../auth/signIn";
 import { SignButtons } from "../../signButtons";
-import { ChevronLeftIcon } from "@radix-ui/react-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // Hooks
 import { useState } from "react";
@@ -15,6 +15,9 @@ import { useProject } from "../../../../lib/ProjectContext";
 
 // Styles
 import styles from "../styles/HeaderPanel.module.css";
+
+// Icons
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 export const HeaderPanel = () => {
   const router = useRouter();
@@ -58,7 +61,7 @@ export const HeaderPanel = () => {
           router.push("/dashboard");
         }}
       >
-        <ChevronLeftIcon height="20" width="20" />
+        <FontAwesomeIcon icon={faChevronLeft} />
         {"Back"}
       </Button>
     );
@@ -83,7 +86,7 @@ export const HeaderPanel = () => {
             router.push(`/project-patients/${projectId}`);
           }}
         >
-          <ChevronLeftIcon height="20" width="20" />
+          <FontAwesomeIcon icon={faChevronLeft} />
           {"Back"}
         </Button>
       );
