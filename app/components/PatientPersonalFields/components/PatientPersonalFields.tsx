@@ -24,9 +24,14 @@ import { updatePatientPersonal } from "../../../database/patient-personal/Update
 export const PatientPersonalFields = ({
   patientPersonalFields,
   setPatientPersonalFields,
+  isPatientFullNameInvalid,
+  isPatientGenderInvalid,
+  isPatientDateOfBirthInvalid,
 }: PatientPersonalFieldsProps) => {
   const { setMessage } = usePopupMessage();
-  const [isFullNameInvalid, setIsFullNameInvalid] = useState(false);
+  const [isFullNameInvalid, setIsFullNameInvalid] = useState(
+    isPatientFullNameInvalid
+  );
 
   const {
     patientPersonalId,
@@ -166,6 +171,7 @@ export const PatientPersonalFields = ({
         value={patientGender}
         onChange={(value) => onGenderChange(value)}
         required
+        errorMessage={isPatientGenderInvalid ? "Required field" : ""}
       />
       <DateTime
         label="Date of birth"
@@ -173,6 +179,7 @@ export const PatientPersonalFields = ({
         maxDate={getCurrentDate()}
         onChange={(e) => onDateOfBirthChange(e)}
         required
+        errorMessage={isPatientDateOfBirthInvalid ? "Required field" : ""}
       />
     </Grid>
   );

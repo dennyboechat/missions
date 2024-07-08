@@ -14,6 +14,13 @@ export interface PatientPersonalTypes {
   filterOrder?: number;
 }
 
+export interface NewPatientPersonal {
+  projectId: ProjectId;
+  patientFullName: PatientPersonalFullName;
+  isPatientMale: boolean;
+  patientDateOfBirth: Date;
+}
+
 export interface UpdatePatientPersonal {
   patientPersonalId: PatientPersonalId;
   field: string;

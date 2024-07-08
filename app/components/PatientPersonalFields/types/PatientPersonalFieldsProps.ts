@@ -18,5 +18,10 @@ export interface PatientPersonalFieldsTypes {
 
 export interface PatientPersonalFieldsProps {
   patientPersonalFields: PatientPersonalFieldsTypes;
-  setPatientPersonalFields: Dispatch<SetStateAction<PatientPersonalFieldsTypes>>;
+  setPatientPersonalFields: Dispatch<
+    SetStateAction<PatientPersonalFieldsTypes>
+  >;
+  isPatientFullNameInvalid?: boolean;
+  isPatientGenderInvalid?: boolean;
+  isPatientDateOfBirthInvalid?: boolean;
 }
