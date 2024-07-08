@@ -27,6 +27,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+          <link rel="icon" type="image/png" href="/image/logo_fav.png" />
+        </head>
         <body>
           <Theme>
             <ProjectProvider>

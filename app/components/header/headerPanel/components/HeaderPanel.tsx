@@ -6,6 +6,7 @@ import { SignUpDialog } from "../../../auth/signUp";
 import { SignInDialog } from "../../../auth/signIn";
 import { SignButtons } from "../../signButtons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Image from "next/image";
 
 // Hooks
 import { useState } from "react";
@@ -17,7 +18,13 @@ import { useProject } from "../../../../lib/ProjectContext";
 import styles from "../styles/HeaderPanel.module.css";
 
 // Icons
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronLeft,
+  faGlobeAmericas,
+} from "@fortawesome/free-solid-svg-icons";
+
+// Images
+import logoImage from "../../../../../public/image/logo.jpg";
 
 export const HeaderPanel = () => {
   const router = useRouter();
@@ -102,7 +109,11 @@ export const HeaderPanel = () => {
         height="50px"
       >
         <Link className={styles.header_logo} href={logoLink}>
-          Logo
+          <Image
+            src={logoImage}
+            alt="logo"
+            width={150}
+          />
         </Link>
         <Box>{backButton}</Box>
         <SignButtons onSignInClick={onSignIn} onSignUpClick={onSignUp} />

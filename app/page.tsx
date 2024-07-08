@@ -5,7 +5,9 @@ import { Box, Grid, Container, Heading, Button } from "@radix-ui/themes";
 import Image from "next/image";
 
 // Hooks
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+
+// Images
 import heroImage from "../public/image/hero_image.webp";
 
 // Styles
