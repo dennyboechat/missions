@@ -3,6 +3,7 @@
 // Components
 import { Container, Button } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
+import { Space } from "../../components/ui/Space";
 import { ProjectMenuItems } from "../../components/ProjectMenuItems";
 import { ContentHeader } from "../../components/ContentHeader";
 import { PatientPersonalFields } from "../../components/PatientPersonalFields";
@@ -97,6 +98,7 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
           isPatientGenderInvalid={isPatientGenderInvalid}
           isPatientDateOfBirthInvalid={isPatientDateOfBirthInvalid}
         />
+        <Space />
         <Button
           onClick={onConfirmButtonClick}
           disabled={isCreatingPatient}

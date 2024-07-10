@@ -18,10 +18,7 @@ import { useProject } from "../../../../lib/ProjectContext";
 import styles from "../styles/HeaderPanel.module.css";
 
 // Icons
-import {
-  faChevronLeft,
-  faGlobeAmericas,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 // Images
 import logoImage from "../../../../../public/image/logo.jpg";
@@ -108,12 +105,8 @@ export const HeaderPanel = () => {
         align="center"
         height="50px"
       >
-        <Link className={styles.header_logo} href={logoLink}>
-          <Image
-            src={logoImage}
-            alt="logo"
-            width={150}
-          />
+        <Link className={styles.header_logo_link} href={logoLink}>
+          <Image src={logoImage} alt="logo" className={styles.header_logo} />
         </Link>
         <Box>{backButton}</Box>
         <SignButtons onSignInClick={onSignIn} onSignUpClick={onSignUp} />

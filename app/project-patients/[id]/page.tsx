@@ -6,6 +6,7 @@ import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ProjectMenuItems";
 import { ContentHeader } from "../../components/ContentHeader";
 import { DataTable } from "../../components/ui/DataTable";
+import { Space } from "../../components/ui/Space";
 
 // Styles
 import styles from "../../styles/content.module.css";
@@ -80,6 +81,7 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
         >
           {"Add patient"}
         </Button>
+        <Space />
         <DataTable
           tableHeader={tableHeader}
           onSearchTextChange={(text) => setSearchText(text)}

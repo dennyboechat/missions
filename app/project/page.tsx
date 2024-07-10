@@ -55,7 +55,7 @@ const ProjectNew = () => {
   return (
     <Container className={styles.content}>
       <Grid gap="2">
-        <ContentHeader text="New Project" />
+        <ContentHeader text="New project" />
         <ProjectFields
           projectName={projectName}
           projectDescription={projectDescription}
