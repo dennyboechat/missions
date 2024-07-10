@@ -9,6 +9,7 @@ import { PatientMenuItemsProps } from "../types/PatientMenuItemsProps";
 
 // Icons
 import {
+  faNotesMedical,
   faTooth,
   faListCheck,
   faUser,
@@ -19,6 +20,7 @@ export const PatientMenuItems = ({
   activeMenuItem,
 }: PatientMenuItemsProps) => {
   const summaryIcon = <FontAwesomeIcon icon={faListCheck} />;
+  const generalIcon = <FontAwesomeIcon icon={faNotesMedical} />;
   const dentistryIcon = <FontAwesomeIcon icon={faTooth} />;
   const personalIcon = <FontAwesomeIcon icon={faUser} />;
 
@@ -32,11 +34,18 @@ export const PatientMenuItems = ({
         {"Summary"}
       </MenuItem>
       <MenuItem
+        icon={generalIcon}
+        href={`/patient-general/${patientPersonalId}`}
+        active={activeMenuItem === "patient-general"}
+      >
+        {"General"}
+      </MenuItem>
+      <MenuItem
         icon={dentistryIcon}
         href={`/patient-dentistry/${patientPersonalId}`}
         active={activeMenuItem === "patient-dentistry"}
       >
-        {"Dentistry"}
+        {"Dentistal"}
       </MenuItem>
       <MenuItem
         icon={personalIcon}
