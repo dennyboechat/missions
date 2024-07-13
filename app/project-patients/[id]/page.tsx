@@ -86,6 +86,7 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
           tableHeader={tableHeader}
           onSearchTextChange={(text) => setSearchText(text)}
           isSearchAutoFocus
+          records={filteredPatientPersonals}
         >
           {filteredPatientPersonals.map(
             ({
