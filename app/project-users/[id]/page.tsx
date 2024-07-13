@@ -96,6 +96,7 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
           tableHeader={tableHeader}
           onSearchTextChange={(text) => setSearchText(text)}
           isSearchAutoFocus
+          records={filteredProjectUsers}
         >
           {filteredProjectUsers.map(
             ({ projectUserId, userName, userEmail, isUserActive }) => (

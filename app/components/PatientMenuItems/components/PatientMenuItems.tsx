@@ -45,7 +45,7 @@ export const PatientMenuItems = ({
         href={`/patient-dentistry/${patientPersonalId}`}
         active={activeMenuItem === "patient-dentistry"}
       >
-        {"Dentistal"}
+        {"Dental"}
       </MenuItem>
       <MenuItem
         icon={personalIcon}

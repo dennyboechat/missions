@@ -111,7 +111,7 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
       isBoldHeader
     >
       <Container className={styles.content}>
-        <ContentHeader text="Personal Data" />
+        <ContentHeader text="Personal" />
         <PatientPersonalFields
           patientPersonalFields={patientPersonalFields}
           setPatientPersonalFields={setPatientPersonalFields}

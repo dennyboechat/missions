@@ -67,7 +67,7 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
       isBoldHeader
     >
       <Container className={styles.content}>
-        <ContentHeader text="Dentistry" />
+        <ContentHeader text="Dental" />
         <TabNavigator>
           {patientDentistries.map(({ patientDentistryId }) => (
             <TabNav.Link key={patientDentistryId} href="#" active></TabNav.Link>
