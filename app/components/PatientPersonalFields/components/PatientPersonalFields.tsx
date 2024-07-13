@@ -28,17 +28,16 @@ export const PatientPersonalFields = ({
   isPatientGenderInvalid,
   isPatientDateOfBirthInvalid,
 }: PatientPersonalFieldsProps) => {
+  const [dateOfBirth, setDateOfBirth] = useState(
+    getFormattedDate(patientPersonalFields.patientDateOfBirth)
+  );
   const { setMessage } = usePopupMessage();
   const [isFullNameInvalid, setIsFullNameInvalid] = useState(
     isPatientFullNameInvalid
   );
 
-  const {
-    patientPersonalId,
-    patientFullName,
-    isPatientMale,
-    patientDateOfBirth,
-  } = patientPersonalFields;
+  const { patientPersonalId, patientFullName, isPatientMale } =
+    patientPersonalFields;
 
   const onFullNameChanged = async (e: React.FocusEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -117,16 +116,12 @@ export const PatientPersonalFields = ({
     }
   };
 
-  const onDateOfBirthChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newValue = e.target.value;
-
+  const onDateOfBirthChange = async () => {
     if (patientPersonalId) {
       const updatedPatientPerson = await updatePatientPersonal({
         patientPersonalId,
         field: "patient_date_of_birth",
-        value: newValue,
+        value: dateOfBirth,
       });
 
       if (updatedPatientPerson) {
@@ -141,7 +136,7 @@ export const PatientPersonalFields = ({
         );
       }
     } else {
-      const dateValue = new Date(newValue);
+      const dateValue = new Date(dateOfBirth);
 
       setPatientPersonalFields((prevFields) => {
         return {
@@ -151,8 +146,6 @@ export const PatientPersonalFields = ({
       });
     }
   };
-
-  const dateOfBirth = getFormattedDate(patientDateOfBirth);
 
   return (
     <Grid gap="10px" width={{ xs: "auto", sm: "500px" }}>
@@ -177,7 +170,8 @@ export const PatientPersonalFields = ({
         label="Date of birth"
         value={dateOfBirth}
         maxDate={getCurrentDate()}
-        onChange={(e) => onDateOfBirthChange(e)}
+        onChange={(value) => setDateOfBirth(value)}
+        onBlur={onDateOfBirthChange}
         required
         errorMessage={isPatientDateOfBirthInvalid ? "Required field" : ""}
       />

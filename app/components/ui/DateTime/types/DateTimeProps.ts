@@ -5,5 +5,6 @@ export interface DateTimeProps {
   required?: boolean;
   errorMessage?: string;
   maxDate?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (value: string) => void;
+  onBlur?: () => void;
 }
