@@ -5,12 +5,18 @@ import { PatientPersonalFullName } from "./PatientPersonalTypes";
 
 export type PatientDentistryId = string;
 
+export interface PatientDental {
+  patientDentistryId: PatientDentistryId;
+  patientPersonalId: PatientPersonalId;
+  appointmentDate: Date;
+  appointmentNotes: string;
+}
+
 export interface PatientDentistryTypes {
   patientDentistryId: PatientDentistryId;
   patientPersonalId: PatientPersonalId;
+  appointmentDate: Date;
   appointmentNotes: string;
-  appointmentDate: string;
-  isChildDentalMap: boolean;
   projectId: ProjectId;
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;

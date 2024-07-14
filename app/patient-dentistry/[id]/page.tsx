@@ -1,20 +1,23 @@
 "use client";
 
 // Components
-import { Container, TabNav } from "@radix-ui/themes";
+import { Container, Button } from "@radix-ui/themes";
 import { ContentHeader } from "../../components/ContentHeader";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
+import { Space } from "../../components/ui/Space";
 import { PatientMenuItems } from "../../components/PatientMenuItems";
-import { TabNavigator } from "../../components/ui/TabNavigator";
+import { DentalAppointment } from "../../components/DentalAppointment";
 
 // Styles
 import styles from "../../styles/content.module.css";
 
 // Database
 import { getPatientDentistries } from "../../database/patient-dentistry/GetPatientDentistries";
+import { insertPatientDentistry } from "../../database/patient-dentistry/InsertPatientDentistry";
 
 // Hooks
 import { useState, useEffect } from "react";
+import { usePopupMessage } from "../../lib/PopupMessage";
 
 // Types
 import { PatientDentistryTypes } from "../../types/PatientDentistryTypes";
@@ -23,8 +26,11 @@ import { PatientDentistryTypes } from "../../types/PatientDentistryTypes";
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 
 const PatientDentistry = ({ params }: { params: { id: string } }) => {
+  const { setMessage } = usePopupMessage();
   const [patientDentistries, setPatientDentistries] =
     useState<PatientDentistryTypes[]>();
+  const [lastestAppointment, setLastestAppointment] =
+    useState<PatientDentistryTypes>();
 
   const { id: patientPersonalId } = params;
 
@@ -35,13 +41,17 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
           patientPersonalId: patientPersonalId,
         });
         setPatientDentistries(patientDentistryData);
+
+        if (patientDentistryData) {
+          setLastestAppointment(patientDentistryData[0]);
+        }
       }
     };
 
     fetchPatientDentistry();
   }, [patientPersonalId]);
 
-  if (!patientDentistries || patientDentistries.length === 0) {
+  if (!patientDentistries || !lastestAppointment) {
     return null;
   }
 
@@ -52,27 +62,54 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
     />
   );
 
-  const latestDentistryAppointment = patientDentistries[0];
-
   const subHeader = getSideMenuSubHeader({
-    patientDateOfBirth: latestDentistryAppointment.patientDateOfBirth,
-    isPatientMale: latestDentistryAppointment.isPatientMale,
+    patientDateOfBirth: lastestAppointment.patientDateOfBirth,
+    isPatientMale: lastestAppointment.isPatientMale,
   });
+
+  const onCreateAppointment = async () => {
+    const patientDentistryData = await insertPatientDentistry({
+      patientPersonalId: patientPersonalId,
+    });
+
+    if (patientDentistryData && setMessage) {
+      const newLastestAppointment: PatientDentistryTypes = lastestAppointment;
+      newLastestAppointment.patientDentistryId =
+        patientDentistryData.patientDentistryId;
+      newLastestAppointment.appointmentDate =
+        patientDentistryData.appointmentDate;
+      newLastestAppointment.appointmentNotes =
+        patientDentistryData.appointmentNotes;
+
+      setLastestAppointment(newLastestAppointment);
+
+      setMessage("Saved");
+
+      const patientDentistries = await getPatientDentistries({
+        patientPersonalId: patientPersonalId,
+      });
+
+      setPatientDentistries(patientDentistries);
+    }
+  };
 
   return (
     <SideMenuLayout
       menuItems={patientMenuItems}
-      header={latestDentistryAppointment.patientFullName}
+      header={lastestAppointment.patientFullName}
       subHeader={subHeader}
       isBoldHeader
     >
       <Container className={styles.content}>
         <ContentHeader text="Dental" />
-        <TabNavigator>
-          {patientDentistries.map(({ patientDentistryId }) => (
-            <TabNav.Link key={patientDentistryId} href="#" active></TabNav.Link>
-          ))}
-        </TabNavigator>
+        <Button onClick={onCreateAppointment}>{"Create appointment"}</Button>
+        <Space height={20} />
+        {lastestAppointment.patientDentistryId && (
+          <DentalAppointment
+            patientDentistries={patientDentistries}
+            defaultActiveTab={lastestAppointment.patientDentistryId}
+          />
+        )}
       </Container>
     </SideMenuLayout>
   );

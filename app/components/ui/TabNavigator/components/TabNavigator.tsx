@@ -1,11 +1,20 @@
 "use client";
 
 // Components
-import { TabNav } from "@radix-ui/themes";
+import { Tabs } from "@radix-ui/themes";
 
 // Types
 import { TabNavigatorProps } from "../types/TabNavigatorProps";
 
-export const TabNavigator = ({ children }: TabNavigatorProps) => (
-  <TabNav.Root>{children}</TabNav.Root>
+// Hooks
+import { useState } from "react";
+
+export const TabNavigator = ({
+  activeTab,
+  setActiveTab,
+  children,
+}: TabNavigatorProps) => (
+  <Tabs.Root value={activeTab} onValueChange={(value) => setActiveTab(value)}>
+    {children}
+  </Tabs.Root>
 );
