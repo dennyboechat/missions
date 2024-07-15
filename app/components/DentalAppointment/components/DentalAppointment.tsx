@@ -1,10 +1,19 @@
 "use client";
 
 // Components
-import { Tabs, Heading } from "@radix-ui/themes";
+import {
+  Tabs,
+  Heading,
+  Box,
+  Text,
+  Grid,
+  Button,
+  Popover,
+} from "@radix-ui/themes";
 import { TabNavigator } from "../../ui/TabNavigator";
 import { TextAreaField } from "../../ui/TextAreaField";
 import { Space } from "../../ui/Space";
+import { PopupConfirmation } from "../../ui/PopupConfirmation";
 
 // Types
 import { DentalAppointmentProps } from "../types/DentalAppointmentProps";
@@ -17,12 +26,17 @@ import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 import { usePopupMessage } from "../../../lib/PopupMessage";
 import { useState, useEffect } from "react";
 
+// Database
+import { deletePatientDentistry } from "../../../database/patient-dentistry/DeletePatientDentistry";
+
 export const DentalAppointment = ({
   patientDentistries,
   defaultActiveTab,
+  afterDeleteAppointment,
 }: DentalAppointmentProps) => {
   const { setMessage } = usePopupMessage();
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
+  const [isDeletingAppointment, setIsDeletingAppointment] = useState(false);
 
   useEffect(() => {
     setActiveTab(defaultActiveTab);
@@ -51,6 +65,44 @@ export const DentalAppointment = ({
       </Tabs.Trigger>
     );
 
+    const onDeleteAppointment = async () => {
+      setIsDeletingAppointment(true);
+
+      await deletePatientDentistry({ patientDentistryId });
+
+      if (afterDeleteAppointment) {
+        afterDeleteAppointment();
+      }
+
+      setIsDeletingAppointment(false);
+    };
+
+    const deleteAppointmentPopupConfirmation = (
+      <Box>
+        <Text weight="bold">{"Confirm the appointment notes deletion?"}</Text>
+        <Text as="p">{"This action cannot be undone."}</Text>
+        <Grid columns="2" gapX="10px">
+          <Button
+            color="red"
+            onClick={onDeleteAppointment}
+            disabled={isDeletingAppointment}
+            variant="outline"
+          >
+            {"Confirm"}
+          </Button>
+          <Popover.Close>
+            <Button
+              variant="outline"
+              color="gray"
+              disabled={isDeletingAppointment}
+            >
+              {"Cancel"}
+            </Button>
+          </Popover.Close>
+        </Grid>
+      </Box>
+    );
+
     tabContent.push(
       <Tabs.Content key={patientDentistryId} value={patientDentistryId}>
         <Space />
@@ -62,13 +114,20 @@ export const DentalAppointment = ({
             onChangeAppointmentNotes(e.target.value)
           }
         />
+        <Grid width={{ initial: "auto", sm: "200px" }}>
+          <PopupConfirmation content={deleteAppointmentPopupConfirmation}>
+            <Button color="red" variant="outline">
+              {"Delete appointment notes"}
+            </Button>
+          </PopupConfirmation>
+        </Grid>
       </Tabs.Content>
     );
   });
 
   return (
     <>
-      <Heading size="3">{"Existing appointments"}</Heading>
+      <Heading size="3">{"Existing appointment notes"}</Heading>
       <TabNavigator activeTab={activeTab} setActiveTab={setActiveTab}>
         <Tabs.List>{tabList}</Tabs.List>
         {tabContent}

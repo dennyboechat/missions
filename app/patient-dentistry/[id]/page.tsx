@@ -67,29 +67,44 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
     isPatientMale: lastestAppointment.isPatientMale,
   });
 
+  const updateAppointments = async () => {
+    const patientDentistriesData = await getPatientDentistries({
+      patientPersonalId: patientPersonalId,
+    });
+
+    setPatientDentistries(patientDentistriesData);
+
+    return patientDentistriesData;
+  };
+
   const onCreateAppointment = async () => {
     const patientDentistryData = await insertPatientDentistry({
       patientPersonalId: patientPersonalId,
     });
 
     if (patientDentistryData && setMessage) {
-      const newLastestAppointment: PatientDentistryTypes = lastestAppointment;
-      newLastestAppointment.patientDentistryId =
-        patientDentistryData.patientDentistryId;
-      newLastestAppointment.appointmentDate =
-        patientDentistryData.appointmentDate;
-      newLastestAppointment.appointmentNotes =
-        patientDentistryData.appointmentNotes;
+      const newLastestAppointment = {
+        ...lastestAppointment,
+        patientDentistryId: patientDentistryData.patientDentistryId,
+        appointmentDate: patientDentistryData.appointmentDate,
+        appointmentNotes: patientDentistryData.appointmentNotes,
+      };
 
       setLastestAppointment(newLastestAppointment);
 
       setMessage("Saved");
 
-      const patientDentistries = await getPatientDentistries({
-        patientPersonalId: patientPersonalId,
-      });
+      updateAppointments();
+    }
+  };
 
-      setPatientDentistries(patientDentistries);
+  const afterDeleteAppointment = async () => {
+    const patientDentistriesData = await updateAppointments();
+
+    if (patientDentistriesData) {
+      const newLastestAppointment = patientDentistriesData[0];
+      setLastestAppointment(newLastestAppointment);
+      
     }
   };
 
@@ -102,12 +117,13 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
     >
       <Container className={styles.content}>
         <ContentHeader text="Dental" />
-        <Button onClick={onCreateAppointment}>{"Create appointment"}</Button>
+        <Button onClick={onCreateAppointment}>{"Create appointment notes"}</Button>
         <Space height={20} />
         {lastestAppointment.patientDentistryId && (
           <DentalAppointment
             patientDentistries={patientDentistries}
             defaultActiveTab={lastestAppointment.patientDentistryId}
+            afterDeleteAppointment={afterDeleteAppointment}
           />
         )}
       </Container>

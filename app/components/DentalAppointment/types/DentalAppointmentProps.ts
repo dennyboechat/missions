@@ -7,4 +7,5 @@ import {
 export interface DentalAppointmentProps {
   patientDentistries: PatientDentistryTypes[];
   defaultActiveTab: PatientDentistryId;
+  afterDeleteAppointment: () => void;
 }
