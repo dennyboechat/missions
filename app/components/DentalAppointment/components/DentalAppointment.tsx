@@ -28,6 +28,7 @@ import { useState, useEffect } from "react";
 
 // Database
 import { deletePatientDentistry } from "../../../database/patient-dentistry/DeletePatientDentistry";
+import { updatePatientDentistry } from "../../../database/patient-dentistry/UpdatePatientDentistry";
 
 export const DentalAppointment = ({
   patientDentistries,
@@ -53,9 +54,25 @@ export const DentalAppointment = ({
       date: appointmentDate,
     });
 
-    const onChangeAppointmentNotes = (value: string) => {
-      if (setMessage) {
-        setMessage("Saved" + value);
+    const onChangeAppointmentNotes = async (value: string) => {
+      if (appointmentNotes !== value) {
+        const updatedPatientDentistry = await updatePatientDentistry({
+          patientDentistryId,
+          field: "appointment_notes",
+          value,
+        });
+
+        if (updatedPatientDentistry) {
+          // setPatientPersonalFields(updatedPatientPerson);
+
+          if (setMessage) {
+            setMessage("Saved");
+          }
+        } else {
+          console.error(
+            `Could not update appointment notes by id ${patientDentistryId}`
+          );
+        }
       }
     };
 

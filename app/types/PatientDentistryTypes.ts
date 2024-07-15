@@ -22,3 +22,9 @@ export interface PatientDentistryTypes {
   isPatientMale: boolean;
   patientDateOfBirth: Date;
 }
+
+export interface UpdatePatientDentistry {
+  patientDentistryId: PatientDentistryId;
+  field: string;
+  value: string | boolean;
+}

@@ -4,28 +4,33 @@
 import { sql } from "@vercel/postgres";
 
 // Types
-import { PatientDental } from "../../types/PatientDentistryTypes";
-import { PatientPersonalId } from "../../types/PatientPersonalTypes";
+import {
+  PatientDental,
+  UpdatePatientDentistry,
+} from "../../types/PatientDentistryTypes";
 
-// Utils
-import { getCurrentDate } from "@/app/utils/getCurrentDate";
-
-export const insertPatientDentistry = async ({
-  patientPersonalId,
-}: {
-  patientPersonalId: PatientPersonalId;
-}): Promise<PatientDental | undefined> => {
+export const updatePatientDentistry = async ({
+  patientDentistryId,
+  field,
+  value,
+}: UpdatePatientDentistry): Promise<PatientDental | undefined> => {
   try {
-    const currentDate = getCurrentDate();
-
-    const response = await sql`
-      INSERT INTO
-        patient_dentistry (patient_personal_id, appointment_date, appointment_notes)
-      VALUES 
-        (${patientPersonalId}, ${currentDate}, '')
-      RETURNING 
+    const query = `
+      UPDATE 
+        patient_dentistry
+       SET
+        ${field} = $1
+      WHERE
+        patient_dentistry_id = $2
+      RETURNING
         patient_dentistry_id, patient_personal_id, appointment_date, appointment_notes
     `;
+
+    const validatedValue = typeof value === "string" ? value.trim() : value;
+    const response = await sql.query(query, [
+      validatedValue,
+      patientDentistryId,
+    ]);
 
     const patientDentistries: PatientDental[] = response.rows.map((row) => ({
       patientDentistryId: row.patient_dentistry_id,
