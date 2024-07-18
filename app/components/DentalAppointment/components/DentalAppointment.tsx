@@ -14,6 +14,7 @@ import { TabNavigator } from "../../ui/TabNavigator";
 import { TextAreaField } from "../../ui/TextAreaField";
 import { Space } from "../../ui/Space";
 import { PopupConfirmation } from "../../ui/PopupConfirmation";
+import { DentalAppointmentMap } from "../../DentalAppointmentMap";
 
 // Types
 import { DentalAppointmentProps } from "../types/DentalAppointmentProps";
@@ -123,14 +124,25 @@ export const DentalAppointment = ({
     tabContent.push(
       <Tabs.Content key={patientDentistryId} value={patientDentistryId}>
         <Space />
-        <TextAreaField
-          label="General notes"
-          value={appointmentNotes}
-          autoFocus
-          onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) =>
-            onChangeAppointmentNotes(e.target.value)
-          }
-        />
+        <DentalAppointmentMap />
+        <Grid columns="2" gap="5">
+          <TextAreaField
+            label="Clinical notes"
+            value={appointmentNotes}
+            autoFocus
+            onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) =>
+              onChangeAppointmentNotes(e.target.value)
+            }
+          />
+          <TextAreaField
+            label="Medication prescribed"
+            value={appointmentNotes}
+            autoFocus
+            onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) =>
+              onChangeAppointmentNotes(e.target.value)
+            }
+          />
+        </Grid>
         <Grid width={{ initial: "auto", sm: "200px" }}>
           <PopupConfirmation content={deleteAppointmentPopupConfirmation}>
             <Button color="red" variant="outline">

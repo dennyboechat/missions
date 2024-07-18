@@ -1,5 +1,5 @@
 // Components
-import { Grid, Container, Text, TextField } from "@radix-ui/themes";
+import { Grid, Container, Text } from "@radix-ui/themes";
 
 // Types
 import { DateTimeProps } from "../types/DateTimeProps";

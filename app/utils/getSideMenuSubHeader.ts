@@ -14,5 +14,5 @@ export const getSideMenuSubHeader = ({
 
   const gender = isPatientMale === undefined ? '' : (isPatientMale ? "male" : "female");
 
-  return `${patientAge ?? ""}yo ${gender}`;
+  return `${patientAge ?? ""}yo | ${gender}`;
 };

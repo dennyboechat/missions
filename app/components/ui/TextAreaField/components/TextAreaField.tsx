@@ -16,12 +16,13 @@ export const TextAreaField = ({
   autoFocus,
   required,
   errorMessage,
+  size = '3',
   onBlur,
 }: TextAreaFieldProps) => (
   <Grid>
     <Text>{`${label}${required ? " *" : ""}`}</Text>
     <TextArea
-      size="3"
+      size={size}
       resize="vertical"
       onBlur={onBlur}
       defaultValue={value}
