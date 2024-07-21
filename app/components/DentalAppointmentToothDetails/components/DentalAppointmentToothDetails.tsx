@@ -7,16 +7,40 @@ import { Space } from "../../ui/Space";
 import { DentalAppointmentToothStatus } from "../../DentalAppointmentToothStatus";
 
 // Types
-import { DentalAppointmentToothDetailsProps } from "../types/DentalAppointmentToothDetailsProps";
+import {
+  DentalAppointmentToothDetailsProps,
+  Tooth,
+  ToothDetails,
+} from "../types/DentalAppointmentToothDetailsProps";
 
 export const DentalAppointmentToothDetails = ({
   selectedTooth,
+  toothDetails,
+  setToothDetails,
 }: DentalAppointmentToothDetailsProps) => (
   <Box>
     <Text color="blue">{`Tooth ${selectedTooth}`}</Text>
     <Space />
-    <DentalAppointmentToothStatus />
+    <Text>{"Tooth status"}</Text>
+    <DentalAppointmentToothStatus
+      selectedTooth={selectedTooth}
+      toothDetails={toothDetails}
+      setToothDetails={setToothDetails}
+    />
     <Space />
-    <TextAreaField label="Tooth notes" value={""} size="1" />
+    <TextAreaField
+      label="Tooth notes"
+      value={toothDetails?.[selectedTooth]?.toothNotes ?? ""}
+      onChange={(e) => {
+        setToothDetails((prevToothDetails: any) => ({
+          ...prevToothDetails,
+          [selectedTooth]: {
+            ...prevToothDetails?.[selectedTooth],
+            toothNotes: e.target.value,
+          },
+        }));
+      }}
+      size="1"
+    />
   </Box>
 );

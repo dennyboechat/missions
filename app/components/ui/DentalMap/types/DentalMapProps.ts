@@ -1,4 +1,11 @@
+// Types
+import {
+  Tooth,
+  ToothDetails,
+} from "../../../DentalAppointmentToothDetails/types/DentalAppointmentToothDetailsProps";
+
 export interface DentalMapProps {
-  selectedTooth?: string;
-  onClickTooth: (toothNumber: string) => void;
+  selectedTooth?: Tooth;
+  toothDetails?: Record<Tooth, ToothDetails>;
+  onClickTooth: (toothNumber: Tooth) => void;
 }

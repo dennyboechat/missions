@@ -1,8 +1,11 @@
 // Components
-import { Button } from "@radix-ui/themes";
+import { Button, ButtonProps } from "@radix-ui/themes";
 
 // Types
 import type { ToothButtonProps } from "../types/ToothButtonProps";
+import { DentalAppointmentToothStatusEnum } from "../../../DentalAppointmentToothStatus/types/DentalAppointmentToothStatusProps";
+type ButtonColor = ButtonProps["color"];
+type ButtonVariant = ButtonProps["variant"];
 
 // Styles
 import styles from "../styles/DentalMap.module.css";
@@ -12,18 +15,42 @@ export const ToothButton = ({
   top,
   left,
   isSelected,
+  toothDetails,
   onClickTooth,
 }: ToothButtonProps) => {
   const selectedToothClassname = isSelected ? styles.selected_tooth : undefined;
+
+  let color: ButtonColor = "gray";
+  let variant: ButtonVariant = "soft";
+  let title;
+  if (
+    toothDetails?.toothStatus === DentalAppointmentToothStatusEnum.EXTRACTED
+  ) {
+    color = "bronze";
+    variant = "solid";
+    title = "Extracted";
+  } else if (
+    toothDetails?.toothStatus === DentalAppointmentToothStatusEnum.TREATED
+  ) {
+    color = "green";
+    variant = "solid";
+    title = "Treated";
+  } else if (toothDetails?.toothNotes) {
+    color = "yellow";
+    variant = "solid";
+    title = "Notes";
+  }
 
   return (
     <Button
       id={id}
       className={`${styles.tooth_button} ${selectedToothClassname}`}
       style={{ top, left }}
+      color={color}
+      variant={variant}
       onClick={() => onClickTooth(id)}
-      variant="outline"
       size="1"
+      title={title}
     >
       {id}
     </Button>

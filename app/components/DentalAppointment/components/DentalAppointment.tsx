@@ -63,12 +63,8 @@ export const DentalAppointment = ({
           value,
         });
 
-        if (updatedPatientDentistry) {
-          // setPatientPersonalFields(updatedPatientPerson);
-
-          if (setMessage) {
-            setMessage("Saved");
-          }
+        if (updatedPatientDentistry && setMessage) {
+          setMessage("Saved");
         } else {
           console.error(
             `Could not update appointment notes by id ${patientDentistryId}`
@@ -128,20 +124,13 @@ export const DentalAppointment = ({
         <Grid columns="2" gap="5">
           <TextAreaField
             label="Clinical notes"
-            value={appointmentNotes}
+            defaultValue={appointmentNotes}
             autoFocus
             onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) =>
               onChangeAppointmentNotes(e.target.value)
             }
           />
-          <TextAreaField
-            label="Medication prescribed"
-            value={appointmentNotes}
-            autoFocus
-            onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) =>
-              onChangeAppointmentNotes(e.target.value)
-            }
-          />
+          <Text>{"Medication prescribed"}</Text>
         </Grid>
         <Grid width={{ initial: "auto", sm: "200px" }}>
           <PopupConfirmation content={deleteAppointmentPopupConfirmation}>

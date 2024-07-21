@@ -14,5 +14,5 @@
 }
 
 .selected_tooth {
-  box-shadow: inset 0 0 0 2px;
+  box-shadow: inset 0 0 0 2px #202020;
 }

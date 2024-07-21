@@ -1,7 +1,11 @@
+// Types
+import { Tooth, ToothDetails } from "../../../DentalAppointmentToothDetails/types/DentalAppointmentToothDetailsProps";
+
 export interface ToothButtonProps {
-  id: string;
+  id: Tooth;
   top: string;
   left: string;
   isSelected?: boolean;
-  onClickTooth: (id: string) => void;
+  toothDetails?: ToothDetails;
+  onClickTooth: (id: Tooth) => void;
 }

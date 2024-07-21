@@ -11,12 +11,14 @@ import textAreaStyles from "../styles/TextAreaField.module.css";
 export const TextAreaField = ({
   label,
   placeholder,
+  defaultValue,
   value,
   maxLength = 4000,
   autoFocus,
   required,
   errorMessage,
   size = '3',
+  onChange,
   onBlur,
 }: TextAreaFieldProps) => (
   <Grid>
@@ -25,7 +27,9 @@ export const TextAreaField = ({
       size={size}
       resize="vertical"
       onBlur={onBlur}
-      defaultValue={value}
+      value={value}
+      defaultValue={defaultValue}
+      onChange={onChange}
       placeholder={placeholder}
       maxLength={maxLength}
       autoFocus={autoFocus}
