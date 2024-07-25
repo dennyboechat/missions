@@ -27,6 +27,7 @@ export const updatePatientDentistry = async ({
     `;
 
     const validatedValue = typeof value === "string" ? value.trim() : value;
+
     const response = await sql.query(query, [
       validatedValue,
       patientDentistryId,

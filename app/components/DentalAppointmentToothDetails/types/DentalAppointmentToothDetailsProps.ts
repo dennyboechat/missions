@@ -2,49 +2,22 @@
 import { Dispatch, SetStateAction } from "react";
 
 // Types
-import { DentalAppointmentToothStatusEnum } from "../../DentalAppointmentToothStatus/types/DentalAppointmentToothStatusProps";
-
-export type Tooth =
-  | "1"
-  | "2"
-  | "3"
-  | "4"
-  | "5"
-  | "6"
-  | "7"
-  | "8"
-  | "9"
-  | "10"
-  | "11"
-  | "12"
-  | "13"
-  | "14"
-  | "15"
-  | "16"
-  | "17"
-  | "18"
-  | "19"
-  | "20"
-  | "21"
-  | "22"
-  | "23"
-  | "24"
-  | "25"
-  | "26"
-  | "27"
-  | "28"
-  | "29"
-  | "30"
-  | "31"
-  | "32";
+import { Tooth } from "../../../types/Tooth";
+import { ToothStatus } from "../../../types/ToothStatus";
+import { PatientDentistryId } from "../../../types/PatientDentistryTypes";
+import { PatientDentistryToothId } from "@/app/types/PatientDentistryTooth";
 
 export interface DentalAppointmentToothDetailsProps {
+  patientDentistryId: PatientDentistryId;
   selectedTooth: Tooth;
   toothDetails?: Record<Tooth, ToothDetails>;
-  setToothDetails: Dispatch<SetStateAction<Record<Tooth, ToothDetails> | undefined>>
+  setToothDetails: Dispatch<
+    SetStateAction<Record<Tooth, ToothDetails> | undefined>
+  >;
 }
 
 export interface ToothDetails {
-  toothStatus?: DentalAppointmentToothStatusEnum;
+  toothStatus?: ToothStatus;
   toothNotes?: string;
+  patientDentistryToothId?: PatientDentistryToothId;
 }

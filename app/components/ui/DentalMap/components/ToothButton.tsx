@@ -3,7 +3,7 @@ import { Button, ButtonProps } from "@radix-ui/themes";
 
 // Types
 import type { ToothButtonProps } from "../types/ToothButtonProps";
-import { DentalAppointmentToothStatusEnum } from "../../../DentalAppointmentToothStatus/types/DentalAppointmentToothStatusProps";
+import { ToothStatus } from "../../../../types/ToothStatus";
 type ButtonColor = ButtonProps["color"];
 type ButtonVariant = ButtonProps["variant"];
 
@@ -23,15 +23,11 @@ export const ToothButton = ({
   let color: ButtonColor = "gray";
   let variant: ButtonVariant = "soft";
   let title;
-  if (
-    toothDetails?.toothStatus === DentalAppointmentToothStatusEnum.EXTRACTED
-  ) {
+  if (toothDetails?.toothStatus === ToothStatus.EXTRACTED) {
     color = "bronze";
     variant = "solid";
     title = "Extracted";
-  } else if (
-    toothDetails?.toothStatus === DentalAppointmentToothStatusEnum.TREATED
-  ) {
+  } else if (toothDetails?.toothStatus === ToothStatus.TREATED) {
     color = "green";
     variant = "solid";
     title = "Treated";

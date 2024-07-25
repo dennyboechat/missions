@@ -13,7 +13,7 @@ export const TextAreaField = ({
   placeholder,
   defaultValue,
   value,
-  maxLength = 4000,
+  maxLength = 2550,
   autoFocus,
   required,
   errorMessage,

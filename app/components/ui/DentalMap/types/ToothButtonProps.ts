@@ -1,5 +1,6 @@
 // Types
-import { Tooth, ToothDetails } from "../../../DentalAppointmentToothDetails/types/DentalAppointmentToothDetailsProps";
+import { Tooth } from "../../../../types/Tooth";
+import { ToothDetails } from "../../../DentalAppointmentToothDetails/types/DentalAppointmentToothDetailsProps";
 
 export interface ToothButtonProps {
   id: Tooth;

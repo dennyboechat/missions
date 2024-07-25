@@ -4,7 +4,7 @@ import { ToothButton } from "./ToothButton";
 
 // Types
 import { DentalMapProps } from "../types/DentalMapProps";
-import { Tooth } from "../../../DentalAppointmentToothDetails/types/DentalAppointmentToothDetailsProps";
+import { Tooth } from "../../../../types/Tooth";
 
 // Styles
 import styles from "../styles/DentalMap.module.css";

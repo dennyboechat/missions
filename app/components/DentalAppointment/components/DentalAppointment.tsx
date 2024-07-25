@@ -120,7 +120,7 @@ export const DentalAppointment = ({
     tabContent.push(
       <Tabs.Content key={patientDentistryId} value={patientDentistryId}>
         <Space />
-        <DentalAppointmentMap />
+        <DentalAppointmentMap patientDentistryId={patientDentistryId} />
         <Grid columns="2" gap="5">
           <TextAreaField
             label="Clinical notes"

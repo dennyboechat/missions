@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS app_user (
     user_id VARCHAR(255) NOT NULL PRIMARY KEY,
     user_name VARCHAR(255) NOT NULL,
     user_email VARCHAR(255) NOT NULL,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS project (
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS project (
     project_name VARCHAR(255) NOT NULL,
     project_description VARCHAR(255),
     owner_id VARCHAR(255) NOT NULL,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS project_user (
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS project_user (
     project_id UUID NOT NULL,
     user_id VARCHAR(255) NOT NULL,
     is_user_active BOOLEAN NOT NULL,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE,
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES app_user(user_id) ON DELETE CASCADE
 );
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS patient_personal (
     patient_full_name VARCHAR(255) NOT NULL,
     is_patient_male BOOLEAN NOT NULL,
     patient_date_of_birth DATE,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE
 );
 
@@ -40,8 +40,27 @@ CREATE TABLE IF NOT EXISTS patient_dentistry (
     patient_dentistry_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     patient_personal_id UUID NOT NULL,
     appointment_date DATE NOT NULL,
-    appointment_notes VARCHAR(4000),
+    appointment_notes VARCHAR(2550),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS tooth_status (
+    status VARCHAR(255) PRIMARY KEY
+);
+
+INSERT INTO 
+    tooth_status (status)
+VALUES 
+    ('extracted'),
+    ('treated')
+
+CREATE TABLE IF NOT EXISTS patient_dentistry_tooth (
+    patient_dentistry_tooth_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    patient_dentistry_id UUID NOT NULL,
+    tooth_name VARCHAR(255) NOT NULL,
+    tooth_status VARCHAR(255),
+    tooth_notes VARCHAR(2550),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_tooth_status FOREIGN KEY(tooth_status) REFERENCES tooth_status(status) ON DELETE CASCADE
 );
