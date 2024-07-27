@@ -1,3 +1,5 @@
+"use client";
+
 // Components
 import { Grid, Table } from "@radix-ui/themes";
 import { DataTableSearch } from "../../DataTableSearch";

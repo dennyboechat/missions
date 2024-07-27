@@ -26,16 +26,21 @@ export const updatePatientPersonal = async ({
         patient_personal_id, project_id, patient_full_name, is_patient_male, patient_date_of_birth
     `;
 
-    const validatedValue = typeof value === 'string' ? value.trim() : value;
-    const response = await sql.query(query, [validatedValue, patientPersonalId]);
+    const validatedValue = typeof value === "string" ? value.trim() : value;
+    const response = await sql.query(query, [
+      validatedValue,
+      patientPersonalId,
+    ]);
 
-    const patientPersonals: PatientPersonalTypes[] = response.rows.map((row) => ({
-      patientPersonalId: row.patient_personal_id,
-      projectId: row.project_id,
-      patientFullName: row.patient_full_name,
-      isPatientMale: row.is_patient_male,
-      patientDateOfBirth: row.patient_date_of_birth,
-    }));
+    const patientPersonals: PatientPersonalTypes[] = response.rows.map(
+      (row) => ({
+        patientPersonalId: row.patient_personal_id,
+        projectId: row.project_id,
+        patientFullName: row.patient_full_name,
+        isPatientMale: row.is_patient_male,
+        patientDateOfBirth: row.patient_date_of_birth,
+      })
+    );
 
     return patientPersonals?.length > 0 ? patientPersonals[0] : undefined;
   } catch (error) {

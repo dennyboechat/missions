@@ -1,3 +1,5 @@
+"use client";
+
 // Components
 import { Grid, Container, Text, TextArea } from "@radix-ui/themes";
 
@@ -17,7 +19,7 @@ export const TextAreaField = ({
   autoFocus,
   required,
   errorMessage,
-  size = '3',
+  size = "3",
   onChange,
   onBlur,
 }: TextAreaFieldProps) => (

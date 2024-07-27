@@ -23,7 +23,7 @@ export const updateProject = async ({
         project_id, project_name, project_description, owner_id
     `;
 
-    const validatedValue = typeof value === 'string' ? value.trim() : value;
+    const validatedValue = typeof value === "string" ? value.trim() : value;
     const response = await sql.query(query, [validatedValue, projectId]);
 
     const projects: Project[] = response.rows.map((row) => ({

@@ -52,7 +52,7 @@ export const DentalAppointmentMap = ({
   }, [patientDentistryId]);
 
   return (
-    <Grid columns="2" gap="5">
+    <Grid columns={{ initial: "1", sm: "2" }} gap="5">
       <DentalMap
         onClickTooth={(toothNumber) => setSelectedTooth(toothNumber)}
         selectedTooth={selectedTooth}

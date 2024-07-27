@@ -1,8 +1,10 @@
+"use client";
+
 // Components
 import { Button, ButtonProps } from "@radix-ui/themes";
 
 // Types
-import type { ToothButtonProps } from "../types/ToothButtonProps";
+import { ToothButtonProps } from "../types/ToothButtonProps";
 import { ToothStatus } from "../../../../types/ToothStatus";
 type ButtonColor = ButtonProps["color"];
 type ButtonVariant = ButtonProps["variant"];

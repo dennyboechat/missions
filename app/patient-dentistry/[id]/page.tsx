@@ -104,7 +104,6 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
     if (patientDentistriesData) {
       const newLastestAppointment = patientDentistriesData[0];
       setLastestAppointment(newLastestAppointment);
-      
     }
   };
 
@@ -117,7 +116,9 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
     >
       <Container className={styles.content}>
         <ContentHeader text="Dental" />
-        <Button onClick={onCreateAppointment}>{"Create appointment notes"}</Button>
+        <Button onClick={onCreateAppointment}>
+          {"Create appointment notes"}
+        </Button>
         <Space height={20} />
         {lastestAppointment.patientDentistryId && (
           <DentalAppointment

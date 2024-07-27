@@ -1,3 +1,5 @@
+"use client";
+
 // Components
 import { Grid, Box, Text } from "@radix-ui/themes";
 import { Sidebar, Menu } from "react-pro-sidebar";
@@ -60,7 +62,12 @@ export const SideMenuLayout = ({
           height={subHeader ? "90px" : "70px"}
           className={styles.header}
         >
-          <Text weight={isBoldHeader ? 'bold' : 'regular'} className={styles.header_text}>{header}</Text>
+          <Text
+            weight={isBoldHeader ? "bold" : "regular"}
+            className={styles.header_text}
+          >
+            {header}
+          </Text>
           <Text className={styles.header_text}>{subHeader}</Text>
         </Box>
         <Menu>{menuItems}</Menu>

@@ -6,9 +6,6 @@ import { Tabs } from "@radix-ui/themes";
 // Types
 import { TabNavigatorProps } from "../types/TabNavigatorProps";
 
-// Hooks
-import { useState } from "react";
-
 export const TabNavigator = ({
   activeTab,
   setActiveTab,

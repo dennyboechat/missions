@@ -18,7 +18,7 @@ import { usePopupMessage } from "../../lib/PopupMessage";
 import styles from "../../styles/content.module.css";
 
 // Types
-import type { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFields/types/PatientPersonalFieldsProps";
+import { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFields/types/PatientPersonalFieldsProps";
 
 // Database
 import { insertPatientPersonal } from "../../database/patient-personal/InsertPatientPersonal";

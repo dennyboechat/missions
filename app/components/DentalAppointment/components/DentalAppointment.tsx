@@ -18,7 +18,7 @@ import { DentalAppointmentMap } from "../../DentalAppointmentMap";
 
 // Types
 import { DentalAppointmentProps } from "../types/DentalAppointmentProps";
-import type { ReactElement } from "react";
+import { ReactElement } from "react";
 
 // Utils
 import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
@@ -121,7 +121,7 @@ export const DentalAppointment = ({
       <Tabs.Content key={patientDentistryId} value={patientDentistryId}>
         <Space />
         <DentalAppointmentMap patientDentistryId={patientDentistryId} />
-        <Grid columns="2" gap="5">
+        <Grid columns={{ initial: "1", sm: "2" }} gap="5">
           <TextAreaField
             label="Clinical notes"
             defaultValue={appointmentNotes}
@@ -132,7 +132,7 @@ export const DentalAppointment = ({
           />
           <Text>{"Medication prescribed"}</Text>
         </Grid>
-        <Grid width={{ initial: "auto", sm: "200px" }}>
+        <Grid width={{ initial: "auto", sm: "220px" }}>
           <PopupConfirmation content={deleteAppointmentPopupConfirmation}>
             <Button color="red" variant="outline">
               {"Delete appointment notes"}

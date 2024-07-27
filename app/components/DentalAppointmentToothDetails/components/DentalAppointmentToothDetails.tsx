@@ -55,9 +55,9 @@ export const DentalAppointmentToothDetails = ({
       ...prevToothDetails,
       [selectedTooth]: {
         ...prevToothDetails?.[selectedTooth],
-        patientDentistryToothId
+        patientDentistryToothId,
       },
-    }))
+    }));
 
     if (setMessage) {
       setMessage("Saved");

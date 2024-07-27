@@ -14,6 +14,7 @@ export const getFilteredProjectUsers = ({
   filterText?: string;
 }): ProjectUser[] => {
   let sortedProjectUsers: ProjectUser[] = [];
+
   if (projectUsers && projectUsers.length) {
     if (filterText && filterText.length) {
       projectUsers.forEach((projectUser) => {

@@ -56,7 +56,7 @@ export const DentalAppointmentToothStatus = ({
       [selectedTooth]: {
         ...prevToothDetails?.[selectedTooth],
         toothStatus: newStatus,
-        patientDentistryToothId
+        patientDentistryToothId,
       },
     }));
 

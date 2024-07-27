@@ -20,7 +20,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // Types
-import type { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFields/types/PatientPersonalFieldsProps";
+import { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFields/types/PatientPersonalFieldsProps";
 
 // Utils
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";

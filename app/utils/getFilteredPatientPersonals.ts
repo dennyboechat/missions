@@ -15,6 +15,7 @@ export const getFilteredPatientPersonals = ({
   filterText?: string;
 }): PatientPersonalTypes[] => {
   let sortedPatientPersonals: PatientPersonalTypes[] = [];
+
   if (patientPersonals && patientPersonals.length) {
     if (filterText && filterText.length) {
       patientPersonals.forEach((patientPersonal) => {
@@ -41,10 +42,14 @@ export const getFilteredPatientPersonals = ({
           sortedPatientPersonals.push(patientPersonal);
         }
       });
-      sortedPatientPersonals.sort((a, b) => (a.filterOrder ?? 0) - (b.filterOrder ?? 0));
+
+      sortedPatientPersonals.sort(
+        (a, b) => (a.filterOrder ?? 0) - (b.filterOrder ?? 0)
+      );
     } else {
       sortedPatientPersonals = patientPersonals;
     }
   }
+
   return sortedPatientPersonals;
 };

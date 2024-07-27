@@ -1,3 +1,5 @@
+"use client";
+
 // Components
 import { Grid, Text } from "@radix-ui/themes";
 

@@ -13,9 +13,7 @@ export const PopupConfirmation = ({
   return (
     <Popover.Root>
       <Popover.Trigger>{children}</Popover.Trigger>
-      <Popover.Content width="360px">
-        {content}
-      </Popover.Content>
+      <Popover.Content width="360px">{content}</Popover.Content>
     </Popover.Root>
   );
 };

@@ -1,3 +1,5 @@
+"use client";
+
 // Components
 import { Grid, Container, Text, RadioGroup } from "@radix-ui/themes";
 
@@ -19,7 +21,12 @@ export const RadioField = ({
 }: RadioFieldProps) => (
   <Grid>
     <Text>{`${label}${required ? " *" : ""}`}</Text>
-    <RadioGroup.Root defaultValue={value} name={name} autoFocus={autoFocus} onValueChange={onChange}>
+    <RadioGroup.Root
+      defaultValue={value}
+      name={name}
+      autoFocus={autoFocus}
+      onValueChange={onChange}
+    >
       {items}
     </RadioGroup.Root>
     <Container height="25px">

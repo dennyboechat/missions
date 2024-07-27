@@ -45,15 +45,13 @@ CREATE TABLE IF NOT EXISTS patient_dentistry (
     CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS tooth_status (
-    status VARCHAR(255) PRIMARY KEY
-);
+CREATE TABLE IF NOT EXISTS tooth_status (status VARCHAR(255) PRIMARY KEY);
 
-INSERT INTO 
+INSERT INTO
     tooth_status (status)
-VALUES 
+VALUES
     ('extracted'),
-    ('treated')
+    ('treated');
 
 CREATE TABLE IF NOT EXISTS patient_dentistry_tooth (
     patient_dentistry_tooth_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,

@@ -4,8 +4,8 @@
 import { createContext, useContext, useState } from "react";
 
 // Types
-import type { Project } from "../types/ProjectTypes";
-import type { ProjectContextType } from "./types/ProjectContextType";
+import { Project } from "../types/ProjectTypes";
+import { ProjectContextType } from "./types/ProjectContextType";
 
 // Hooks
 import { useEffect } from "react";
