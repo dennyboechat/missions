@@ -9,7 +9,7 @@ import { SignInDialogProps } from "../types/SignInDialogProps";
 
 export const SignInDialog = ({ onClose }: SignInDialogProps) => (
   <Dialog.Root defaultOpen onOpenChange={onClose}>
-    <Dialog.Content width="450px">
+    <Dialog.Content width="460px">
       <SignIn routing="hash" />
       <Flex gap="3" justify="end">
         <Dialog.Close>

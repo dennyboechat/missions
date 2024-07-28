@@ -66,13 +66,13 @@ export const DentalMap = ({
     <Text className={styles.text} style={{ top: "100px", left: "104px" }}>
       {"upper"}
     </Text>
-    <Text className={styles.text} style={{ top: "180px" }}>
+    <Text className={styles.text} style={{ top: "182px" }}>
       {"R"}
     </Text>
-    <Text className={styles.text} style={{ top: "174px", left: "20px" }}>
+    <Text className={styles.text} style={{ top: "176px", left: "20px" }}>
       {"_______________________"}
     </Text>
-    <Text className={styles.text} style={{ top: "180px", left: "238px" }}>
+    <Text className={styles.text} style={{ top: "182px", left: "238px" }}>
       {"L"}
     </Text>
     <Text className={styles.text} style={{ top: "265px", left: "105px" }}>

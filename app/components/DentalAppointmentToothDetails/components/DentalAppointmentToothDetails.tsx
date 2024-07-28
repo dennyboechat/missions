@@ -95,7 +95,6 @@ export const DentalAppointmentToothDetails = ({
               toothDetails?.[selectedTooth]?.patientDentistryToothId,
           });
         }}
-        size="1"
       />
     </Box>
   );

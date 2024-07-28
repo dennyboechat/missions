@@ -9,7 +9,7 @@ import { SignUpDialogProps } from "../types/SignUpDialogProps";
 
 export const SignUpDialog = ({ onClose }: SignUpDialogProps) => (
   <Dialog.Root defaultOpen onOpenChange={onClose}>
-    <Dialog.Content width="450px">
+    <Dialog.Content width="460px">
       <SignUp routing="hash" />
       <Flex gap="3" justify="end">
         <Dialog.Close>
