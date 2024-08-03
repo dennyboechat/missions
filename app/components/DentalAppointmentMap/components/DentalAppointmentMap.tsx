@@ -15,6 +15,7 @@ import { PatientDentistryId } from "../../../types/PatientDentistryTypes";
 
 // Database
 import { getPatientToothMap } from "../../../database/patient-tooth/GetPatientToothMap";
+import { ChildDentalMap } from "../../ui/DentalMap/components/ChildDentalMap";
 
 export const DentalAppointmentMap = ({
   patientDentistryId,
@@ -53,11 +54,18 @@ export const DentalAppointmentMap = ({
 
   return (
     <Grid columns={{ initial: "1", sm: "2" }} gap="5">
-      <DentalMap
-        onClickTooth={(toothNumber) => setSelectedTooth(toothNumber)}
-        selectedTooth={selectedTooth}
-        toothDetails={toothDetails}
-      />
+      <Grid columns={{ initial: "1", lg: "2" }} gap="5">
+        <DentalMap
+          onClickTooth={(toothNumber) => setSelectedTooth(toothNumber)}
+          selectedTooth={selectedTooth}
+          toothDetails={toothDetails}
+        />
+        <ChildDentalMap
+          onClickTooth={(toothNumber) => setSelectedTooth(toothNumber)}
+          selectedTooth={selectedTooth}
+          toothDetails={toothDetails}
+        />
+      </Grid>
       {selectedTooth && (
         <DentalAppointmentToothDetails
           patientDentistryId={patientDentistryId}
