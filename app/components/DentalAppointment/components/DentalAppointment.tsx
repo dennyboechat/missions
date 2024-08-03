@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 
 export const DentalAppointment = ({
   patientDentistries,
+  setPatientDentistries,
   defaultActiveTab,
   afterDeleteAppointment,
 }: DentalAppointmentProps) => {
@@ -41,6 +42,7 @@ export const DentalAppointment = ({
       <DentalAppointmentContent
         key={patientDentistryId}
         patientDentistry={patientDentistry}
+        setPatientDentistries={setPatientDentistries}
         afterDeleteAppointment={afterDeleteAppointment}
       />
     );

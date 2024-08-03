@@ -4,7 +4,8 @@
 import { TextAreaField } from "../../ui/TextAreaField";
 
 // Types
-import { PatientDentistryTypes } from "../../../types/PatientDentistryTypes";
+import { DentalAppointmentContentNotesProps } from "../types/DentalAppointmentContentNotesProps";
+import { PatientDentistryTypes } from "@/app/types/PatientDentistryTypes";
 
 // Hooks
 import { useState, useEffect } from "react";
@@ -15,27 +16,36 @@ import { updatePatientDentistry } from "../../../database/patient-dentistry/Upda
 
 export const DentalAppointmentClinicalNotes = ({
   patientDentistry,
-}: {
-  patientDentistry: PatientDentistryTypes;
-}) => {
+  setPatientDentistries,
+}: DentalAppointmentContentNotesProps) => {
   const { setMessage } = usePopupMessage();
   const [notes, setNotes] = useState(patientDentistry.appointmentNotes);
-  const { patientDentistryId } = patientDentistry;
+  const { patientDentistryId, appointmentNotes } = patientDentistry;
 
   useEffect(() => {
     const onChangeAppointmentNotes = async () => {
-      const updatedPatientDentistry = await updatePatientDentistry({
-        patientDentistryId,
-        field: "appointment_notes",
-        value: notes,
-      });
+      if (appointmentNotes !== notes) {
+        const updatedPatientDentistry = await updatePatientDentistry({
+          patientDentistryId,
+          field: "appointment_notes",
+          value: notes,
+        });
 
-      if (updatedPatientDentistry && setMessage) {
-        setMessage("Saved");
-      } else {
-        console.error(
-          `Could not update appointment notes by id ${patientDentistryId}`
-        );
+        if (updatedPatientDentistry && setMessage) {
+          setPatientDentistries((prevState: PatientDentistryTypes[]) =>
+            prevState.map((existingPatientDentistry) =>
+              existingPatientDentistry.patientDentistryId === patientDentistryId
+                ? { ...existingPatientDentistry, appointmentNotes: notes }
+                : existingPatientDentistry
+            )
+          );
+
+          setMessage("Saved");
+        } else {
+          console.error(
+            `Could not update appointment notes by id ${patientDentistryId}`
+          );
+        }
       }
     };
 
@@ -44,7 +54,13 @@ export const DentalAppointmentClinicalNotes = ({
     }, 1000);
 
     return () => clearTimeout(updateData);
-  }, [notes, patientDentistryId, setMessage]);
+  }, [
+    notes,
+    appointmentNotes,
+    patientDentistryId,
+    setPatientDentistries,
+    setMessage,
+  ]);
 
   return (
     <TextAreaField

@@ -123,6 +123,7 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
         {lastestAppointment.patientDentistryId && (
           <DentalAppointment
             patientDentistries={patientDentistries}
+            setPatientDentistries={setPatientDentistries}
             defaultActiveTab={lastestAppointment.patientDentistryId}
             afterDeleteAppointment={afterDeleteAppointment}
           />

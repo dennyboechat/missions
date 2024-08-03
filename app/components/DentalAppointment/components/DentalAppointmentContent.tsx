@@ -19,6 +19,7 @@ import { deletePatientDentistry } from "../../../database/patient-dentistry/Dele
 
 export const DentalAppointmentContent = ({
   patientDentistry,
+  setPatientDentistries,
   afterDeleteAppointment,
 }: DentalAppointmentContentProps) => {
   const [isDeletingAppointment, setIsDeletingAppointment] = useState(false);
@@ -67,7 +68,10 @@ export const DentalAppointmentContent = ({
       <Space />
       <DentalAppointmentMap patientDentistryId={patientDentistryId} />
       <Grid columns={{ initial: "1", sm: "2" }} gap="5">
-        <DentalAppointmentClinicalNotes patientDentistry={patientDentistry} />
+        <DentalAppointmentClinicalNotes
+          patientDentistry={patientDentistry}
+          setPatientDentistries={setPatientDentistries}
+        />
         <DentalAppointmentMedicationPrescribed />
       </Grid>
       <Grid width={{ initial: "auto", sm: "220px" }}>

@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Grid, Button } from "@radix-ui/themes";
+import { Grid, Button, Text } from "@radix-ui/themes";
 
 // Types
 import { DentalAppointmentToothStatusProps } from "../types/DentalAppointmentToothStatusProps";
@@ -66,29 +66,32 @@ export const DentalAppointmentToothStatus = ({
   };
 
   return (
-    <Grid columns="2" gap="10px">
-      <Button
-        color="bronze"
-        variant={
-          toothDetails?.[selectedTooth]?.toothStatus === ToothStatus.EXTRACTED
-            ? "solid"
-            : "outline"
-        }
-        onClick={() => onSelectStatus(ToothStatus.EXTRACTED)}
-      >
-        {"Extracted"}
-      </Button>
-      <Button
-        color="green"
-        variant={
-          toothDetails?.[selectedTooth]?.toothStatus === ToothStatus.TREATED
-            ? "solid"
-            : "outline"
-        }
-        onClick={() => onSelectStatus(ToothStatus.TREATED)}
-      >
-        {"Treated"}
-      </Button>
-    </Grid>
+    <>
+      <Text>{"Tooth status"}</Text>
+      <Grid columns="2" gap="10px">
+        <Button
+          color="bronze"
+          variant={
+            toothDetails?.[selectedTooth]?.toothStatus === ToothStatus.EXTRACTED
+              ? "solid"
+              : "outline"
+          }
+          onClick={() => onSelectStatus(ToothStatus.EXTRACTED)}
+        >
+          {"Extracted"}
+        </Button>
+        <Button
+          color="green"
+          variant={
+            toothDetails?.[selectedTooth]?.toothStatus === ToothStatus.TREATED
+              ? "solid"
+              : "outline"
+          }
+          onClick={() => onSelectStatus(ToothStatus.TREATED)}
+        >
+          {"Treated"}
+        </Button>
+      </Grid>
+    </>
   );
 };

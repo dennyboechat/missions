@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 // Types
 import { ToothDetails } from "../../DentalAppointmentToothDetails/types/DentalAppointmentToothDetailsProps";
 import { Tooth } from "../../../types/Tooth";
-import { PatientDentistryId } from "../../../types/PatientDentistryTypes";
+import { DentalAppointmentMapProps } from "../types/DentalAppointmentMapProps";
 
 // Database
 import { getPatientToothMap } from "../../../database/patient-tooth/GetPatientToothMap";
@@ -19,9 +19,7 @@ import { ChildDentalMap } from "../../ui/DentalMap/components/ChildDentalMap";
 
 export const DentalAppointmentMap = ({
   patientDentistryId,
-}: {
-  patientDentistryId: PatientDentistryId;
-}) => {
+}: DentalAppointmentMapProps) => {
   const [selectedTooth, setSelectedTooth] = useState<Tooth>();
   const [toothDetails, setToothDetails] =
     useState<Record<Tooth, ToothDetails>>();
