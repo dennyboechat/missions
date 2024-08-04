@@ -52,7 +52,7 @@ export const DentalAppointmentMap = ({
 
   return (
     <Grid columns={{ initial: "1", sm: "2" }} gap="5">
-      <Grid columns={{ initial: "1", lg: "2" }} gap="5">
+      <Grid columns={{ initial: "1", lg: "2" }} gap="5" align='center'>
         <DentalMap
           onClickTooth={(toothNumber) => setSelectedTooth(toothNumber)}
           selectedTooth={selectedTooth}
