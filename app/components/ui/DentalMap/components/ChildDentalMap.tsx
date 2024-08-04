@@ -51,7 +51,7 @@ export const ChildDentalMap = ({
         isSelected={selectedTooth === id}
       />
     ))}
-    <Text className={styles.text} style={{ top: "133px", left: "104px" }}>
+    <Text className={styles.text} style={{ top: "140px", left: "104px" }}>
       {"upper"}
     </Text>
     <Text className={styles.text} style={{ top: "182px" }}>
@@ -63,7 +63,7 @@ export const ChildDentalMap = ({
     <Text className={styles.text} style={{ top: "182px", left: "238px" }}>
       {"L"}
     </Text>
-    <Text className={styles.text} style={{ top: "232px", left: "105px" }}>
+    <Text className={styles.text} style={{ top: "225px", left: "105px" }}>
       {"lower"}
     </Text>
   </Box>

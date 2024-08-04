@@ -4,7 +4,7 @@
 import { TextAreaField } from "../../ui/TextAreaField";
 
 // Types
-import { DentalAppointmentContentNotesProps } from "../types/DentalAppointmentContentNotesProps";
+import { DentalAppointmentClinicalNotesProps } from "../types/DentalAppointmentClinicalNotesProps";
 import { PatientDentistryTypes } from "@/app/types/PatientDentistryTypes";
 
 // Hooks
@@ -17,7 +17,7 @@ import { updatePatientDentistry } from "../../../database/patient-dentistry/Upda
 export const DentalAppointmentClinicalNotes = ({
   patientDentistry,
   setPatientDentistries,
-}: DentalAppointmentContentNotesProps) => {
+}: DentalAppointmentClinicalNotesProps) => {
   const { setMessage } = usePopupMessage();
   const [notes, setNotes] = useState(patientDentistry.appointmentNotes);
   const { patientDentistryId, appointmentNotes } = patientDentistry;
@@ -32,12 +32,14 @@ export const DentalAppointmentClinicalNotes = ({
         });
 
         if (updatedPatientDentistry && setMessage) {
-          setPatientDentistries((prevState: PatientDentistryTypes[]) =>
-            prevState.map((existingPatientDentistry) =>
-              existingPatientDentistry.patientDentistryId === patientDentistryId
-                ? { ...existingPatientDentistry, appointmentNotes: notes }
-                : existingPatientDentistry
-            )
+          setPatientDentistries(
+            (prevState: PatientDentistryTypes[] | undefined) =>
+              prevState?.map((existingPatientDentistry) =>
+                existingPatientDentistry.patientDentistryId ===
+                patientDentistryId
+                  ? { ...existingPatientDentistry, appointmentNotes: notes }
+                  : existingPatientDentistry
+              )
           );
 
           setMessage("Saved");
@@ -66,7 +68,6 @@ export const DentalAppointmentClinicalNotes = ({
     <TextAreaField
       label="Clinical notes"
       value={notes}
-      autoFocus
       onChange={(e) => setNotes(e.target.value)}
     />
   );

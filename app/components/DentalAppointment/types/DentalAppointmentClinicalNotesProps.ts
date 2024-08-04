@@ -2,7 +2,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { PatientDentistryTypes } from "../../../types/PatientDentistryTypes";
 
-export interface DentalAppointmentContentNotesProps {
+export interface DentalAppointmentClinicalNotesProps {
   patientDentistry: PatientDentistryTypes;
   setPatientDentistries: Dispatch<
     SetStateAction<PatientDentistryTypes[] | undefined>

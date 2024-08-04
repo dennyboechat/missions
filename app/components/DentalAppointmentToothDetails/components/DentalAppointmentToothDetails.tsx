@@ -28,7 +28,10 @@ export const DentalAppointmentToothDetails = ({
     <DentalAppointmentToothNotes
       patientDentistryId={patientDentistryId}
       selectedTooth={selectedTooth}
-      toothDetails={toothDetails}
+      patientDentistryToothId={
+        toothDetails?.[selectedTooth]?.patientDentistryToothId
+      }
+      notes={toothDetails?.[selectedTooth]?.toothNotes}
       setToothDetails={setToothDetails}
     />
   </Box>

@@ -4,5 +4,5 @@
 import { Text } from "@radix-ui/themes";
 
 export const DentalAppointmentMedicationPrescribed = () => (
-  <Text>{"Medication prescribed"}</Text>
+  <Text>{"Prescribed medication"}</Text>
 );
