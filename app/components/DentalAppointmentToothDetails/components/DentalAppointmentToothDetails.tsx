@@ -16,7 +16,7 @@ export const DentalAppointmentToothDetails = ({
   setToothDetails,
 }: DentalAppointmentToothDetailsProps) => (
   <Box>
-    <Text color="blue">{`Tooth ${selectedTooth}`}</Text>
+    <Text weight='bold'>{`Tooth ${selectedTooth}`}</Text>
     <Space />
     <DentalAppointmentToothStatus
       patientDentistryId={patientDentistryId}

@@ -12,26 +12,26 @@ import { Tooth } from "../../../../types/Tooth";
 import styles from "../styles/DentalMap.module.css";
 
 const toothButtonData = [
-  { id: "A" as Tooth, left: "10px", top: "165px" },
-  { id: "B" as Tooth, left: "15px", top: "137px" },
-  { id: "C" as Tooth, left: "34px", top: "110px" },
-  { id: "D" as Tooth, left: "63px", top: "92px" },
-  { id: "E" as Tooth, left: "94px", top: "80px" },
-  { id: "F" as Tooth, left: "126px", top: "80px" },
-  { id: "G" as Tooth, left: "157px", top: "92px" },
-  { id: "H" as Tooth, left: "186px", top: "110px" },
-  { id: "I" as Tooth, left: "205px", top: "137px" },
-  { id: "J" as Tooth, left: "210px", top: "165px" },
-  { id: "K" as Tooth, left: "210px", top: "210px" },
-  { id: "L" as Tooth, left: "205px", top: "238px" },
-  { id: "M" as Tooth, left: "186px", top: "265px" },
-  { id: "N" as Tooth, left: "157px", top: "284px" },
-  { id: "O" as Tooth, left: "126px", top: "296px" },
-  { id: "P" as Tooth, left: "94px", top: "296px" },
-  { id: "Q" as Tooth, left: "63px", top: "284px" },
-  { id: "R" as Tooth, left: "34px", top: "265px" },
-  { id: "S" as Tooth, left: "15px", top: "238px" },
-  { id: "T" as Tooth, left: "10px", top: "210px" },
+  { id: "A" as Tooth, left: "19px", top: "85px" },
+  { id: "B" as Tooth, left: "24px", top: "57px" },
+  { id: "C" as Tooth, left: "43px", top: "30px" },
+  { id: "D" as Tooth, left: "72px", top: "12px" },
+  { id: "E" as Tooth, left: "103px", top: "0px" },
+  { id: "F" as Tooth, left: "135px", top: "0px" },
+  { id: "G" as Tooth, left: "166px", top: "12px" },
+  { id: "H" as Tooth, left: "195px", top: "30px" },
+  { id: "I" as Tooth, left: "214px", top: "57px" },
+  { id: "J" as Tooth, left: "219px", top: "85px" },
+  { id: "K" as Tooth, left: "219px", top: "130px" },
+  { id: "L" as Tooth, left: "214px", top: "158px" },
+  { id: "M" as Tooth, left: "195px", top: "185px" },
+  { id: "N" as Tooth, left: "166px", top: "204px" },
+  { id: "O" as Tooth, left: "135px", top: "216px" },
+  { id: "P" as Tooth, left: "103px", top: "216px" },
+  { id: "Q" as Tooth, left: "72px", top: "204px" },
+  { id: "R" as Tooth, left: "43px", top: "185px" },
+  { id: "S" as Tooth, left: "24px", top: "158px" },
+  { id: "T" as Tooth, left: "19px", top: "130px" },
 ];
 
 export const ChildDentalMap = ({
@@ -39,7 +39,7 @@ export const ChildDentalMap = ({
   toothDetails,
   onClickTooth,
 }: ChildDentalMapProps) => (
-  <Box width="247px" height="260px" className={styles.container}>
+  <Box width="247px" height="255px" className={styles.container}>
     {toothButtonData.map(({ id, left, top }) => (
       <ToothButton
         key={id}
@@ -51,19 +51,19 @@ export const ChildDentalMap = ({
         isSelected={selectedTooth === id}
       />
     ))}
-    <Text className={styles.text} style={{ top: "140px", left: "104px" }}>
+    <Text className={styles.text} style={{ top: "57px", left: "104px" }}>
       {"upper"}
     </Text>
-    <Text className={styles.text} style={{ top: "187px" }}>
+    <Text className={styles.text} style={{ top: "107px" }}>
       {"R"}
     </Text>
-    <Text className={styles.text} style={{ top: "180px", left: "20px" }}>
-      {"_______________________"}
+    <Text className={styles.text} style={{ top: "100px", left: "20px" }}>
+    {"_________________________"}
     </Text>
-    <Text className={styles.text} style={{ top: "187px", left: "238px" }}>
+    <Text className={styles.text} style={{ top: "107px", left: "256px" }}>
       {"L"}
     </Text>
-    <Text className={styles.text} style={{ top: "225px", left: "105px" }}>
+    <Text className={styles.text} style={{ top: "158px", left: "105px" }}>
       {"lower"}
     </Text>
   </Box>
