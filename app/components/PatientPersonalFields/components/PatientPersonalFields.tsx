@@ -1,5 +1,8 @@
 "use client";
 
+// Multivariate Dependencies
+import { useState, FocusEvent } from "react";
+
 // Components
 import { Grid, RadioGroup } from "@radix-ui/themes";
 import { InputTextField } from "../../ui/InputTextField";
@@ -10,7 +13,6 @@ import { DateTime } from "../../ui/DateTime";
 import { PatientPersonalFieldsProps } from "../types/PatientPersonalFieldsProps";
 
 // Hooks
-import { useState } from "react";
 import { usePopupMessage } from "../../../lib/PopupMessage";
 
 // Utils
@@ -39,7 +41,7 @@ export const PatientPersonalFields = ({
   const { patientPersonalId, patientFullName, isPatientMale } =
     patientPersonalFields;
 
-  const onFullNameChanged = async (e: React.FocusEvent<HTMLInputElement>) => {
+  const onFullNameChanged = async (e: FocusEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
 
     const isValidName = isValidFullName({ fullName: newValue });

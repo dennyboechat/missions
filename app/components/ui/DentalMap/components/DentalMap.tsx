@@ -63,19 +63,19 @@ export const DentalMap = ({
         isSelected={selectedTooth === id}
       />
     ))}
-    <Text className={styles.text} style={{ top: "137px", left: "104px" }}>
+    <Text className={styles.text} style={{ top: "137px", left: "112px" }}>
       {"upper"}
     </Text>
-    <Text className={styles.text} style={{ top: "187px" }}>
+    <Text title="Right" className={styles.text} style={{ top: "187px" }}>
       {"R"}
     </Text>
     <Text className={styles.text} style={{ top: "180px", left: "20px" }}>
       {"_________________________"}
     </Text>
-    <Text className={styles.text} style={{ top: "187px", left: "256px" }}>
+    <Text title="Left" className={styles.text} style={{ top: "187px", left: "256px" }}>
       {"L"}
     </Text>
-    <Text className={styles.text} style={{ top: "238px", left: "105px" }}>
+    <Text className={styles.text} style={{ top: "238px", left: "112px" }}>
       {"lower"}
     </Text>
   </Box>

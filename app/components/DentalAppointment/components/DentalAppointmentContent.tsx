@@ -65,15 +65,16 @@ export const DentalAppointmentContent = ({
 
   return (
     <Tabs.Content key={patientDentistryId} value={patientDentistryId}>
-      <Space />
+      <Space height={50} />
       <DentalAppointmentMap patientDentistryId={patientDentistryId} />
-      <Grid columns={{ initial: "1", sm: "2" }} gap="5">
-        <DentalAppointmentClinicalNotes
-          patientDentistry={patientDentistry}
-          setPatientDentistries={setPatientDentistries}
-        />
-        <DentalAppointmentMedicationPrescribed />
-      </Grid>
+      <Space height={50} />
+      <DentalAppointmentMedicationPrescribed />
+      <Space height={50} />
+      <DentalAppointmentClinicalNotes
+        patientDentistry={patientDentistry}
+        setPatientDentistries={setPatientDentistries}
+      />
+      <Space height={50} />
       <Grid width={{ initial: "auto", sm: "220px" }}>
         <PopupConfirmation content={deleteAppointmentPopupConfirmation}>
           <Button color="red" variant="outline">

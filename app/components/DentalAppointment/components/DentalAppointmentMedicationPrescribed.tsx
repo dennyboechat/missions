@@ -1,8 +1,12 @@
 "use client";
 
 // Components
-import { Text } from "@radix-ui/themes";
+import { Box, Text } from "@radix-ui/themes";
+import { MedicationTable } from "../../ui/MedicationTable";
 
 export const DentalAppointmentMedicationPrescribed = () => (
-  <Text>{"Prescribed medication"}</Text>
+  <Box>
+    <Text>{"Prescribed medication"}</Text>
+    <MedicationTable />
+  </Box>
 );
