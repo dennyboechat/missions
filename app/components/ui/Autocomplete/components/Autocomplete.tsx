@@ -1,11 +1,9 @@
-// Multivariate Dependencies
-import { useRef, useEffect, FocusEvent } from "react";
-
 // Components
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
-
-// Types
 import { AutocompleteProps } from "../types/AutocompleteProps";
+
+// Hooks
+import { useRef, useEffect } from "react";
 
 export const Autocomplete = ({
   items,
@@ -21,9 +19,9 @@ export const Autocomplete = ({
       const inputElement = inputRef.current.querySelector("input");
 
       if (inputElement) {
-        const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+        const handleBlur = (event: FocusEvent) => {
           if (onBlur) {
-            onBlur(event);
+            onBlur(event as unknown as React.FocusEvent<HTMLInputElement>);
           }
         };
 

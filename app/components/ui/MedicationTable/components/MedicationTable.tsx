@@ -37,12 +37,15 @@ export const MedicationTable = () => {
             medications={medications}
             setMedications={setMedications}
           />
-          <DoseInput />
-          <QuantityInput />
-          <InstructionsInput />
-          <Actions
+          <DoseInput medicationUid={uid} setMedications={setMedications} />
+          <QuantityInput medicationUid={uid} setMedications={setMedications} />
+          <InstructionsInput
             medicationUid={uid}
+            setMedications={setMedications}
+          />
+          <Actions
             drug={drug}
+            medicationUid={uid}
             setMedications={setMedications}
           />
         </Fragment>
