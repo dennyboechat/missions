@@ -4,10 +4,13 @@ export type Drug = string;
 
 export type Dose = string;
 
+export type Instructions = string;
+
 export interface Medication {
-  uid: MedicationUid;
+  rowId: string;
+  medicationUid?: MedicationUid;
   drug?: Drug;
   dose?: Dose;
   quantity?: number;
-  instructions?: string;
+  instructions?: Instructions;
 }

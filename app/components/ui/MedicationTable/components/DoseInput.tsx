@@ -8,18 +8,45 @@ import { DoseProps } from "../types/DoseProps";
 import { Medication } from "../../../../types/Medication";
 import { FocusEvent } from "react";
 
-export const DoseInput = ({ medicationUid, setMedications }: DoseProps) => {
-  const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+// Database
+import { updatePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/updatePatientDentistryMedication";
+
+// Hooks
+import { usePopupMessage } from "../../../../lib/PopupMessage";
+
+export const DoseInput = ({
+  drug,
+  dose,
+  medicationUid,
+  setMedications,
+}: DoseProps) => {
+  const { setMessage } = usePopupMessage();
+
+  const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const value = e.target.value;
+
+    if (!drug || !medicationUid || dose === value) {
+      return;
+    }
 
     setMedications((prevMedications: Medication[]) =>
       prevMedications.map((medication) =>
-        medication.uid === medicationUid
+        medication.medicationUid === medicationUid
           ? { ...medication, dose: value }
           : medication
       )
     );
+
+    const updatedPatientMedication = await updatePatientDentistryMedication({
+      patientDentistryPrescribedMedicationId: medicationUid,
+      field: "dose",
+      value,
+    });
+
+    if (updatedPatientMedication && setMessage) {
+      setMessage("Saved");
+    }
   };
 
-  return <TextField.Root maxLength={255} onBlur={handleBlur} />;
+  return <TextField.Root maxLength={255} onBlur={handleBlur} readOnly={!drug} />;
 };

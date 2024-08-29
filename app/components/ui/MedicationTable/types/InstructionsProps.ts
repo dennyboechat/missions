@@ -1,7 +1,14 @@
 // Types
-import { Medication, MedicationUid } from "../../../../types/Medication";
+import {
+  Medication,
+  MedicationUid,
+  Drug,
+  Instructions,
+} from "../../../../types/Medication";
 
 export interface InstructionsProps {
-  medicationUid: MedicationUid;
+  drug?: Drug;
+  instructions?: Instructions;
+  medicationUid?: MedicationUid;
   setMedications: (medications: any) => Medication[] | void;
 }

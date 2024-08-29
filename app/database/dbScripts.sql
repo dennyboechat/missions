@@ -60,5 +60,17 @@ CREATE TABLE IF NOT EXISTS patient_dentistry_tooth (
     tooth_status VARCHAR(255),
     tooth_notes VARCHAR(2550),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_patient_dentistry_id FOREIGN KEY(patient_dentistry_id) REFERENCES patient_dentistry(patient_dentistry_id) ON DELETE CASCADE,
     CONSTRAINT fk_tooth_status FOREIGN KEY(tooth_status) REFERENCES tooth_status(status) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS patient_dentistry_prescribed_medication (
+    patient_dentistry_prescribed_medication_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    patient_dentistry_id UUID NOT NULL,
+    drug_name VARCHAR(255) NOT NULL,
+    dose VARCHAR(255),
+    quantity INTEGER,
+    instructions_usage VARCHAR(510),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_patient_dentistry_id FOREIGN KEY(patient_dentistry_id) REFERENCES patient_dentistry(patient_dentistry_id) ON DELETE CASCADE
 );

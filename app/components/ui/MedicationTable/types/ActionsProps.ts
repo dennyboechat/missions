@@ -2,7 +2,7 @@
 import { Medication, MedicationUid, Drug } from "../../../../types/Medication";
 
 export interface ActionsProps {
-  medicationUid: MedicationUid;
+  medicationUid?: MedicationUid;
   drug?: Drug;
   setMedications: (medications: any) => Medication[] | void
 }

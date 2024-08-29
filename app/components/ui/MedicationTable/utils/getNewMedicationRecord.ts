@@ -6,10 +6,10 @@ import { generateUID } from "../../../../utils/generateUID";
 
 export const getNewMedicationRecord = (): Medication => {
   return {
-    uid: generateUID(),
+    rowId: generateUID(),
     drug: undefined,
-    dose: undefined,
+    dose: '',
     quantity: undefined,
-    instructions: undefined,
+    instructions: '',
   };
 };

@@ -8,21 +8,53 @@ import { QuantityProps } from "../types/QuantityProps";
 import { Medication } from "../../../../types/Medication";
 import { FocusEvent } from "react";
 
+// Database
+import { updatePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/updatePatientDentistryMedication";
+
+// Hooks
+import { usePopupMessage } from "../../../../lib/PopupMessage";
+
 export const QuantityInput = ({
+  drug,
+  quantity,
   medicationUid,
   setMedications,
 }: QuantityProps) => {
-  const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const { setMessage } = usePopupMessage();
+
+  const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    const value = rawValue === "" ? undefined : Number(rawValue);
+
+    if (!drug || !medicationUid || Number(quantity) === value) {
+      return;
+    }
 
     setMedications((prevMedications: Medication[]) =>
       prevMedications.map((medication) =>
-        medication.uid === medicationUid
+        medication.medicationUid === medicationUid
           ? { ...medication, quantity: value }
           : medication
       )
     );
+
+    const updatedPatientMedication = await updatePatientDentistryMedication({
+      patientDentistryPrescribedMedicationId: medicationUid,
+      field: "quantity",
+      value,
+    });
+
+    if (updatedPatientMedication && setMessage) {
+      setMessage("Saved");
+    }
   };
 
-  return <TextField.Root type="number" maxLength={20} onBlur={handleBlur} />;
+  return (
+    <TextField.Root
+      type="number"
+      maxLength={20}
+      onBlur={handleBlur}
+      readOnly={!drug}
+    />
+  );
 };

@@ -11,6 +11,7 @@ import { Fragment } from "react";
 
 // Types
 import { Medication } from "../../../../types/Medication";
+import { MedicationTableProps } from "../types/MedicationTableProps";
 
 // Utils
 import { getNewMedicationRecord } from "../utils/getNewMedicationRecord";
@@ -18,7 +19,9 @@ import { getNewMedicationRecord } from "../utils/getNewMedicationRecord";
 // Hooks
 import { useState } from "react";
 
-export const MedicationTable = () => {
+export const MedicationTable = ({
+  patientDentistryId,
+}: MedicationTableProps) => {
   const [medications, setMedications] = useState<Medication[]>([
     getNewMedicationRecord(),
   ]);
@@ -30,26 +33,41 @@ export const MedicationTable = () => {
       <Text weight="medium">{"Quantity"}</Text>
       <Text weight="medium">{"Instructions"}</Text>
       <Text>{""}</Text>
-      {medications.map(({ uid, drug }) => (
-        <Fragment key={uid}>
-          <DrugSelector
-            drug={drug}
-            medications={medications}
-            setMedications={setMedications}
-          />
-          <DoseInput medicationUid={uid} setMedications={setMedications} />
-          <QuantityInput medicationUid={uid} setMedications={setMedications} />
-          <InstructionsInput
-            medicationUid={uid}
-            setMedications={setMedications}
-          />
-          <Actions
-            drug={drug}
-            medicationUid={uid}
-            setMedications={setMedications}
-          />
-        </Fragment>
-      ))}
+      {medications.map(
+        ({ rowId, medicationUid, drug, dose, quantity, instructions }) => (
+          <Fragment key={rowId}>
+            <DrugSelector
+              patientDentistryId={patientDentistryId}
+              drug={drug}
+              medications={medications}
+              setMedications={setMedications}
+            />
+            <DoseInput
+              drug={drug}
+              dose={dose}
+              medicationUid={medicationUid}
+              setMedications={setMedications}
+            />
+            <QuantityInput
+              drug={drug}
+              quantity={quantity}
+              medicationUid={medicationUid}
+              setMedications={setMedications}
+            />
+            <InstructionsInput
+              drug={drug}
+              instructions={instructions}
+              medicationUid={medicationUid}
+              setMedications={setMedications}
+            />
+            <Actions
+              drug={drug}
+              medicationUid={medicationUid}
+              setMedications={setMedications}
+            />
+          </Fragment>
+        )
+      )}
     </Grid>
   );
 };

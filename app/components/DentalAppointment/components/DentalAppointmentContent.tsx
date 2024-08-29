@@ -68,7 +68,9 @@ export const DentalAppointmentContent = ({
       <Space height={50} />
       <DentalAppointmentMap patientDentistryId={patientDentistryId} />
       <Space height={50} />
-      <DentalAppointmentMedicationPrescribed />
+      <DentalAppointmentMedicationPrescribed
+        patientDentistryId={patientDentistryId}
+      />
       <Space height={50} />
       <DentalAppointmentClinicalNotes
         patientDentistry={patientDentistry}
