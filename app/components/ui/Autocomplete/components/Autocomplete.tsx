@@ -7,6 +7,7 @@ import { useRef, useEffect } from "react";
 
 export const Autocomplete = ({
   items,
+  value,
   onSelect,
   onBlur,
   placeholder,
@@ -52,8 +53,9 @@ export const Autocomplete = ({
         showNoResults={false}
         onSelect={onSelect}
         placeholder={placeholder}
-        className="autocomplete"
+        className={readOnly ? "autocomplete_readonly" : ""}
         styling={styling}
+        inputSearchString={value}
       />
     </div>
   );

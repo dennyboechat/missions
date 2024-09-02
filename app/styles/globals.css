@@ -31,3 +31,8 @@ div[role="dialog"] .cl-cardBox {
 .ps-active > a.ps-menu-button:hover {
   background-color: #eaeaea;
 }
+
+/* Autocomplete as read only  */
+.autocomplete_readonly > .wrapper > div:nth-of-type(2) {
+  display: none !important;
+}

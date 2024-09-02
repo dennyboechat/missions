@@ -49,6 +49,6 @@ export const InstructionsInput = ({
   };
 
   return (
-    <TextField.Root maxLength={510} onBlur={handleBlur} readOnly={!drug} />
+    <TextField.Root defaultValue={instructions} maxLength={510} onBlur={handleBlur} readOnly={!drug} />
   );
 };

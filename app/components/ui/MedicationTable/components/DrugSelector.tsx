@@ -45,7 +45,8 @@ export const DrugSelector = ({
         updatedMedications[lastIndex] = {
           ...updatedMedications[lastIndex],
           drug: medication,
-          medicationUid: insertedMedication.patientDentistryPrescribedMedicationId,
+          medicationUid:
+            insertedMedication.patientDentistryPrescribedMedicationId,
         };
 
         if (setMessage) {
@@ -63,6 +64,7 @@ export const DrugSelector = ({
 
   return (
     <Autocomplete
+      value={drug}
       items={getMostCommonDentalDrugs()}
       onBlur={handleBlur}
       readOnly={!!drug}

@@ -1,5 +1,8 @@
 "use client";
 
+// Multivariate Dependencies
+import { Fragment, useState, useEffect } from "react";
+
 // Components
 import { Grid, Text } from "@radix-ui/themes";
 import { DrugSelector } from "./DrugSelector";
@@ -7,7 +10,6 @@ import { DoseInput } from "./DoseInput";
 import { QuantityInput } from "./QuantityInput";
 import { InstructionsInput } from "./InstructionsInput";
 import { Actions } from "./Actions";
-import { Fragment } from "react";
 
 // Types
 import { Medication } from "../../../../types/Medication";
@@ -15,16 +17,57 @@ import { MedicationTableProps } from "../types/MedicationTableProps";
 
 // Utils
 import { getNewMedicationRecord } from "../utils/getNewMedicationRecord";
+import { generateUID } from "../../../../utils/generateUID";
 
-// Hooks
-import { useState } from "react";
+// Database
+import { getPatientDentistryMedications } from "../../../../database/patient-dentistry-medication/getPatientDentistryMedications";
 
 export const MedicationTable = ({
   patientDentistryId,
 }: MedicationTableProps) => {
-  const [medications, setMedications] = useState<Medication[]>([
-    getNewMedicationRecord(),
-  ]);
+  const [medications, setMedications] = useState<Medication[]>([]);
+
+  useEffect(() => {
+    const updatePatientMedications = async () => {
+      if (patientDentistryId) {
+        const dentistryMedications = await getPatientDentistryMedications({
+          patientDentistryId,
+        });
+
+        if (dentistryMedications) {
+          const retrievedMedications: Medication[] = [];
+
+          dentistryMedications.map(
+            ({
+              patientDentistryPrescribedMedicationId,
+              drug,
+              dose,
+              quantity,
+              instructions,
+            }) => {
+              retrievedMedications.push({
+                rowId: generateUID(),
+                medicationUid: patientDentistryPrescribedMedicationId,
+                drug,
+                dose,
+                quantity,
+                instructions,
+              });
+            }
+          );
+
+          retrievedMedications.push(getNewMedicationRecord());
+          setMedications(retrievedMedications);
+        } else {
+          console.log(
+            `Error to get patient dentistry medications with id ${patientDentistryId}`
+          );
+        }
+      }
+    };
+
+    updatePatientMedications();
+  }, [patientDentistryId]);
 
   return (
     <Grid columns="30fr 10fr 10fr 45fr 5fr" gap="3">

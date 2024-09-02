@@ -48,5 +48,5 @@ export const DoseInput = ({
     }
   };
 
-  return <TextField.Root maxLength={255} onBlur={handleBlur} readOnly={!drug} />;
+  return <TextField.Root defaultValue={dose} maxLength={255} onBlur={handleBlur} readOnly={!drug} />;
 };

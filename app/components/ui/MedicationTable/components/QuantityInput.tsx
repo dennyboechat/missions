@@ -25,8 +25,9 @@ export const QuantityInput = ({
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const value = rawValue === "" ? undefined : Number(rawValue);
+    const previousQuantity = quantity ? Number(quantity) : undefined;
 
-    if (!drug || !medicationUid || Number(quantity) === value) {
+    if (!drug || !medicationUid || previousQuantity === value) {
       return;
     }
 
@@ -51,6 +52,7 @@ export const QuantityInput = ({
 
   return (
     <TextField.Root
+      defaultValue={quantity}
       type="number"
       maxLength={20}
       onBlur={handleBlur}

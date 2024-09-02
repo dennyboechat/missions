@@ -7,7 +7,7 @@ import { sql } from "@vercel/postgres";
 import { DentistryPrescribedMedication } from "../../types/DentistryPrescribedMedication";
 import { PatientDentistryId } from "../../types/PatientDentistryTypes";
 
-export const getPatientDentistryMedication = async ({
+export const getPatientDentistryMedications = async ({
   patientDentistryId,
 }: {
   patientDentistryId: PatientDentistryId;
