@@ -13,14 +13,16 @@ export const getPatientSummary = async ({
   patientPersonalId: PatientPersonalId;
 }): Promise<PatientPersonalSummary | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       SELECT 
         * 
       FROM
         patient_personal 
       WHERE 
-        patient_personal_id = ${patientPersonalId}
+        patient_personal_id = $1
     `;
+
+    const response = await sql.query(query, [patientPersonalId]);
 
     const patientPersonalSummary: PatientPersonalSummary[] = response.rows.map(
       (row) => ({

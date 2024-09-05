@@ -14,7 +14,7 @@ export const getPatientDentistries = async ({
   patientPersonalId: PatientPersonalId;
 }): Promise<PatientDentistryTypes[] | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       SELECT 
         * 
       FROM
@@ -22,11 +22,13 @@ export const getPatientDentistries = async ({
       LEFT JOIN
         patient_dentistry ON patient_dentistry.patient_personal_id = patient_personal.patient_personal_id
       WHERE 
-        patient_personal.patient_personal_id = ${patientPersonalId}
+        patient_personal.patient_personal_id = $1
       ORDER BY
         patient_dentistry.appointment_date DESC,
         patient_dentistry.created_at DESC
     `;
+
+    const response = await sql.query(query, [patientPersonalId]);
 
     const patientDentistries: PatientDentistryTypes[] = response.rows.map(
       (row) => ({

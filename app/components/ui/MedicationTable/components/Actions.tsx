@@ -12,7 +12,7 @@ import { Medication } from "../../../../types/Medication";
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
 
 // Database
-import { deletePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/deletePatientDentistryMedication";
+import { deletePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/DeletePatientDentistryMedication";
 
 // Hooks
 import { usePopupMessage } from "../../../../lib/PopupMessage";

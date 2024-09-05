@@ -13,16 +13,18 @@ export const getPatientPersonals = async ({
   projectId: ProjectId;
 }): Promise<PatientPersonalTypes[] | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       SELECT 
         * 
       FROM 
         patient_personal 
       WHERE 
-        project_id = ${projectId}
+        project_id = $1
       ORDER BY
         patient_full_name ASC  
     `;
+
+    const response = await sql.query(query, [projectId]);
 
     const patientPersonals: PatientPersonalTypes[] = response.rows.map(
       (row) => ({

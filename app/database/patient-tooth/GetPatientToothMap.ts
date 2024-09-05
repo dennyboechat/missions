@@ -13,14 +13,16 @@ export const getPatientToothMap = async ({
   patientDentistryId: PatientDentistryId;
 }): Promise<PatientDentistryTooth[] | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       SELECT 
         * 
       FROM
         patient_dentistry_tooth
       WHERE 
-        patient_dentistry_id = ${patientDentistryId}
+        patient_dentistry_id = $1
     `;
+
+    const response = await sql.query(query, [patientDentistryId]);
 
     const patientToothMap: PatientDentistryTooth[] = response.rows.map(
       (row) => ({

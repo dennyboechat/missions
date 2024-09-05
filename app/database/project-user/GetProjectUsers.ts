@@ -13,7 +13,7 @@ export const getProjectUsers = async ({
   projectId: ProjectId;
 }): Promise<ProjectUser[] | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       SELECT 
         * 
       FROM 
@@ -21,10 +21,12 @@ export const getProjectUsers = async ({
       INNER JOIN
         app_user ON app_user.user_id = project_user.user_id  
       WHERE 
-        project_id = ${projectId}
+        project_id = $1
       ORDER BY
         app_user.user_name  
     `;
+
+    const response = await sql.query(query, [projectId]);
 
     const projectUsers: ProjectUser[] = response.rows.map((row) => ({
       projectUserId: row.project_user_id,

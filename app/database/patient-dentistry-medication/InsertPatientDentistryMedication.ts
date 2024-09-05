@@ -20,14 +20,22 @@ export const insertPatientDentistryMedication = async ({
   try {
     const { drug, dose, quantity, instructions } = medication;
 
-    const response = await sql`
+    const query = `
       INSERT INTO
         patient_dentistry_prescribed_medication (patient_dentistry_id, drug_name, dose, quantity, instructions_usage)
       VALUES 
-        (${patientDentistryId}, ${drug}, ${dose}, ${quantity}, ${instructions})
+        ($1, $2, $3, $4, $5)
       RETURNING 
         patient_dentistry_prescribed_medication_id, patient_dentistry_id, drug_name, dose, quantity, instructions_usage
     `;
+
+    const response = await sql.query(query, [
+      patientDentistryId,
+      drug,
+      dose,
+      quantity,
+      instructions,
+    ]);
 
     const dentistryPrescribedMedications: DentistryPrescribedMedication[] =
       response.rows.map((row) => ({

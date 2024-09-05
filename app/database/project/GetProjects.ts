@@ -12,16 +12,18 @@ export const getProjects = async ({
   ownerId: ProjectOwnerId;
 }): Promise<Project[] | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       SELECT 
         * 
       FROM 
         project 
       WHERE 
-        owner_id = ${ownerId}
+        owner_id = $1
       ORDER BY
         project_id DESC  
     `;
+
+    const response = await sql.query(query, [ownerId]);
 
     const projects: Project[] = response.rows.map((row) => ({
       projectId: row.project_id,

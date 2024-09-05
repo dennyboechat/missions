@@ -12,14 +12,20 @@ export const insertProject = async ({
   ownerId,
 }: NewProject): Promise<Project | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       INSERT INTO 
         project (project_name, project_description, owner_id) 
       VALUES 
-        (${projectName.trim()}, ${projectDescription?.trim()}, ${ownerId})
+        ($1, $2, $3)
       RETURNING 
         project_id, project_name, project_description, owner_id
     `;
+
+    const response = await sql.query(query, [
+      projectName.trim(),
+      projectDescription?.trim(),
+      ownerId,
+    ]);
 
     const projects: Project[] = response.rows.map((row) => ({
       projectId: row.project_id,

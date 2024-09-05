@@ -12,7 +12,7 @@ import { DrugSelectorProps } from "../types/DrugSelectorProps";
 import { FocusEvent } from "react";
 
 // Database
-import { insertPatientDentistryMedication } from "../../../../database/patient-dentistry-medication/insertPatientDentistryMedication";
+import { insertPatientDentistryMedication } from "../../../../database/patient-dentistry-medication/InsertPatientDentistryMedication";
 
 // Hooks
 import { usePopupMessage } from "../../../../lib/PopupMessage";

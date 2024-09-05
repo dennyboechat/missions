@@ -11,7 +11,9 @@ export const updatePatientDentistryMedication = async ({
   patientDentistryPrescribedMedicationId,
   field,
   value,
-}: UpdatePatientDentistryMedication): Promise<DentistryPrescribedMedication | undefined> => {
+}: UpdatePatientDentistryMedication): Promise<
+  DentistryPrescribedMedication | undefined
+> => {
   try {
     const query = `
       UPDATE

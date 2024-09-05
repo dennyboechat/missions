@@ -18,14 +18,20 @@ export const insertPatientDentistry = async ({
   try {
     const currentDate = getCurrentDate();
 
-    const response = await sql`
+    const query = `
       INSERT INTO
         patient_dentistry (patient_personal_id, appointment_date, appointment_notes)
       VALUES 
-        (${patientPersonalId}, ${currentDate}, '')
+        ($1, $2, $3)
       RETURNING 
         patient_dentistry_id, patient_personal_id, appointment_date, appointment_notes
     `;
+
+    const response = await sql.query(query, [
+      patientPersonalId,
+      currentDate,
+      "",
+    ]);
 
     const patientDentistries: PatientDental[] = response.rows.map((row) => ({
       patientDentistryId: row.patient_dentistry_id,

@@ -20,7 +20,7 @@ import { getNewMedicationRecord } from "../utils/getNewMedicationRecord";
 import { generateUID } from "../../../../utils/generateUID";
 
 // Database
-import { getPatientDentistryMedications } from "../../../../database/patient-dentistry-medication/getPatientDentistryMedications";
+import { getPatientDentistryMedications } from "../../../../database/patient-dentistry-medication/GetPatientDentistryMedications";
 
 export const MedicationTable = ({
   patientDentistryId,

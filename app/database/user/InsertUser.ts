@@ -12,16 +12,23 @@ export const insertUser = async ({
   userEmail,
 }: User): Promise<User | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       INSERT INTO 
         app_user (user_id, user_name, user_email) 
       SELECT 
-        ${userId}, ${userName}, ${userEmail}
+        $1, $2, $3
       WHERE
-        NOT EXISTS (SELECT 1 FROM app_user WHERE user_id = ${userId})
+        NOT EXISTS (SELECT 1 FROM app_user WHERE user_id = $4)
       RETURNING 
         user_id, user_name, user_email
     `;
+
+    const response = await sql.query(query, [
+      userId,
+      userName,
+      userEmail,
+      userId,
+    ]);
 
     const users: User[] = response.rows.map((row) => ({
       userId: row.user_id,

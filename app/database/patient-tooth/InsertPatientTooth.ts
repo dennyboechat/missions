@@ -16,14 +16,21 @@ export const insertPatientTooth = async ({
   toothNotes,
 }: InsertPatientTooth): Promise<PatientDentistryTooth | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       INSERT INTO
         patient_dentistry_tooth (patient_dentistry_id, tooth_name, tooth_status, tooth_notes)
       VALUES 
-        (${patientDentistryId}, ${toothName}, ${toothStatus}, ${toothNotes})
+        ($1, $2, $3, $4)
       RETURNING 
         patient_dentistry_tooth_id, patient_dentistry_id, tooth_name, tooth_status, tooth_notes
     `;
+
+    const response = await sql.query(query, [
+      patientDentistryId,
+      toothName,
+      toothStatus,
+      toothNotes,
+    ]);
 
     const patientDentistryTooth: PatientDentistryTooth[] = response.rows.map(
       (row) => ({

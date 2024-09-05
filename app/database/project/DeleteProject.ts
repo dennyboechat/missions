@@ -16,7 +16,8 @@ export const deleteProject = async ({
       DELETE FROM 
         project 
       WHERE 
-        project_id = $1`;
+        project_id = $1
+    `;
 
     await sql.query(query, [projectId]);
   } catch (error) {

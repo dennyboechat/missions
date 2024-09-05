@@ -21,14 +21,21 @@ export const insertPatientPersonal = async ({
   try {
     const parsedPatientDateOfBirth = getFormattedDate(patientDateOfBirth);
 
-    const response = await sql`
+    const query = `
       INSERT INTO 
         patient_personal (project_id, patient_full_name, is_patient_male, patient_date_of_birth)
       VALUES 
-        (${projectId}, ${patientFullName.trim()}, ${isPatientMale}, ${parsedPatientDateOfBirth})
+        ($1, $2, $3, $4)
       RETURNING 
         patient_personal_id, project_id, patient_full_name, is_patient_male, patient_date_of_birth
     `;
+
+    const response = await sql.query(query, [
+      projectId,
+      patientFullName.trim(),
+      isPatientMale,
+      parsedPatientDateOfBirth,
+    ]);
 
     const patientPersonals: PatientPersonalTypes[] = response.rows.map(
       (row) => ({

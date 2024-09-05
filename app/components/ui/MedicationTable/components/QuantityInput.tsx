@@ -9,7 +9,7 @@ import { Medication } from "../../../../types/Medication";
 import { FocusEvent } from "react";
 
 // Database
-import { updatePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/updatePatientDentistryMedication";
+import { updatePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/UpdatePatientDentistryMedication";
 
 // Hooks
 import { usePopupMessage } from "../../../../lib/PopupMessage";

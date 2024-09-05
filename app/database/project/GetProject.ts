@@ -12,14 +12,16 @@ export const getProject = async ({
   projectId: ProjectId;
 }): Promise<Project | undefined> => {
   try {
-    const response = await sql`
+    const query = `
       SELECT 
         * 
       FROM 
         project 
       WHERE 
-        project_id = ${projectId}
+        project_id = $1
     `;
+
+    const response = await sql.query(query, [projectId]);
 
     const projects: Project[] = response.rows.map((row) => ({
       projectId: row.project_id,
