@@ -18,14 +18,24 @@ export const getPatientDentalSummary = async ({
         patient_dentistry.patient_dentistry_id,
         appointment_date,
         tooth_name,
-        tooth_status
+        tooth_status,
+        patient_dentistry_prescribed_medication_id,
+        drug_name,
+        dose,
+        quantity,
+        instructions_usage
       FROM
         patient_dentistry
-      LEFT JOIN patient_dentistry_tooth ON patient_dentistry_tooth.patient_dentistry_id = patient_dentistry.patient_dentistry_id
+      LEFT JOIN 
+        patient_dentistry_tooth ON patient_dentistry_tooth.patient_dentistry_id = patient_dentistry.patient_dentistry_id
+      LEFT JOIN 
+        patient_dentistry_prescribed_medication ON patient_dentistry_prescribed_medication.patient_dentistry_id = patient_dentistry.patient_dentistry_id
       WHERE 
         patient_dentistry.patient_personal_id = $1
       ORDER BY
-        appointment_date
+        appointment_date,
+        tooth_name,
+        drug_name
     `;
 
     const response = await sql.query(query, [patientPersonalId]);
@@ -36,6 +46,12 @@ export const getPatientDentalSummary = async ({
         appointmentDate: row.appointment_date,
         toothName: row.tooth_name,
         toothStatus: row.tooth_status,
+        patientDentistryPrescribedMedicationId:
+          row.patient_dentistry_prescribed_medication_id,
+        drug: row.drug_name,
+        dose: row.dose,
+        quantity: row.quantity,
+        instructions: row.instructions_usage,
       })
     );
 

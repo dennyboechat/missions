@@ -1,5 +1,8 @@
 "use client";
 
+// Multivariate Dependencies
+import { Fragment, useState, useEffect } from "react";
+
 // Components
 import { Container, Text, Grid } from "@radix-ui/themes";
 import { ContentHeader } from "../../ContentHeader";
@@ -28,10 +31,7 @@ import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 import { getAge } from "../../../utils/getAge";
 import { getGenderLabel } from "../../../utils/getGenderLabel";
 import { getYearsOldLabel } from "../../../utils/getYearsOldLabel";
-import { getDentalAppointmentsSummary } from "../../../utils/getDentalAppointmentsSummary";
-
-// Hooks
-import { useState, useEffect } from "react";
+import { getDentalAppointmentsSummary } from "../utils/getDentalAppointmentsSummary";
 
 // Icons
 import {
@@ -139,7 +139,13 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
               {"Dental"}
             </Text>
           </div>
-          <Text>{"Existing appointments:"}</Text>
+          {dentalAppointments.length > 0 ? (
+            <Text>{"Existing appointments:"}</Text>
+          ) : (
+            <Text className={patientSummaryStyles.italic}>
+              {"No appointment"}
+            </Text>
+          )}
           <Space height={3} />
           {dentalAppointments.map(
             ({
@@ -147,6 +153,7 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
               appointmentDate,
               treatedTeeth,
               extractedTeeth,
+              prescribedMedication,
             }) => (
               <Grid
                 key={patientDentistryId}
@@ -159,29 +166,67 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
                 </Text>
                 <div className={patientSummaryStyles.summary_teeth}>
                   <Text>{"Teeth treated: "}</Text>
-                  {treatedTeeth.map((tooth) =>
-                    tooth ? (
-                      <ToothButton
-                        key={tooth}
-                        id={tooth}
-                        toothDetails={{ toothStatus: ToothStatus.TREATED }}
-                        ignoreAbsolutePosition
-                      />
-                    ) : null
+                  {treatedTeeth.length > 0 ? (
+                    treatedTeeth.map((tooth) =>
+                      tooth ? (
+                        <ToothButton
+                          key={tooth}
+                          id={tooth}
+                          toothDetails={{ toothStatus: ToothStatus.TREATED }}
+                          ignoreAbsolutePosition
+                        />
+                      ) : null
+                    )
+                  ) : (
+                    <Text className={patientSummaryStyles.italic}>
+                      {"none"}
+                    </Text>
                   )}
                 </div>
                 <Space />
                 <div className={patientSummaryStyles.summary_teeth}>
                   <Text>{"Teeth extracted: "}</Text>
-                  {extractedTeeth.map((tooth) =>
-                    tooth ? (
-                      <ToothButton
-                        key={tooth}
-                        id={tooth}
-                        toothDetails={{ toothStatus: ToothStatus.EXTRACTED }}
-                        ignoreAbsolutePosition
-                      />
-                    ) : null
+                  {extractedTeeth.length > 0 ? (
+                    extractedTeeth.map((tooth) =>
+                      tooth ? (
+                        <ToothButton
+                          key={tooth}
+                          id={tooth}
+                          toothDetails={{ toothStatus: ToothStatus.EXTRACTED }}
+                          ignoreAbsolutePosition
+                        />
+                      ) : null
+                    )
+                  ) : (
+                    <Text className={patientSummaryStyles.italic}>
+                      {"none"}
+                    </Text>
+                  )}
+                </div>
+                <Space />
+                <div className={patientSummaryStyles.summary_margin}>
+                  <Text>{"Prescribed medication: "}</Text>
+                  {prescribedMedication.length > 0 ? (
+                    <Grid columns="30fr 10fr 10fr 50fr" gap="2" className={patientSummaryStyles.summary_margin}>
+                      <Text weight="medium">{"Drug"}</Text>
+                      <Text weight="medium">{"Dose"}</Text>
+                      <Text weight="medium">{"Quantity"}</Text>
+                      <Text weight="medium">{"Instructions"}</Text>
+                      {prescribedMedication.map(
+                        ({ rowId, drug, dose, quantity, instructions }) => (
+                          <Fragment key={rowId}>
+                            <Text className={patientSummaryStyles.summary_medication_item}>{drug}</Text>
+                            <Text className={patientSummaryStyles.summary_medication_item}>{dose}</Text>
+                            <Text className={patientSummaryStyles.summary_medication_item}>{quantity}</Text>
+                            <Text className={patientSummaryStyles.summary_medication_item}>{instructions}</Text>
+                          </Fragment>
+                        )
+                      )}
+                    </Grid>
+                  ) : (
+                    <Text className={patientSummaryStyles.italic}>
+                      {"none"}
+                    </Text>
                   )}
                 </div>
                 <Space />

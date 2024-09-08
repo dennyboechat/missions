@@ -9,8 +9,22 @@
 }
 
 .summary_teeth {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-left: 20px;
-  }
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-left: 20px;
+}
+
+.summary_margin {
+  margin-left: 20px;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.summary_medication_item {
+  background-color: #f0f0f0;
+  padding-left: 3px;
+  padding-right: 3px;
+}

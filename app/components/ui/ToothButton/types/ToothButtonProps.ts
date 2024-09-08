@@ -4,8 +4,8 @@ import { ToothDetails } from "../../../DentalAppointmentToothDetails/types/Denta
 
 export interface ToothButtonProps {
   id: Tooth;
-  top: string;
-  left: string;
+  top?: string;
+  left?: string;
   isSelected?: boolean;
   toothDetails?: ToothDetails;
   onClickTooth?: (id: Tooth) => void;
