@@ -18,6 +18,7 @@ export const SideMenuLayout = ({
   menuItems,
   header,
   subHeader,
+  subHeaderFooter,
   isBoldHeader,
   children,
 }: SideMenuLayoutProps) => {
@@ -59,7 +60,7 @@ export const SideMenuLayout = ({
       >
         <Box
           width="200px"
-          height={subHeader ? "90px" : "70px"}
+          height={subHeader ? "140px" : "70px"}
           className={styles.header}
         >
           <Text
@@ -69,6 +70,7 @@ export const SideMenuLayout = ({
             {header}
           </Text>
           <Text className={styles.header_text}>{subHeader}</Text>
+          <Text className={styles.header_text}>{subHeaderFooter}</Text>
         </Box>
         <Menu>{menuItems}</Menu>
       </Sidebar>

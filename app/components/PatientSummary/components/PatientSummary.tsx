@@ -27,6 +27,7 @@ import { ToothStatus } from "../../../types/ToothStatus";
 
 // Utils
 import { getSideMenuSubHeader } from "../../../utils/getSideMenuSubHeader";
+import { getSideMenuSubHeaderFooter } from "../../../utils/getSideMenuSubHeaderFooter";
 import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 import { getAge } from "../../../utils/getAge";
 import { getGenderLabel } from "../../../utils/getGenderLabel";
@@ -84,6 +85,9 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
 
   const subHeader = getSideMenuSubHeader({
     patientDateOfBirth,
+  });
+
+  const subHeaderFooter = getSideMenuSubHeaderFooter({
     isPatientMale,
   });
 
@@ -108,6 +112,7 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
       menuItems={patientMenuItems}
       header={patientFullName}
       subHeader={subHeader}
+      subHeaderFooter={subHeaderFooter}
       isBoldHeader
     >
       <Container className={styles.content}>
@@ -119,8 +124,10 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
               {patientFullName}
             </Text>
           </div>
-          <Text>{birthData}</Text>
-          <Text>
+          <Text className={patientSummaryStyles.summary_margin}>
+            {birthData}
+          </Text>
+          <Text className={patientSummaryStyles.summary_margin}>
             {getGenderLabel({
               isPatientMale,
             })}
@@ -140,9 +147,13 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
             </Text>
           </div>
           {dentalAppointments.length > 0 ? (
-            <Text>{"Existing appointments:"}</Text>
+            <Text className={patientSummaryStyles.summary_margin}>
+              {"Existing appointments:"}
+            </Text>
           ) : (
-            <Text className={patientSummaryStyles.italic}>
+            <Text
+              className={`${patientSummaryStyles.italic} ${patientSummaryStyles.summary_margin}`}
+            >
               {"No appointment"}
             </Text>
           )}
@@ -207,7 +218,11 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
                 <div className={patientSummaryStyles.summary_margin}>
                   <Text>{"Prescribed medication: "}</Text>
                   {prescribedMedication.length > 0 ? (
-                    <Grid columns="30fr 10fr 10fr 50fr" gap="2" className={patientSummaryStyles.summary_margin}>
+                    <Grid
+                      columns="30fr 10fr 10fr 50fr"
+                      gap="2"
+                      className={patientSummaryStyles.summary_margin}
+                    >
                       <Text weight="medium">{"Drug"}</Text>
                       <Text weight="medium">{"Dose"}</Text>
                       <Text weight="medium">{"Quantity"}</Text>
@@ -215,10 +230,34 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
                       {prescribedMedication.map(
                         ({ rowId, drug, dose, quantity, instructions }) => (
                           <Fragment key={rowId}>
-                            <Text className={patientSummaryStyles.summary_medication_item}>{drug}</Text>
-                            <Text className={patientSummaryStyles.summary_medication_item}>{dose}</Text>
-                            <Text className={patientSummaryStyles.summary_medication_item}>{quantity}</Text>
-                            <Text className={patientSummaryStyles.summary_medication_item}>{instructions}</Text>
+                            <Text
+                              className={
+                                patientSummaryStyles.summary_medication_item
+                              }
+                            >
+                              {drug}
+                            </Text>
+                            <Text
+                              className={
+                                patientSummaryStyles.summary_medication_item
+                              }
+                            >
+                              {dose}
+                            </Text>
+                            <Text
+                              className={
+                                patientSummaryStyles.summary_medication_item
+                              }
+                            >
+                              {quantity}
+                            </Text>
+                            <Text
+                              className={
+                                patientSummaryStyles.summary_medication_item
+                              }
+                            >
+                              {instructions}
+                            </Text>
                           </Fragment>
                         )
                       )}

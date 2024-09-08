@@ -33,7 +33,7 @@ export const getPatientDentalSummary = async ({
       WHERE 
         patient_dentistry.patient_personal_id = $1
       ORDER BY
-        appointment_date,
+        appointment_date DESC,
         tooth_name,
         drug_name
     `;

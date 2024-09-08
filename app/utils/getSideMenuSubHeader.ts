@@ -1,19 +1,21 @@
 // Utils
 import { getAge } from "./getAge";
+import { getLocaleFormattedDate } from "./getLocaleFormattedDate";
 
 export const getSideMenuSubHeader = ({
   patientDateOfBirth,
-  isPatientMale,
 }: {
   patientDateOfBirth?: Date;
-  isPatientMale?: boolean;
 }) => {
   const patientAge = getAge({
     date: patientDateOfBirth,
   });
 
-  const gender =
-    isPatientMale === undefined ? "" : isPatientMale ? "male" : "female";
+  const formattedDateOfBirth = patientDateOfBirth
+    ? getLocaleFormattedDate({
+        date: patientDateOfBirth,
+      })
+    : "";
 
-  return `${patientAge ?? ""}yo | ${gender}`;
+  return `${formattedDateOfBirth} (${patientAge ?? ""}yo)`;
 };

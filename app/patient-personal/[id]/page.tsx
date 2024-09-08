@@ -24,6 +24,7 @@ import { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFiel
 
 // Utils
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
+import { getSideMenuSubHeaderFooter } from "../../utils/getSideMenuSubHeaderFooter";
 
 const PatientPersonal = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -72,6 +73,9 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
 
   const subHeader = getSideMenuSubHeader({
     patientDateOfBirth: patientPersonalFields.patientDateOfBirth,
+  });
+
+  const subHeaderFooter = getSideMenuSubHeaderFooter({
     isPatientMale: patientPersonalFields.isPatientMale,
   });
 
@@ -108,6 +112,7 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
       menuItems={patientMenuItems}
       header={patientPersonalFields.patientFullName}
       subHeader={subHeader}
+      subHeaderFooter={subHeaderFooter}
       isBoldHeader
     >
       <Container className={styles.content}>

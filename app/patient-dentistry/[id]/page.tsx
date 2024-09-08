@@ -24,6 +24,7 @@ import { PatientDentistryTypes } from "../../types/PatientDentistryTypes";
 
 // Utils
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
+import { getSideMenuSubHeaderFooter } from "../../utils/getSideMenuSubHeaderFooter";
 
 const PatientDentistry = ({ params }: { params: { id: string } }) => {
   const { setMessage } = usePopupMessage();
@@ -64,6 +65,9 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
 
   const subHeader = getSideMenuSubHeader({
     patientDateOfBirth: lastestAppointment.patientDateOfBirth,
+  });
+
+  const subHeaderFooter = getSideMenuSubHeaderFooter({
     isPatientMale: lastestAppointment.isPatientMale,
   });
 
@@ -112,6 +116,7 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
       menuItems={patientMenuItems}
       header={lastestAppointment.patientFullName}
       subHeader={subHeader}
+      subHeaderFooter={subHeaderFooter}
       isBoldHeader
     >
       <Container className={styles.content}>
