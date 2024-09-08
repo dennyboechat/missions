@@ -1,0 +1,16 @@
+.summary_subtitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dental_appointments {
+  margin-left: 20px;
+}
+
+.summary_teeth {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-left: 20px;
+  }

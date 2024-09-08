@@ -8,5 +8,6 @@ export interface ToothButtonProps {
   left: string;
   isSelected?: boolean;
   toothDetails?: ToothDetails;
-  onClickTooth: (id: Tooth) => void;
+  onClickTooth?: (id: Tooth) => void;
+  ignoreAbsolutePosition?: boolean;
 }

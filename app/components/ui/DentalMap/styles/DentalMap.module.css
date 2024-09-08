@@ -2,18 +2,7 @@
   position: relative;
 }
 
-.tooth_button {
-  position: absolute;
-  border-radius: 8px;
-  width: 30px;
-  z-index: 1;
-}
-
 .text {
   position: absolute;
   color: gray;
-}
-
-.selected_tooth {
-  box-shadow: inset 0 0 0 2px #202020;
 }

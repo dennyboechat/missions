@@ -2,7 +2,7 @@
 
 // Components
 import { Box, Text } from "@radix-ui/themes";
-import { ToothButton } from "./ToothButton";
+import { ToothButton } from "../../ToothButton";
 
 // Types
 import { DentalMapProps } from "../types/DentalMapProps";

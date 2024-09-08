@@ -10,7 +10,7 @@ type ButtonColor = ButtonProps["color"];
 type ButtonVariant = ButtonProps["variant"];
 
 // Styles
-import styles from "../styles/DentalMap.module.css";
+import styles from "../styles/ToothButton.module.css";
 
 export const ToothButton = ({
   id,
@@ -19,8 +19,12 @@ export const ToothButton = ({
   isSelected,
   toothDetails,
   onClickTooth,
+  ignoreAbsolutePosition,
 }: ToothButtonProps) => {
   const selectedToothClassname = isSelected ? styles.selected_tooth : undefined;
+  const toothButtonPositionClassname = ignoreAbsolutePosition
+    ? undefined
+    : styles.tooth_button_position;
 
   let color: ButtonColor = "gray";
   let variant: ButtonVariant = "soft";
@@ -42,11 +46,11 @@ export const ToothButton = ({
   return (
     <Button
       id={id}
-      className={`${styles.tooth_button} ${selectedToothClassname}`}
+      className={`${styles.tooth_button} ${toothButtonPositionClassname} ${selectedToothClassname}`}
       style={{ top, left }}
       color={color}
       variant={variant}
-      onClick={() => onClickTooth(id)}
+      onClick={() => (onClickTooth ? onClickTooth(id) : () => {})}
       size="1"
       title={title}
     >

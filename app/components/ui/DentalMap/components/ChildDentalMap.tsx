@@ -2,7 +2,7 @@
 
 // Components
 import { Box, Text } from "@radix-ui/themes";
-import { ToothButton } from "./ToothButton";
+import { ToothButton } from "../../ToothButton";
 
 // Types
 import { ChildDentalMapProps } from "../types/ChildDentalMapProps";
@@ -58,7 +58,7 @@ export const ChildDentalMap = ({
       {"R"}
     </Text>
     <Text className={styles.text} style={{ top: "100px", left: "20px" }}>
-    {"_________________________"}
+      {"_________________________"}
     </Text>
     <Text className={styles.text} style={{ top: "107px", left: "256px" }}>
       {"L"}
