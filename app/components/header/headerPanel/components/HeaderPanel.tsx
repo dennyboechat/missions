@@ -94,6 +94,28 @@ export const HeaderPanel = () => {
           {"Back"}
         </Button>
       );
+    } else {
+      const projectUserLinks = ["/project-user/"];
+
+      const hasProjectUserLink = projectUserLinks.some((path) =>
+        currentPath.includes(path)
+      );
+
+      if (hasProjectUserLink && project) {
+        const { projectId } = project;
+        backButton = (
+          <Button
+            variant="outline"
+            title="Go back to users"
+            onClick={() => {
+              router.push(`/project-users/${projectId}`);
+            }}
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+            {"Back"}
+          </Button>
+        );
+      }
     }
   }
 

@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Container, Table, Switch } from "@radix-ui/themes";
+import { Container, Table, Switch, Button } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ProjectMenuItems";
 import { ContentHeader } from "../../components/ContentHeader";
@@ -14,6 +14,7 @@ import styles from "../../styles/content.module.css";
 import { useProject } from "../../lib/ProjectContext";
 import { useState, useEffect } from "react";
 import { usePopupMessage } from "../../lib/PopupMessage";
+import { useRouter } from "next/navigation";
 
 // Database
 import { getProjectUsers } from "../../database/project-user/GetProjectUsers";
@@ -27,6 +28,7 @@ import { ProjectUserId } from "../../types/ProjectUserTypes";
 import { getFilteredProjectUsers } from "../../utils/getFilteredProjectUsers";
 
 const ProjectUsers = ({ params }: { params: { id: string } }) => {
+  const router = useRouter();
   const { project } = useProject();
   const { setMessage } = usePopupMessage();
   const [projectUsers, setProjectUsers] = useState<ProjectUser[]>([]);
@@ -92,6 +94,13 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
           text="Users"
           subText="All users who have access to this project."
         />
+        <Button
+          onClick={() => {
+            router.push(`/project-user/${projectId}`);
+          }}
+        >
+          {"Add user"}
+        </Button>
         <DataTable
           tableHeader={tableHeader}
           onSearchTextChange={(text) => setSearchText(text)}

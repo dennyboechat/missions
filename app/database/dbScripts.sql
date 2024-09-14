@@ -2,7 +2,8 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS app_user (
-    user_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    user_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_third_party_id VARCHAR(255),
     user_name VARCHAR(255) NOT NULL,
     user_email VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS project (
     project_description VARCHAR(255),
     owner_id VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    CONSTRAINT fk_owner FOREIGN KEY(owner_id) REFERENCES app_user(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS project_user (
