@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Container, Grid } from "@radix-ui/themes";
+import { Container, Grid, Skeleton } from "@radix-ui/themes";
 import { ProjectCardButton } from "../components/ProjectCardButton";
 
 // Database
@@ -26,6 +26,7 @@ import { getAppUser } from "../database/app-user/GetAppUser";
 const DashboardPage = () => {
   const { user } = useUser();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async (loggedUser?: AppUser) => {
@@ -43,6 +44,7 @@ const DashboardPage = () => {
     };
 
     const insertUser = async () => {
+      setIsLoadingProjects(true);
       let loggedUser;
 
       if (user) {
@@ -85,6 +87,8 @@ const DashboardPage = () => {
       }
 
       await fetchProjects(loggedUser);
+
+      setIsLoadingProjects(false);
     };
 
     insertUser();
@@ -101,12 +105,12 @@ const DashboardPage = () => {
         gap="3"
       >
         <ProjectCardButton isAddNew />
-        {projects &&
-          projects.map((project) => {
-            return (
-              <ProjectCardButton key={project.projectId} project={project} />
-            );
-          })}
+        {isLoadingProjects && <ProjectCardButton isLoading />}
+        {projects?.map((project) => {
+          return (
+            <ProjectCardButton key={project.projectId} project={project} />
+          );
+        })}
       </Grid>
     </Container>
   );
