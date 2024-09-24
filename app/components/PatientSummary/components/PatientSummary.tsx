@@ -146,11 +146,7 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
               {"Dental"}
             </Text>
           </div>
-          {dentalAppointments.length > 0 ? (
-            <Text className={patientSummaryStyles.summary_margin}>
-              {"Existing appointments:"}
-            </Text>
-          ) : (
+          {dentalAppointments.length === 0 && (
             <Text
               className={`${patientSummaryStyles.italic} ${patientSummaryStyles.summary_margin}`}
             >
@@ -175,6 +171,7 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
                     date: appointmentDate,
                   })}
                 </Text>
+                <Space height={3} />
                 <div className={patientSummaryStyles.summary_teeth}>
                   <Text>{"Teeth treated: "}</Text>
                   {treatedTeeth.length > 0 ? (
