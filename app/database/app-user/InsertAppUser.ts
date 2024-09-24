@@ -14,8 +14,10 @@ export const insertAppUser = async ({
     const query = `
       INSERT INTO 
         app_user (user_name, user_email)
-      VALUES 
-        ($1, $2)
+      SELECT 
+        $1, $2::VARCHAR
+      WHERE
+        NOT EXISTS (SELECT 1 FROM app_user WHERE user_email = $2)
       RETURNING 
         user_id, user_name, user_email
     `;

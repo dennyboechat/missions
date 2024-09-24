@@ -2,6 +2,7 @@
 import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { ClerkProvider } from "@clerk/nextjs";
+import { AppUserProvider } from "./lib/AppUserContext";
 import { ProjectProvider } from "./lib/ProjectContext";
 import { PopupMessageProvider } from "./lib/PopupMessage";
 
@@ -32,13 +33,15 @@ export default function RootLayout({
         </head>
         <body>
           <Theme scaling="110%">
-            <ProjectProvider>
-              <PopupMessageProvider>
-                <HeaderPanel />
-                {children}
-                <PopupMessage />
-              </PopupMessageProvider>
-            </ProjectProvider>
+            <AppUserProvider>
+              <ProjectProvider>
+                <PopupMessageProvider>
+                  <HeaderPanel />
+                  {children}
+                  <PopupMessage />
+                </PopupMessageProvider>
+              </ProjectProvider>
+            </AppUserProvider>
             <Analytics />
           </Theme>
         </body>

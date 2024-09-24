@@ -13,15 +13,15 @@ CREATE TABLE IF NOT EXISTS project (
     project_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     project_name VARCHAR(255) NOT NULL,
     project_description VARCHAR(255),
-    owner_id VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    owner_id UUID NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_owner FOREIGN KEY(owner_id) REFERENCES app_user(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS project_user (
     project_user_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     project_id UUID NOT NULL,
-    user_id VARCHAR(255) NOT NULL,
+    user_id UUID NOT NULL,
     is_user_active BOOLEAN NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE,
@@ -76,3 +76,14 @@ CREATE TABLE IF NOT EXISTS patient_dentistry_prescribed_medication (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_patient_dentistry_id FOREIGN KEY(patient_dentistry_id) REFERENCES patient_dentistry(patient_dentistry_id) ON DELETE CASCADE
 );
+
+-- Clean up
+DROP TABLE IF EXISTS 
+    patient_dentistry_prescribed_medication,
+    patient_dentistry_tooth,
+    tooth_status,
+    patient_dentistry,
+    patient_personal,
+    project_user,
+    project,
+    app_user

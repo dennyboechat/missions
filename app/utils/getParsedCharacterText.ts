@@ -1,4 +1,4 @@
-export const getParsedCharacterText = ({ text }: { text: string }): string => {
+export const getParsedCharacterText = ({ text }: { text?: string }): string => {
   if (text) {
     return text
       .toLowerCase()

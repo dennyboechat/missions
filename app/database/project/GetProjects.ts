@@ -7,23 +7,29 @@ import { sql } from "@vercel/postgres";
 import { Project, ProjectOwnerId } from "../../types/ProjectTypes";
 
 export const getProjects = async ({
-  ownerId,
+  userId,
 }: {
-  ownerId: ProjectOwnerId;
+  userId: ProjectOwnerId;
 }): Promise<Project[] | undefined> => {
   try {
     const query = `
       SELECT 
-        * 
+        DISTINCT project.*
       FROM 
-        project 
+        project
+      LEFT JOIN
+        project_user ON project_user.project_id = project.project_id  
       WHERE 
-        owner_id = $1
+        project.owner_id = $1 OR
+        (
+          project_user.user_id = $1 AND
+          is_user_active = TRUE
+        )
       ORDER BY
-        project_id DESC  
+        project.created_at DESC
     `;
 
-    const response = await sql.query(query, [ownerId]);
+    const response = await sql.query(query, [userId]);
 
     const projects: Project[] = response.rows.map((row) => ({
       projectId: row.project_id,

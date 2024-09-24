@@ -9,6 +9,7 @@ import { getProjects } from "../database/project/GetProjects";
 
 // Types
 import { Project } from "../types/ProjectTypes";
+import { AppUser } from "../types/AppUser";
 
 // Hooks
 import { useState, useEffect } from "react";
@@ -18,47 +19,75 @@ import { useUser } from "@clerk/nextjs";
 import styles from "../styles/content.module.css";
 
 // Database
-import { insertUser } from "../database/user/InsertUser";
+import { insertAppUserWithThirdPartyId } from "../database/app-user/InsertAppUserWithThirdPartyId";
+import { updateAppUser } from "../database/app-user/UpdateAppUser";
+import { getAppUser } from "../database/app-user/GetAppUser";
 
 const DashboardPage = () => {
   const { user } = useUser();
   const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      if (user) {
-        const { id: userId } = user;
-        const projectsData = await getProjects({ ownerId: userId });
+    const fetchProjects = async (loggedUser?: AppUser) => {
+      if (!loggedUser && user) {
+        loggedUser = await getAppUser({
+          field: "user_third_party_id",
+          value: user.id,
+        });
+      }
+
+      if (loggedUser) {
+        const projectsData = await getProjects({ userId: loggedUser.userId });
         setProjects(projectsData ?? []);
       }
     };
 
-    const insertAppUser = async () => {
+    const insertUser = async () => {
+      let loggedUser;
+
       if (user) {
-        const { id: userId, fullName, primaryEmailAddress, createdAt } = user;
+        const {
+          id: userThirdPartyId,
+          fullName,
+          primaryEmailAddress,
+          createdAt,
+        } = user;
         const currentTime = new Date();
+        const emailAddress = primaryEmailAddress?.emailAddress ?? "";
         const timeDifference =
-          currentTime.getMilliseconds() - (createdAt?.getMilliseconds() ?? 0);
+          currentTime.getMilliseconds() -
+          new Date(createdAt ?? 0).getMilliseconds();
         const fiveMinutesInMilli = 5 * 60 * 1000;
 
-        // The user database storing check occurs within 5 minutes after user sign up
-        // It avoids the database check every time this page is loaded
         if (timeDifference < fiveMinutesInMilli) {
           try {
-            await insertUser({
-              userId: userId ?? "",
+            const addedUser = await insertAppUserWithThirdPartyId({
+              userThirdPartyId,
               userName: fullName ?? "",
-              userEmail: primaryEmailAddress?.emailAddress ?? "",
+              userEmail: emailAddress,
             });
+
+            loggedUser = addedUser;
+
+            if (!addedUser) {
+              const changedUser = await updateAppUser({
+                userEmail: emailAddress,
+                field: "user_third_party_id",
+                value: userThirdPartyId,
+              });
+
+              loggedUser = changedUser;
+            }
           } catch (error) {
             console.error("Error during sign-up process.", error);
           }
         }
       }
+
+      await fetchProjects(loggedUser);
     };
 
-    fetchProjects();
-    insertAppUser();
+    insertUser();
   }, [user]);
 
   if (!user) {

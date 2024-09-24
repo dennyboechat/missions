@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ProjectMenuItemsProps } from "../types/ProjectMenuItemsProps";
 
 // Hooks
-import { useUser } from "@clerk/nextjs";
+import { useAppUser } from "../../../lib/AppUserContext";
 import { useProject } from "../../../lib/ProjectContext";
 
 // Icons
@@ -22,10 +22,15 @@ export const ProjectMenuItems = ({
   projectId,
   activeMenuItem,
 }: ProjectMenuItemsProps) => {
-  const { user } = useUser();
+  const { appUser } = useAppUser();
   const { project } = useProject();
 
-  const isProjectEditable = project && project.ownerId === user?.id;
+  if (!appUser || !project) {
+    return null;
+  }
+
+  const { userId } = appUser;
+  const isProjectEditable = project.ownerId === userId;
   const projectPatientsIcon = <FontAwesomeIcon icon={faUserGroup} />;
   const projectUsersIcon = <FontAwesomeIcon icon={faUserLock} />;
   const projectIcon = <FontAwesomeIcon icon={faGear} />;

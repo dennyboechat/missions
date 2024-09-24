@@ -9,7 +9,7 @@ import { ContentHeader } from "../components/ContentHeader";
 import { insertProject } from "../database/project/InsertProject";
 
 // Hooks
-import { useUser } from "@clerk/nextjs";
+import { useAppUser } from "../lib/AppUserContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProject } from "../lib/ProjectContext";
@@ -22,14 +22,14 @@ import styles from "../styles/content.module.css";
 
 const ProjectNew = () => {
   const router = useRouter();
-  const { user } = useUser();
+  const { appUser } = useAppUser();
   const { setProject } = useProject();
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [isProjectNameInvalid, setIsProjectNameInvalid] = useState(false);
   const [isCreatingProject, setIsCreatingProject] = useState(false);
 
-  if (!user) {
+  if (!appUser) {
     return null;
   }
 
@@ -39,10 +39,12 @@ const ProjectNew = () => {
     setIsProjectNameInvalid(!isValidProject);
 
     if (isValidProject) {
+      const { userId } = appUser;
+
       const insertedProject = await insertProject({
         projectName: projectName,
         projectDescription: projectDescription,
-        ownerId: user.id,
+        ownerId: userId,
       });
 
       setProject(insertedProject);

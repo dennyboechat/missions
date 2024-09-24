@@ -6,32 +6,32 @@ import { sql } from "@vercel/postgres";
 // Types
 import { User } from "../../types/UserTypes";
 
-export const insertUser = async ({
-  userId,
-  userName,
+export const updateAppUser = async ({
   userEmail,
-}: User): Promise<User | undefined> => {
+  field,
+  value,
+}: {
+  userEmail: string;
+  field: string;
+  value: string | number | boolean;
+}): Promise<User | undefined> => {
   try {
     const query = `
-      INSERT INTO 
-        app_user (user_id, user_name, user_email) 
-      SELECT 
-        $1, $2, $3
+      UPDATE 
+        app_user
+      SET
+        ${field} = $1
       WHERE
-        NOT EXISTS (SELECT 1 FROM app_user WHERE user_id = $4)
+        user_email = $2
       RETURNING 
-        user_id, user_name, user_email
+        user_id, user_third_party_id, user_name, user_email
     `;
 
-    const response = await sql.query(query, [
-      userId,
-      userName,
-      userEmail,
-      userId,
-    ]);
+    const response = await sql.query(query, [value, userEmail]);
 
     const users: User[] = response.rows.map((row) => ({
       userId: row.user_id,
+      userThirdPartyId: row.user_third_party_id,
       userName: row.user_name,
       userEmail: row.user_email,
     }));
