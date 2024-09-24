@@ -25,6 +25,7 @@ import { insertPatientPersonal } from "../../database/patient-personal/InsertPat
 
 // Utils
 import { isValidPatientFullName } from "../../utils/isValidPatientFullName";
+import { isValidDate } from "../../utils/isValidDate";
 
 const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -63,7 +64,7 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
     const isValidPatientGender = isPatientMale !== undefined;
     setIsPatientGenderInvalid(!isValidPatientGender);
 
-    const isValidDateOfBirth = patientDateOfBirth !== undefined;
+    const isValidDateOfBirth = patientDateOfBirth !== undefined && isValidDate(patientDateOfBirth);
     setIsPatientDateOfBirthInvalid(!isValidDateOfBirth);
 
     if (isValidFullName && isValidPatientGender && isValidDateOfBirth) {

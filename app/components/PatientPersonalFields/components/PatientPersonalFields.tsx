@@ -19,6 +19,7 @@ import { usePopupMessage } from "../../../lib/PopupMessage";
 import { isValidFullName } from "../utils/isValidFullName";
 import { getFormattedDate } from "../../../utils/getFormattedDate";
 import { getCurrentDate } from "../../../utils/getCurrentDate";
+import { isValidDate } from "../../../utils/isValidDate";
 
 // Database
 import { updatePatientPersonal } from "../../../database/patient-personal/UpdatePatientPersonal";
@@ -119,6 +120,12 @@ export const PatientPersonalFields = ({
   };
 
   const onDateOfBirthChange = async () => {
+    const isValidDateOfBirth = isValidDate(dateOfBirth);
+
+    if (!isValidDateOfBirth) {
+      return;
+    }
+
     if (patientPersonalId) {
       const updatedPatientPerson = await updatePatientPersonal({
         patientPersonalId,
