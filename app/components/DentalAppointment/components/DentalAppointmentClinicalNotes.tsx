@@ -45,7 +45,7 @@ export const DentalAppointmentClinicalNotes = ({
           setMessage("Saved");
         } else {
           console.error(
-            `Could not update appointment notes by id ${patientDentistryId}`
+            `Could not update appointment by id ${patientDentistryId}`
           );
         }
       }

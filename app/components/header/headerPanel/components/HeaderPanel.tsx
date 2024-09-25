@@ -72,6 +72,7 @@ export const HeaderPanel = () => {
   } else {
     const patientLinks = [
       "/patient-personal/",
+      "/patient-general/",
       "/patient-dentistry/",
       "/patient-summary/",
       "/project-patient/",

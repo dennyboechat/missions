@@ -122,7 +122,7 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
       <Container className={styles.content}>
         <ContentHeader text="Dental" />
         <Button onClick={onCreateAppointment}>
-          {"Create appointment notes"}
+          {"Create appointment"}
         </Button>
         <Space height={20} />
         {lastestAppointment.patientDentistryId && (

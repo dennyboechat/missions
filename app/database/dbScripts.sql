@@ -77,6 +77,15 @@ CREATE TABLE IF NOT EXISTS patient_dentistry_prescribed_medication (
     CONSTRAINT fk_patient_dentistry_id FOREIGN KEY(patient_dentistry_id) REFERENCES patient_dentistry(patient_dentistry_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS patient_general (
+    patient_general_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    patient_personal_id UUID NOT NULL,
+    appointment_date DATE NOT NULL,
+    appointment_notes VARCHAR(2550),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
+);
+
 -- Clean up
 DROP TABLE IF EXISTS 
     patient_dentistry_prescribed_medication,

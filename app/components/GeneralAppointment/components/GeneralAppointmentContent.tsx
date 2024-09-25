@@ -4,31 +4,29 @@
 import { Tabs, Box, Text, Grid, Button, Popover } from "@radix-ui/themes";
 import { Space } from "../../ui/Space";
 import { PopupConfirmation } from "../../ui/PopupConfirmation";
-import { DentalAppointmentMap } from "../../DentalAppointmentMap";
-import { DentalAppointmentClinicalNotes } from "./DentalAppointmentClinicalNotes";
-import { DentalAppointmentMedicationPrescribed } from "./DentalAppointmentMedicationPrescribed";
+import { GeneralAppointmentClinicalNotes } from "./GeneralAppointmentClinicalNotes";
 
 // Types
-import { DentalAppointmentContentProps } from "../types/DentalAppointmentContentProps";
+import { GeneralAppointmentContentProps } from "../types/GeneralAppointmentContentProps";
 
 // Hooks
 import { useState } from "react";
 
 // Database
-import { deletePatientDentistry } from "../../../database/patient-dentistry/DeletePatientDentistry";
+import { deletePatientGeneral } from "../../../database/patient-general/DeletePatientGeneral";
 
-export const DentalAppointmentContent = ({
-  patientDentistry,
-  setPatientDentistries,
+export const GeneralAppointmentContent = ({
+  patientGeneral,
+  setPatientGeneral,
   afterDeleteAppointment,
-}: DentalAppointmentContentProps) => {
+}: GeneralAppointmentContentProps) => {
   const [isDeletingAppointment, setIsDeletingAppointment] = useState(false);
-  const { patientDentistryId } = patientDentistry;
+  const { patientGeneralId } = patientGeneral;
 
   const onDeleteAppointment = async () => {
     setIsDeletingAppointment(true);
 
-    await deletePatientDentistry({ patientDentistryId });
+    await deletePatientGeneral({ patientGeneralId });
 
     if (afterDeleteAppointment) {
       afterDeleteAppointment();
@@ -64,17 +62,11 @@ export const DentalAppointmentContent = ({
   );
 
   return (
-    <Tabs.Content key={patientDentistryId} value={patientDentistryId}>
+    <Tabs.Content key={patientGeneralId} value={patientGeneralId}>
       <Space height={50} />
-      <DentalAppointmentMap patientDentistryId={patientDentistryId} />
-      <Space height={50} />
-      <DentalAppointmentMedicationPrescribed
-        patientDentistryId={patientDentistryId}
-      />
-      <Space height={50} />
-      <DentalAppointmentClinicalNotes
-        patientDentistry={patientDentistry}
-        setPatientDentistries={setPatientDentistries}
+      <GeneralAppointmentClinicalNotes
+        patientGeneral={patientGeneral}
+        setPatientGeneral={setPatientGeneral}
       />
       <Space height={50} />
       <Grid width={{ initial: "auto", sm: "220px" }}>

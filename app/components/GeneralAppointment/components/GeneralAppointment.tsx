@@ -3,22 +3,22 @@
 // Components
 import { Tabs, Heading } from "@radix-ui/themes";
 import { TabNavigator } from "../../ui/TabNavigator";
-import { DentalAppointmentList } from "./DentalAppointmentList";
-import { DentalAppointmentContent } from "./DentalAppointmentContent";
+import { GeneralAppointmentList } from "./GeneralAppointmentList";
+import { GeneralAppointmentContent } from "./GeneralAppointmentContent";
 
 // Types
-import { DentalAppointmentProps } from "../types/DentalAppointmentProps";
+import { GeneralAppointmentProps } from "../types/GeneralAppointmentProps";
 import { ReactElement } from "react";
 
 // Hooks
 import { useState, useEffect } from "react";
 
-export const DentalAppointment = ({
-  patientDentistries,
-  setPatientDentistries,
+export const GeneralAppointment = ({
+  patientGeneral,
+  setPatientGeneral,
   defaultActiveTab,
   afterDeleteAppointment,
-}: DentalAppointmentProps) => {
+}: GeneralAppointmentProps) => {
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
   useEffect(() => {
@@ -28,21 +28,21 @@ export const DentalAppointment = ({
   const tabList: ReactElement[] = [];
   const tabContent: ReactElement[] = [];
 
-  patientDentistries.map((patientDentistry) => {
-    const { patientDentistryId } = patientDentistry;
+  patientGeneral.map((patientGeneral) => {
+    const { patientGeneralId } = patientGeneral;
 
     tabList.push(
-      <DentalAppointmentList
-        key={patientDentistryId}
-        patientDentistry={patientDentistry}
+      <GeneralAppointmentList
+        key={patientGeneralId}
+        patientGeneral={patientGeneral}
       />
     );
 
     tabContent.push(
-      <DentalAppointmentContent
-        key={patientDentistryId}
-        patientDentistry={patientDentistry}
-        setPatientDentistries={setPatientDentistries}
+      <GeneralAppointmentContent
+        key={patientGeneralId}
+        patientGeneral={patientGeneral}
+        setPatientGeneral={setPatientGeneral}
         afterDeleteAppointment={afterDeleteAppointment}
       />
     );
@@ -50,7 +50,7 @@ export const DentalAppointment = ({
 
   return (
     <>
-      <Heading size="3">{"Existing appointment"}</Heading>
+      <Heading size="3">{"Existing appointments"}</Heading>
       <TabNavigator activeTab={activeTab} setActiveTab={setActiveTab}>
         <Tabs.List>{tabList}</Tabs.List>
         {tabContent}
