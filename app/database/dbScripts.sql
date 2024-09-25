@@ -86,8 +86,21 @@ CREATE TABLE IF NOT EXISTS patient_general (
     CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS patient_general_prescribed_medication (
+    patient_general_prescribed_medication_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    patient_general_id UUID NOT NULL,
+    drug_name VARCHAR(255) NOT NULL,
+    dose VARCHAR(255),
+    quantity INTEGER,
+    instructions_usage VARCHAR(510),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_patient_general_id FOREIGN KEY(patient_general_id) REFERENCES patient_general(patient_general_id) ON DELETE CASCADE
+);
+
 -- Clean up
 DROP TABLE IF EXISTS 
+    patient_general_prescribed_medication,
+    patient_general,
     patient_dentistry_prescribed_medication,
     patient_dentistry_tooth,
     tooth_status,
