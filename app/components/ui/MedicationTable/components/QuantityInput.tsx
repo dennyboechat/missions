@@ -8,9 +8,6 @@ import { QuantityProps } from "../types/QuantityProps";
 import { Medication } from "../../../../types/Medication";
 import { FocusEvent } from "react";
 
-// Database
-import { updatePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/UpdatePatientDentistryMedication";
-
 // Hooks
 import { usePopupMessage } from "../../../../lib/PopupMessage";
 
@@ -19,6 +16,7 @@ export const QuantityInput = ({
   quantity,
   medicationUid,
   setMedications,
+  updateMedication,
 }: QuantityProps) => {
   const { setMessage } = usePopupMessage();
 
@@ -39,11 +37,11 @@ export const QuantityInput = ({
       )
     );
 
-    const updatedPatientMedication = await updatePatientDentistryMedication({
-      patientDentistryPrescribedMedicationId: medicationUid,
-      field: "quantity",
-      value,
-    });
+    const updatedPatientMedication = await updateMedication(
+      medicationUid,
+      "quantity",
+      value
+    );
 
     if (updatedPatientMedication && setMessage) {
       setMessage("Saved");

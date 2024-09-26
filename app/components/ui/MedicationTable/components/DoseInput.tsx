@@ -8,9 +8,6 @@ import { DoseProps } from "../types/DoseProps";
 import { Medication } from "../../../../types/Medication";
 import { FocusEvent } from "react";
 
-// Database
-import { updatePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/UpdatePatientDentistryMedication";
-
 // Hooks
 import { usePopupMessage } from "../../../../lib/PopupMessage";
 
@@ -19,6 +16,7 @@ export const DoseInput = ({
   dose,
   medicationUid,
   setMedications,
+  updateMedication,
 }: DoseProps) => {
   const { setMessage } = usePopupMessage();
 
@@ -37,16 +35,23 @@ export const DoseInput = ({
       )
     );
 
-    const updatedPatientMedication = await updatePatientDentistryMedication({
-      patientDentistryPrescribedMedicationId: medicationUid,
-      field: "dose",
-      value,
-    });
+    const updatedPatientMedication = await updateMedication(
+      medicationUid,
+      "dose",
+      value
+    );
 
     if (updatedPatientMedication && setMessage) {
       setMessage("Saved");
     }
   };
 
-  return <TextField.Root defaultValue={dose} maxLength={255} onBlur={handleBlur} readOnly={!drug} />;
+  return (
+    <TextField.Root
+      defaultValue={dose}
+      maxLength={255}
+      onBlur={handleBlur}
+      readOnly={!drug}
+    />
+  );
 };

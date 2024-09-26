@@ -8,9 +8,6 @@ import { InstructionsProps } from "../types/InstructionsProps";
 import { Medication } from "../../../../types/Medication";
 import { FocusEvent } from "react";
 
-// Database
-import { updatePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/UpdatePatientDentistryMedication";
-
 // Hooks
 import { usePopupMessage } from "../../../../lib/PopupMessage";
 
@@ -19,6 +16,7 @@ export const InstructionsInput = ({
   instructions,
   medicationUid,
   setMedications,
+  updateMedication,
 }: InstructionsProps) => {
   const { setMessage } = usePopupMessage();
 
@@ -37,11 +35,11 @@ export const InstructionsInput = ({
       )
     );
 
-    const updatedPatientMedication = await updatePatientDentistryMedication({
-      patientDentistryPrescribedMedicationId: medicationUid,
-      field: "instructions_usage",
-      value,
-    });
+    const updatedPatientMedication = await updateMedication(
+      medicationUid,
+      "instructions_usage",
+      value
+    );
 
     if (updatedPatientMedication && setMessage) {
       setMessage("Saved");
@@ -49,6 +47,11 @@ export const InstructionsInput = ({
   };
 
   return (
-    <TextField.Root defaultValue={instructions} maxLength={510} onBlur={handleBlur} readOnly={!drug} />
+    <TextField.Root
+      defaultValue={instructions}
+      maxLength={510}
+      onBlur={handleBlur}
+      readOnly={!drug}
+    />
   );
 };

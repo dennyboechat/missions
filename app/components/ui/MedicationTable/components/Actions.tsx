@@ -11,9 +11,6 @@ import { Medication } from "../../../../types/Medication";
 // Icons
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
 
-// Database
-import { deletePatientDentistryMedication } from "../../../../database/patient-dentistry-medication/DeletePatientDentistryMedication";
-
 // Hooks
 import { usePopupMessage } from "../../../../lib/PopupMessage";
 
@@ -21,6 +18,7 @@ export const Actions = ({
   medicationUid,
   drug,
   setMedications,
+  deleteMedication
 }: ActionsProps) => {
   const { setMessage } = usePopupMessage();
 
@@ -35,9 +33,7 @@ export const Actions = ({
       )
     );
 
-    await deletePatientDentistryMedication({
-      patientDentistryPrescribedMedicationId: medicationUid,
-    });
+    await deleteMedication(medicationUid);
 
     if (setMessage) {
       setMessage("Saved");

@@ -11,20 +11,12 @@ import { getNewMedicationRecord } from "../utils/getNewMedicationRecord";
 import { DrugSelectorProps } from "../types/DrugSelectorProps";
 import { FocusEvent } from "react";
 
-// Database
-import { insertPatientDentistryMedication } from "../../../../database/patient-dentistry-medication/InsertPatientDentistryMedication";
-
-// Hooks
-import { usePopupMessage } from "../../../../lib/PopupMessage";
-
 export const DrugSelector = ({
-  patientDentistryId,
   drug,
   medications,
   setMedications,
+  insertMedication,
 }: DrugSelectorProps) => {
-  const { setMessage } = usePopupMessage();
-
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     if (drug) {
       return;
@@ -33,29 +25,7 @@ export const DrugSelector = ({
     const updatedMedications = [...medications];
 
     if (medication) {
-      const insertedMedication = await insertPatientDentistryMedication({
-        patientDentistryId,
-        medication: {
-          drug: medication,
-        },
-      });
-
-      if (insertedMedication) {
-        const lastIndex = updatedMedications.length - 1;
-        updatedMedications[lastIndex] = {
-          ...updatedMedications[lastIndex],
-          drug: medication,
-          medicationUid:
-            insertedMedication.patientDentistryPrescribedMedicationId,
-        };
-
-        if (setMessage) {
-          setMessage("Saved");
-        }
-      } else {
-        console.error("Error to insert drug to dental prescribed medications.");
-      }
-
+      await insertMedication(medication, updatedMedications);
       updatedMedications.push(getNewMedicationRecord());
     }
 

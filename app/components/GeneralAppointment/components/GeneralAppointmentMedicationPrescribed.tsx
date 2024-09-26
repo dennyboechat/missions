@@ -6,7 +6,7 @@ import { MedicationTable } from "../../ui/MedicationTable";
 
 // Types
 import { Medication } from "../../../types/Medication";
-import { PatientDentistryId } from "../../../types/PatientDentistryTypes";
+import { PatientGeneralId } from "../../../types/PatientGeneralTypes";
 
 // Hooks
 import { useState, useEffect } from "react";
@@ -17,32 +17,32 @@ import { getNewMedicationRecord } from "../../ui/MedicationTable/utils/getNewMed
 import { generateUID } from "../../../utils/generateUID";
 
 // Database
-import { getPatientDentistryMedications } from "../../../database/patient-dentistry-medication/GetPatientDentistryMedications";
-import { insertPatientDentistryMedication } from "../../../database/patient-dentistry-medication/InsertPatientDentistryMedication";
-import { updatePatientDentistryMedication } from "../../../database/patient-dentistry-medication/UpdatePatientDentistryMedication";
-import { deletePatientDentistryMedication } from "../../../database/patient-dentistry-medication/DeletePatientDentistryMedication";
+import { getPatientGeneralMedications } from "../../../database/patient-general-medication/GetPatientGeneralMedications";
+import { insertPatientGeneralMedication } from "../../../database/patient-general-medication/InsertPatientGeneralMedication";
+import { updatePatientGeneralMedication } from "../../../database/patient-general-medication/UpdatePatientGeneralMedication";
+import { deletePatientGeneralMedication } from "../../../database/patient-general-medication/DeletePatientGeneralMedication";
 
-export const DentalAppointmentMedicationPrescribed = ({
-  patientDentistryId,
+export const GeneralAppointmentMedicationPrescribed = ({
+  patientGeneralId,
 }: {
-  patientDentistryId: PatientDentistryId;
+  patientGeneralId: PatientGeneralId;
 }) => {
   const { setMessage } = usePopupMessage();
   const [medications, setMedications] = useState<Medication[]>([]);
 
   useEffect(() => {
     const updatePatientMedications = async () => {
-      if (patientDentistryId) {
-        const dentistryMedications = await getPatientDentistryMedications({
-          patientDentistryId,
+      if (patientGeneralId) {
+        const generalMedications = await getPatientGeneralMedications({
+          patientGeneralId,
         });
 
-        if (dentistryMedications) {
+        if (generalMedications) {
           const retrievedMedications: Medication[] = [];
 
-          dentistryMedications.map(
+          generalMedications.map(
             ({
-              patientDentistryPrescribedMedicationId,
+              patientGeneralPrescribedMedicationId,
               drug,
               dose,
               quantity,
@@ -50,7 +50,7 @@ export const DentalAppointmentMedicationPrescribed = ({
             }) => {
               retrievedMedications.push({
                 rowId: generateUID(),
-                medicationUid: patientDentistryPrescribedMedicationId,
+                medicationUid: patientGeneralPrescribedMedicationId,
                 drug,
                 dose,
                 quantity,
@@ -63,21 +63,21 @@ export const DentalAppointmentMedicationPrescribed = ({
           setMedications(retrievedMedications);
         } else {
           console.log(
-            `Error to get patient dentistry medications with id ${patientDentistryId}`
+            `Error to get patient general medications with id ${patientGeneralId}`
           );
         }
       }
     };
 
     updatePatientMedications();
-  }, [patientDentistryId]);
+  }, [patientGeneralId]);
 
   const insertMedication = async (
     drug: string,
     updatedMedications: Medication[]
   ) => {
-    const insertedMedication = await insertPatientDentistryMedication({
-      patientDentistryId,
+    const insertedMedication = await insertPatientGeneralMedication({
+      patientGeneralId,
       medication: {
         drug,
       },
@@ -88,8 +88,7 @@ export const DentalAppointmentMedicationPrescribed = ({
       updatedMedications[lastIndex] = {
         ...updatedMedications[lastIndex],
         drug,
-        medicationUid:
-          insertedMedication.patientDentistryPrescribedMedicationId,
+        medicationUid: insertedMedication.patientGeneralPrescribedMedicationId,
       };
 
       if (setMessage) {
@@ -105,22 +104,22 @@ export const DentalAppointmentMedicationPrescribed = ({
     field: "drug" | "dose" | "quantity" | "instructions_usage",
     value?: string | number
   ) => {
-    return await updatePatientDentistryMedication({
-      patientDentistryPrescribedMedicationId: medicationUid,
+    return await updatePatientGeneralMedication({
+      patientGeneralPrescribedMedicationId: medicationUid,
       field,
       value,
     });
   };
 
   const deleteMedication = async (medicationUid: string) => {
-    await deletePatientDentistryMedication({
-      patientDentistryPrescribedMedicationId: medicationUid,
+    await deletePatientGeneralMedication({
+      patientGeneralPrescribedMedicationId: medicationUid,
     });
   };
 
   return (
     <Box>
-      <Text>{"Prescribed medication by the dentist"}</Text>
+      <Text>{"Prescribed medication by the doctor"}</Text>
       <MedicationTable
         medications={medications}
         setMedications={setMedications}

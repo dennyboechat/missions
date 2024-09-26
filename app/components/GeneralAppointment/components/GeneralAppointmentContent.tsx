@@ -5,6 +5,7 @@ import { Tabs, Box, Text, Grid, Button, Popover } from "@radix-ui/themes";
 import { Space } from "../../ui/Space";
 import { PopupConfirmation } from "../../ui/PopupConfirmation";
 import { GeneralAppointmentClinicalNotes } from "./GeneralAppointmentClinicalNotes";
+import { GeneralAppointmentMedicationPrescribed } from "./GeneralAppointmentMedicationPrescribed";
 
 // Types
 import { GeneralAppointmentContentProps } from "../types/GeneralAppointmentContentProps";
@@ -63,6 +64,10 @@ export const GeneralAppointmentContent = ({
 
   return (
     <Tabs.Content key={patientGeneralId} value={patientGeneralId}>
+      <Space height={50} />
+      <GeneralAppointmentMedicationPrescribed
+        patientGeneralId={patientGeneralId}
+      />
       <Space height={50} />
       <GeneralAppointmentClinicalNotes
         patientGeneral={patientGeneral}
