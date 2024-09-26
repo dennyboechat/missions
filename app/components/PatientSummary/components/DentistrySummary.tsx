@@ -82,44 +82,54 @@ export const DentistrySummary = ({
               })}
             </Text>
             <Space height={3} />
-            <div className={styles.summary_teeth}>
-              <Text>{"Teeth treated: "}</Text>
-              {treatedTeeth.length > 0 ? (
-                treatedTeeth.map((tooth) =>
-                  tooth ? (
-                    <ToothButton
-                      key={tooth}
-                      id={tooth}
-                      toothDetails={{ toothStatus: ToothStatus.TREATED }}
-                      ignoreAbsolutePosition
-                    />
-                  ) : null
-                )
-              ) : (
-                <Text className={styles.italic}>{"none"}</Text>
-              )}
-            </div>
-            <Space />
-            <div className={styles.summary_teeth}>
-              <Text>{"Teeth extracted: "}</Text>
-              {extractedTeeth.length > 0 ? (
-                extractedTeeth.map((tooth) =>
-                  tooth ? (
-                    <ToothButton
-                      key={tooth}
-                      id={tooth}
-                      toothDetails={{ toothStatus: ToothStatus.EXTRACTED }}
-                      ignoreAbsolutePosition
-                    />
-                  ) : null
-                )
-              ) : (
-                <Text className={styles.italic}>{"none"}</Text>
-              )}
+            <div className={styles.summary_margin}>
+              <div>
+                <Text>{"Teeth treated: "}</Text>
+              </div>
+              <div className={styles.summary_teeth}>
+                {treatedTeeth.length > 0 ? (
+                  treatedTeeth.map((tooth) =>
+                    tooth ? (
+                      <ToothButton
+                        key={tooth}
+                        id={tooth}
+                        toothDetails={{ toothStatus: ToothStatus.TREATED }}
+                        ignoreAbsolutePosition
+                      />
+                    ) : null
+                  )
+                ) : (
+                  <Text className={styles.italic}>{"none"}</Text>
+                )}
+              </div>
             </div>
             <Space />
             <div className={styles.summary_margin}>
-              <Text>{"Prescribed medication: "}</Text>
+              <div>
+                <Text>{"Teeth extracted: "}</Text>
+              </div>
+              <div className={styles.summary_teeth}>
+                {extractedTeeth.length > 0 ? (
+                  extractedTeeth.map((tooth) =>
+                    tooth ? (
+                      <ToothButton
+                        key={tooth}
+                        id={tooth}
+                        toothDetails={{ toothStatus: ToothStatus.EXTRACTED }}
+                        ignoreAbsolutePosition
+                      />
+                    ) : null
+                  )
+                ) : (
+                  <Text className={styles.italic}>{"none"}</Text>
+                )}
+              </div>
+            </div>
+            <Space />
+            <div className={styles.summary_margin}>
+              <div>
+                <Text>{"Prescribed medication by the dentist: "}</Text>
+              </div>
               {prescribedMedication.length > 0 ? (
                 <Grid
                   columns="30fr 10fr 10fr 50fr"
@@ -150,7 +160,9 @@ export const DentistrySummary = ({
                   )}
                 </Grid>
               ) : (
-                <Text className={styles.italic}>{"none"}</Text>
+                <div className={styles.summary_margin}>
+                  <Text className={styles.italic}>{"none"}</Text>
+                </div>
               )}
             </div>
             <Space />

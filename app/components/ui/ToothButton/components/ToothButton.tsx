@@ -46,7 +46,11 @@ export const ToothButton = ({
   return (
     <Button
       id={id}
-      className={`${styles.tooth_button} ${toothButtonPositionClassname} ${selectedToothClassname}`}
+      className={`${
+        styles.tooth_button
+      } ${toothButtonPositionClassname} ${selectedToothClassname} ${
+        onClickTooth ? "" : styles.non_clickable
+      }`}
       style={{ top, left }}
       color={color}
       variant={variant}

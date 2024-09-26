@@ -75,7 +75,9 @@ export const GeneralSummary = ({
             </Text>
             <Space />
             <div className={styles.summary_margin}>
-              <Text>{"Prescribed medication: "}</Text>
+              <div>
+                <Text>{"Prescribed medication by the doctor: "}</Text>
+              </div>
               {prescribedMedication.length > 0 ? (
                 <Grid
                   columns="30fr 10fr 10fr 50fr"
@@ -106,7 +108,9 @@ export const GeneralSummary = ({
                   )}
                 </Grid>
               ) : (
-                <Text className={styles.italic}>{"none"}</Text>
+                <div className={styles.summary_margin}>
+                  <Text className={styles.italic}>{"none"}</Text>
+                </div>
               )}
             </div>
             <Space />
