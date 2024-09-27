@@ -76,7 +76,7 @@ export const GeneralSummary = ({
             <Space />
             <div className={styles.summary_margin}>
               <div>
-                <Text>{"Prescribed medication by the doctor: "}</Text>
+                <Text>{"Prescribed medication by the doctor:"}</Text>
               </div>
               {prescribedMedication.length > 0 ? (
                 <Grid

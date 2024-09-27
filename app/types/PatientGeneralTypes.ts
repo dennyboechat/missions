@@ -14,6 +14,8 @@ export interface PatientGeneralTypes {
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
   patientDateOfBirth: Date;
+  patientHeight?: number;
+  patientWeight?: number;
 }
 
 export interface PatientGeneral {
@@ -26,5 +28,5 @@ export interface PatientGeneral {
 export interface UpdatePatientGeneral {
   patientGeneralId: PatientGeneralId;
   field: string;
-  value: string | boolean;
+  value?: string | number | boolean;
 }

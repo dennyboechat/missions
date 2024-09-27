@@ -17,6 +17,8 @@ export const getPatientGeneralSummary = async ({
       SELECT 
         patient_general.patient_general_id,
         appointment_date,
+        patient_height,
+        patient_weight,
         patient_general_prescribed_medication_id,
         drug_name,
         dose,
@@ -39,6 +41,8 @@ export const getPatientGeneralSummary = async ({
       (row) => ({
         patientGeneralId: row.patient_general_id,
         appointmentDate: row.appointment_date,
+        patientHeight: row.patient_height,
+        patientWeight: row.patient_weight,
         patientGeneralPrescribedMedicationId:
           row.patient_general_prescribed_medication_id,
         drug: row.drug_name,

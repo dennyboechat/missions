@@ -128,7 +128,7 @@ export const DentistrySummary = ({
             <Space />
             <div className={styles.summary_margin}>
               <div>
-                <Text>{"Prescribed medication by the dentist: "}</Text>
+                <Text>{"Prescribed medication by the dentist:"}</Text>
               </div>
               {prescribedMedication.length > 0 ? (
                 <Grid

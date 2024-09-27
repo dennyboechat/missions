@@ -120,7 +120,7 @@ export const DentalAppointmentMedicationPrescribed = ({
 
   return (
     <Box>
-      <Text>{"Prescribed medication by the dentist"}</Text>
+      <Text>{"Prescribed medication by the dentist:"}</Text>
       <MedicationTable
         medications={medications}
         setMedications={setMedications}

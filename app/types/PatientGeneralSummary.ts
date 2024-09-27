@@ -6,6 +6,8 @@ import { PatientGeneralPrescribedMedicationId } from "./GeneralPrescribedMedicat
 export interface PatientGeneralSummary {
   patientGeneralId: PatientGeneralId;
   appointmentDate: Date;
+  patientHeight: number;
+  patientWeight: number;
   patientGeneralPrescribedMedicationId: PatientGeneralPrescribedMedicationId;
   drug: Drug;
   dose: Dose;

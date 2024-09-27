@@ -18,6 +18,9 @@ export const InputTextField = ({
   required,
   errorMessage,
   onBlur,
+  type='text',
+  max,
+  min,
 }: InputTextFieldProps) => (
   <Grid>
     <Text>{`${label}${required ? " *" : ""}`}</Text>
@@ -28,6 +31,9 @@ export const InputTextField = ({
       maxLength={maxLength}
       autoFocus={autoFocus}
       required={required}
+      type={type}
+      max={max}
+      min={min}
     />
     <Container height="25px">
       <Text className={styles.required_field}>{errorMessage}</Text>

@@ -119,7 +119,7 @@ export const GeneralAppointmentMedicationPrescribed = ({
 
   return (
     <Box>
-      <Text>{"Prescribed medication by the doctor"}</Text>
+      <Text>{"Prescribed medication by the doctor:"}</Text>
       <MedicationTable
         medications={medications}
         setMedications={setMedications}
