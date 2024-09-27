@@ -10,4 +10,6 @@ export interface InputTextFieldProps {
   type?: 'text' | 'number';
   max?: number;
   min?: number;
+  prefix?: string;
+  suffix?: string;
 }

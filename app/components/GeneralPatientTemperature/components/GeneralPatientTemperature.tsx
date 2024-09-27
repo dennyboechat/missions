@@ -5,7 +5,7 @@ import { InputTextField } from "../../ui/InputTextField";
 
 // Types
 import { FocusEvent } from "react";
-import { GeneralPatientWeightProps } from "../types/GeneralPatientWeightProps";
+import { GeneralPatientTemperatureProps } from "../types/GeneralPatientTemperatureProps";
 
 // Hooks
 import { usePopupMessage } from "../../../lib/PopupMessage";
@@ -15,31 +15,33 @@ import { useState } from "react";
 import { updatePatientGeneral } from "../../../database/patient-general/UpdatePatientGeneral";
 
 // Utils
-import { isPatientWeightValid } from "../utils/isPatientWeightValid";
+import { isPatientTemperatureValid } from "../utils/isPatientTemperatureValid";
 
-export const GeneralPatientWeight = ({
+export const GeneralPatientTemperature = ({
   patientGeneralId,
-  patientWeight,
-}: GeneralPatientWeightProps) => {
+  patientTemperature,
+}: GeneralPatientTemperatureProps) => {
   const { setMessage } = usePopupMessage();
-  const [isWeightInvalid, setIsWeightInvalid] = useState(false);
+  const [isTemperatureInvalid, setIsTemperatureInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const value = rawValue === "" ? undefined : Number(rawValue);
-    const previousQuantity = patientWeight ? Number(patientWeight) : undefined;
+    const previousQuantity = patientTemperature
+      ? Number(patientTemperature)
+      : undefined;
 
     if (previousQuantity === value) {
       return;
     }
 
-    const isWeightValid = !value || isPatientWeightValid(value);
-    setIsWeightInvalid(!isWeightValid);
+    const isTemperatureValid = !value || isPatientTemperatureValid(value);
+    setIsTemperatureInvalid(!isTemperatureValid);
 
-    if (isWeightValid) {
+    if (isTemperatureValid) {
       const updatedPatientGeneral = await updatePatientGeneral({
         patientGeneralId,
-        field: "patient_weight",
+        field: "patient_temperature",
         value,
       });
 
@@ -51,15 +53,15 @@ export const GeneralPatientWeight = ({
 
   return (
     <InputTextField
-      label="Patient weight (in kg)"
-      value={patientWeight}
+      label="Patient temperature (in °C)"
+      value={patientTemperature}
       onBlur={handleBlur}
       type="number"
-      placeholder="60"
-      max={180}
-      min={0}
-      errorMessage={isWeightInvalid ? "Invalid" : ""}
-      suffix="kg"
+      placeholder="36.5"
+      max={44}
+      min={34}
+      errorMessage={isTemperatureInvalid ? "Invalid" : ""}
+      suffix="°C"
     />
   );
 };

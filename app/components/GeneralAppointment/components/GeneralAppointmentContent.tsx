@@ -8,6 +8,7 @@ import { GeneralAppointmentClinicalNotes } from "./GeneralAppointmentClinicalNot
 import { GeneralAppointmentMedicationPrescribed } from "./GeneralAppointmentMedicationPrescribed";
 import { GeneralPatientHeight } from "../../GeneralPatientHeight";
 import { GeneralPatientWeight } from "../../GeneralPatientWeight";
+import { GeneralPatientTemperature } from "../../GeneralPatientTemperature";
 
 // Types
 import { GeneralAppointmentContentProps } from "../types/GeneralAppointmentContentProps";
@@ -24,7 +25,8 @@ export const GeneralAppointmentContent = ({
   afterDeleteAppointment,
 }: GeneralAppointmentContentProps) => {
   const [isDeletingAppointment, setIsDeletingAppointment] = useState(false);
-  const { patientGeneralId, patientHeight, patientWeight } = patientGeneral;
+  const { patientGeneralId, patientHeight, patientWeight, patientTemperature } =
+    patientGeneral;
 
   const onDeleteAppointment = async () => {
     setIsDeletingAppointment(true);
@@ -75,6 +77,12 @@ export const GeneralAppointmentContent = ({
         <GeneralPatientWeight
           patientGeneralId={patientGeneralId}
           patientWeight={patientWeight}
+        />
+      </Grid>
+      <Grid columns={{ initial: "1", sm: "2" }} gap="2">
+        <GeneralPatientTemperature
+          patientGeneralId={patientGeneralId}
+          patientTemperature={patientTemperature}
         />
       </Grid>
       <Space height={50} />

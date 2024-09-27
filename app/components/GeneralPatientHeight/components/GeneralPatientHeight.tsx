@@ -33,7 +33,7 @@ export const GeneralPatientHeight = ({
       return;
     }
 
-    const isHeightValid = value && isPatientHeightValid(value);
+    const isHeightValid = !value || isPatientHeightValid(value);
     setIsHeightInvalid(!isHeightValid);
 
     if (isHeightValid) {
@@ -60,6 +60,7 @@ export const GeneralPatientHeight = ({
       max={220}
       min={0}
       errorMessage={isHeightInvalid ? "Invalid" : ""}
+      suffix="cm"
     />
   );
 };

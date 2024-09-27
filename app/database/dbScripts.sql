@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS patient_general (
     appointment_notes VARCHAR(2550),
     patient_height INTEGER,
     patient_weight INTEGER,
+    patient_temperature NUMERIC(5, 2),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
 );

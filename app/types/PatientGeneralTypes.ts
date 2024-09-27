@@ -16,6 +16,7 @@ export interface PatientGeneralTypes {
   patientDateOfBirth: Date;
   patientHeight?: number;
   patientWeight?: number;
+  patientTemperature?: number;
 }
 
 export interface PatientGeneral {

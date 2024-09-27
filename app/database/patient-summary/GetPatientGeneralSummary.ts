@@ -19,6 +19,7 @@ export const getPatientGeneralSummary = async ({
         appointment_date,
         patient_height,
         patient_weight,
+        patient_temperature,
         patient_general_prescribed_medication_id,
         drug_name,
         dose,
@@ -43,6 +44,7 @@ export const getPatientGeneralSummary = async ({
         appointmentDate: row.appointment_date,
         patientHeight: row.patient_height,
         patientWeight: row.patient_weight,
+        patientTemperature: row.patient_temperature,
         patientGeneralPrescribedMedicationId:
           row.patient_general_prescribed_medication_id,
         drug: row.drug_name,
