@@ -3,6 +3,7 @@
 // Components
 import { Box, Text } from "@radix-ui/themes";
 import { MedicationTable } from "../../ui/MedicationTable";
+import { Space } from "../../ui/Space";
 
 // Types
 import { Medication } from "../../../types/Medication";
@@ -121,6 +122,7 @@ export const DentalAppointmentMedicationPrescribed = ({
   return (
     <Box>
       <Text>{"Prescribed medication by the dentist:"}</Text>
+      <Space height={3} />
       <MedicationTable
         medications={medications}
         setMedications={setMedications}

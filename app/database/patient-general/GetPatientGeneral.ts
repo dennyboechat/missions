@@ -42,6 +42,9 @@ export const getPatientGeneral = async ({
       patientHeight: row.patient_height,
       patientWeight: row.patient_weight,
       patientTemperature: row.patient_temperature,
+      patientBloodGlucose: row.patient_blood_glucose,
+      patientPulse: row.patient_pulse,
+      patientOxygenSaturation: row.patient_oxygen_saturation,
     }));
 
     return patientGeneral;

@@ -85,6 +85,9 @@ CREATE TABLE IF NOT EXISTS patient_general (
     patient_height INTEGER,
     patient_weight INTEGER,
     patient_temperature NUMERIC(5, 2),
+    patient_blood_glucose INTEGER,
+    patient_pulse INTEGER,
+    patient_oxygen_saturation INTEGER,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
 );

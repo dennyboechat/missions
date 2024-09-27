@@ -17,6 +17,9 @@ export interface PatientGeneralTypes {
   patientHeight?: number;
   patientWeight?: number;
   patientTemperature?: number;
+  patientBloodGlucose?: number;
+  patientPulse?: number;
+  patientOxygenSaturation?: number;
 }
 
 export interface PatientGeneral {

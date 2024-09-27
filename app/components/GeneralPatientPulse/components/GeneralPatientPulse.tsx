@@ -5,7 +5,7 @@ import { InputTextField } from "../../ui/InputTextField";
 
 // Types
 import { FocusEvent } from "react";
-import { GeneralPatientWeightProps } from "../types/GeneralPatientWeightProps";
+import { GeneralPatientPulseProps } from "../types/GeneralPatientPulseProps";
 
 // Hooks
 import { usePopupMessage } from "../../../lib/PopupMessage";
@@ -15,31 +15,33 @@ import { useState } from "react";
 import { updatePatientGeneral } from "../../../database/patient-general/UpdatePatientGeneral";
 
 // Utils
-import { isPatientWeightValid } from "../utils/isPatientWeightValid";
+import { isPatientPulseValid } from "../utils/isPatientPulseValid";
 
-export const GeneralPatientWeight = ({
+export const GeneralPatientPulse = ({
   patientGeneralId,
-  patientWeight,
-}: GeneralPatientWeightProps) => {
+  patientPulse,
+}: GeneralPatientPulseProps) => {
   const { setMessage } = usePopupMessage();
-  const [isWeightInvalid, setIsWeightInvalid] = useState(false);
+  const [isPulseInvalid, setIsPulseInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const value = rawValue === "" ? undefined : Number(rawValue);
-    const previousQuantity = patientWeight ? Number(patientWeight) : undefined;
+    const previousQuantity = patientPulse
+      ? Number(patientPulse)
+      : undefined;
 
     if (previousQuantity === value) {
       return;
     }
 
-    const isWeightValid = !value || isPatientWeightValid(value);
-    setIsWeightInvalid(!isWeightValid);
+    const isPulseValid = !value || isPatientPulseValid(value);
+    setIsPulseInvalid(!isPulseValid);
 
-    if (isWeightValid) {
+    if (isPulseValid) {
       const updatedPatientGeneral = await updatePatientGeneral({
         patientGeneralId,
-        field: "patient_weight",
+        field: "patient_pulse",
         value,
       });
 
@@ -51,14 +53,14 @@ export const GeneralPatientWeight = ({
 
   return (
     <InputTextField
-      label="Weight (in kg)"
-      value={patientWeight}
+      label="Pulse (in bpm)"
+      value={patientPulse}
       onBlur={handleBlur}
       type="number"
-      max={180}
-      min={0}
-      errorMessage={isWeightInvalid ? "Invalid" : ""}
-      suffix="kg"
+      max={220}
+      min={30}
+      errorMessage={isPulseInvalid ? "Invalid" : ""}
+      suffix="bpm"
     />
   );
 };

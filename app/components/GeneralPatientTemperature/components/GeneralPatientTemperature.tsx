@@ -53,11 +53,10 @@ export const GeneralPatientTemperature = ({
 
   return (
     <InputTextField
-      label="Patient temperature (in °C)"
+      label="Temperature (in °C)"
       value={patientTemperature}
       onBlur={handleBlur}
       type="number"
-      placeholder="36.5"
       max={44}
       min={34}
       errorMessage={isTemperatureInvalid ? "Invalid" : ""}

@@ -5,7 +5,7 @@ import { InputTextField } from "../../ui/InputTextField";
 
 // Types
 import { FocusEvent } from "react";
-import { GeneralPatientWeightProps } from "../types/GeneralPatientWeightProps";
+import { GeneralPatientOxygenSaturationProps } from "../types/GeneralPatientOxygenSaturationProps";
 
 // Hooks
 import { usePopupMessage } from "../../../lib/PopupMessage";
@@ -15,31 +15,33 @@ import { useState } from "react";
 import { updatePatientGeneral } from "../../../database/patient-general/UpdatePatientGeneral";
 
 // Utils
-import { isPatientWeightValid } from "../utils/isPatientWeightValid";
+import { isPatientOxygenSaturationValid } from "../utils/isPatientOxygenSaturationValid";
 
-export const GeneralPatientWeight = ({
+export const GeneralPatientOxygenSaturation = ({
   patientGeneralId,
-  patientWeight,
-}: GeneralPatientWeightProps) => {
+  patientOxygenSaturation,
+}: GeneralPatientOxygenSaturationProps) => {
   const { setMessage } = usePopupMessage();
-  const [isWeightInvalid, setIsWeightInvalid] = useState(false);
+  const [isOxygenSaturationInvalid, setIsOxygenSaturationInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const value = rawValue === "" ? undefined : Number(rawValue);
-    const previousQuantity = patientWeight ? Number(patientWeight) : undefined;
+    const previousQuantity = patientOxygenSaturation
+      ? Number(patientOxygenSaturation)
+      : undefined;
 
     if (previousQuantity === value) {
       return;
     }
 
-    const isWeightValid = !value || isPatientWeightValid(value);
-    setIsWeightInvalid(!isWeightValid);
+    const isOxygenSaturationValid = !value || isPatientOxygenSaturationValid(value);
+    setIsOxygenSaturationInvalid(!isOxygenSaturationValid);
 
-    if (isWeightValid) {
+    if (isOxygenSaturationValid) {
       const updatedPatientGeneral = await updatePatientGeneral({
         patientGeneralId,
-        field: "patient_weight",
+        field: "patient_oxygen_saturation",
         value,
       });
 
@@ -51,14 +53,14 @@ export const GeneralPatientWeight = ({
 
   return (
     <InputTextField
-      label="Weight (in kg)"
-      value={patientWeight}
+      label="Oxygen saturation (in %)"
+      value={patientOxygenSaturation}
       onBlur={handleBlur}
       type="number"
-      max={180}
-      min={0}
-      errorMessage={isWeightInvalid ? "Invalid" : ""}
-      suffix="kg"
+      max={100}
+      min={70}
+      errorMessage={isOxygenSaturationInvalid ? "Invalid" : ""}
+      suffix="%"
     />
   );
 };

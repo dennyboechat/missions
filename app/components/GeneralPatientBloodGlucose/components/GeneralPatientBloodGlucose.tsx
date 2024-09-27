@@ -5,7 +5,7 @@ import { InputTextField } from "../../ui/InputTextField";
 
 // Types
 import { FocusEvent } from "react";
-import { GeneralPatientWeightProps } from "../types/GeneralPatientWeightProps";
+import { GeneralPatientBloodGlucoseProps } from "../types/GeneralPatientBloodGlucoseProps";
 
 // Hooks
 import { usePopupMessage } from "../../../lib/PopupMessage";
@@ -15,31 +15,33 @@ import { useState } from "react";
 import { updatePatientGeneral } from "../../../database/patient-general/UpdatePatientGeneral";
 
 // Utils
-import { isPatientWeightValid } from "../utils/isPatientWeightValid";
+import { isPatientBloodGlucoseValid } from "../utils/isPatientBloodGlucoseValid";
 
-export const GeneralPatientWeight = ({
+export const GeneralPatientBloodGlucose = ({
   patientGeneralId,
-  patientWeight,
-}: GeneralPatientWeightProps) => {
+  patientBloodGlucose,
+}: GeneralPatientBloodGlucoseProps) => {
   const { setMessage } = usePopupMessage();
-  const [isWeightInvalid, setIsWeightInvalid] = useState(false);
+  const [isBloodGlucoseInvalid, setIsBloodGlucoseInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const value = rawValue === "" ? undefined : Number(rawValue);
-    const previousQuantity = patientWeight ? Number(patientWeight) : undefined;
+    const previousQuantity = patientBloodGlucose
+      ? Number(patientBloodGlucose)
+      : undefined;
 
     if (previousQuantity === value) {
       return;
     }
 
-    const isWeightValid = !value || isPatientWeightValid(value);
-    setIsWeightInvalid(!isWeightValid);
+    const isBloodGlucoseValid = !value || isPatientBloodGlucoseValid(value);
+    setIsBloodGlucoseInvalid(!isBloodGlucoseValid);
 
-    if (isWeightValid) {
+    if (isBloodGlucoseValid) {
       const updatedPatientGeneral = await updatePatientGeneral({
         patientGeneralId,
-        field: "patient_weight",
+        field: "patient_blood_glucose",
         value,
       });
 
@@ -51,14 +53,14 @@ export const GeneralPatientWeight = ({
 
   return (
     <InputTextField
-      label="Weight (in kg)"
-      value={patientWeight}
+      label="Blood glucose (in mg/dL)"
+      value={patientBloodGlucose}
       onBlur={handleBlur}
       type="number"
-      max={180}
-      min={0}
-      errorMessage={isWeightInvalid ? "Invalid" : ""}
-      suffix="kg"
+      max={600}
+      min={40}
+      errorMessage={isBloodGlucoseInvalid ? "Invalid" : ""}
+      suffix="mg/dL"
     />
   );
 };

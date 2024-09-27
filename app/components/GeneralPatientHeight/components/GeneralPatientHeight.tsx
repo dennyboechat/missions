@@ -51,12 +51,11 @@ export const GeneralPatientHeight = ({
 
   return (
     <InputTextField
-      label="Patient height (in cm)"
+      label="Height (in cm)"
       value={patientHeight}
       autoFocus
       onBlur={handleBlur}
       type="number"
-      placeholder="165"
       max={220}
       min={0}
       errorMessage={isHeightInvalid ? "Invalid" : ""}
