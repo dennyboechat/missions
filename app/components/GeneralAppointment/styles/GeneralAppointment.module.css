@@ -1,0 +1,19 @@
+.vision_panel {
+  background-color: #ffffeb90;
+  padding: 20px;
+}
+
+.height_weight_panel {
+  background-color: #f1ffeb90;
+  padding: 20px;
+}
+
+.temperature_panel {
+  background-color: #ebfcff90;
+  padding: 20px;
+}
+
+.blood_panel {
+  background-color: #fff5eb90;
+  padding: 20px;
+}

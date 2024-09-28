@@ -15,6 +15,7 @@ import { GeneralPatientOxygenSaturation } from "../../GeneralPatientOxygenSatura
 import { GeneralPatientBloodPressure } from "../../GeneralPatientBloodPressure";
 import { GeneralPatientVisionLeft } from "../../GeneralPatientVisionLeft";
 import { GeneralPatientVisionRight } from "../../GeneralPatientVisionRight";
+import { PatientBodyMassIndex } from "../../PatientBodyMassIndex";
 
 // Types
 import { GeneralAppointmentContentProps } from "../types/GeneralAppointmentContentProps";
@@ -24,6 +25,9 @@ import { useState } from "react";
 
 // Database
 import { deletePatientGeneral } from "../../../database/patient-general/DeletePatientGeneral";
+
+// Styles
+import styles from "../styles/GeneralAppointment.module.css";
 
 export const GeneralAppointmentContent = ({
   patientGeneral,
@@ -87,25 +91,33 @@ export const GeneralAppointmentContent = ({
 
   return (
     <Tabs.Content key={patientGeneralId} value={patientGeneralId}>
-      <Space height={50} />
-      <Grid columns={{ initial: "1", sm: "2" }} gap="2">
+      <Space height={20} />
+      <Grid
+        columns={{ initial: "1", sm: "1fr 1fr 80px" }}
+        gap="5"
+        className={styles.height_weight_panel}
+      >
         <GeneralPatientHeight
           patientGeneralId={patientGeneralId}
           patientHeight={patientHeight}
+          setPatientGeneral={setPatientGeneral}
         />
         <GeneralPatientWeight
           patientGeneralId={patientGeneralId}
           patientWeight={patientWeight}
+          setPatientGeneral={setPatientGeneral}
         />
+        <PatientBodyMassIndex weight={patientWeight} height={patientHeight} />
       </Grid>
-      <Grid columns={{ initial: "1", sm: "2" }} gap="2">
+      <Space height={20} />
+      <Grid
+        columns={{ initial: "1", sm: "3" }}
+        gap="5"
+        className={styles.temperature_panel}
+      >
         <GeneralPatientTemperature
           patientGeneralId={patientGeneralId}
           patientTemperature={patientTemperature}
-        />
-        <GeneralPatientBloodGlucose
-          patientGeneralId={patientGeneralId}
-          patientBloodGlucose={patientBloodGlucose}
         />
         <GeneralPatientPulse
           patientGeneralId={patientGeneralId}
@@ -115,13 +127,29 @@ export const GeneralAppointmentContent = ({
           patientGeneralId={patientGeneralId}
           patientOxygenSaturation={patientOxygenSaturation}
         />
+      </Grid>
+      <Space height={20} />
+      <Grid
+        columns={{ initial: "1", sm: "2" }}
+        gap="5"
+        className={styles.blood_panel}
+      >
+        <GeneralPatientBloodGlucose
+          patientGeneralId={patientGeneralId}
+          patientBloodGlucose={patientBloodGlucose}
+        />
         <GeneralPatientBloodPressure
           patientGeneralId={patientGeneralId}
           patientBloodPressureSystolic={patientBloodPressureSystolic}
           patientBloodPressureDiastolic={patientBloodPressureDiastolic}
         />
       </Grid>
-      <Grid columns={{ initial: "1", sm: "2" }} gap="2">
+      <Space height={20} />
+      <Grid
+        columns={{ initial: "1", sm: "2" }}
+        gap="5"
+        className={styles.vision_panel}
+      >
         <GeneralPatientVisionLeft
           patientGeneralId={patientGeneralId}
           patientVisionLeftTestedDistance={patientVisionLeftTestedDistance}
@@ -133,16 +161,16 @@ export const GeneralAppointmentContent = ({
           patientVisionRightNormalDistance={patientVisionRightNormalDistance}
         />
       </Grid>
-      <Space height={50} />
+      <Space height={40} />
       <GeneralAppointmentMedicationPrescribed
         patientGeneralId={patientGeneralId}
       />
-      <Space height={50} />
+      <Space height={40} />
       <GeneralAppointmentClinicalNotes
         patientGeneral={patientGeneral}
         setPatientGeneral={setPatientGeneral}
       />
-      <Space height={50} />
+      <Space height={40} />
       <Grid width={{ initial: "auto", sm: "220px" }}>
         <PopupConfirmation content={deleteAppointmentPopupConfirmation}>
           <Button color="red" variant="outline">

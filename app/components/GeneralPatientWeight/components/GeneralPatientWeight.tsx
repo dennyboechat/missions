@@ -6,6 +6,7 @@ import { InputTextField } from "../../ui/InputTextField";
 // Types
 import { FocusEvent } from "react";
 import { GeneralPatientWeightProps } from "../types/GeneralPatientWeightProps";
+import { PatientGeneralTypes } from "@/app/types/PatientGeneralTypes";
 
 // Hooks
 import { usePopupMessage } from "../../../lib/PopupMessage";
@@ -20,6 +21,7 @@ import { isPatientWeightValid } from "../utils/isPatientWeightValid";
 export const GeneralPatientWeight = ({
   patientGeneralId,
   patientWeight,
+  setPatientGeneral
 }: GeneralPatientWeightProps) => {
   const { setMessage } = usePopupMessage();
   const [isWeightInvalid, setIsWeightInvalid] = useState(false);
@@ -37,6 +39,16 @@ export const GeneralPatientWeight = ({
     setIsWeightInvalid(!isWeightValid);
 
     if (isWeightValid) {
+      setPatientGeneral(
+        (prevState: PatientGeneralTypes[] | undefined) =>
+          prevState?.map((existingPatientGeneral) =>
+            existingPatientGeneral.patientGeneralId ===
+            patientGeneralId
+              ? { ...existingPatientGeneral, patientHeight: value }
+              : existingPatientGeneral
+          )
+      );
+
       const updatedPatientGeneral = await updatePatientGeneral({
         patientGeneralId,
         field: "patient_weight",
