@@ -45,6 +45,12 @@ export const getPatientGeneral = async ({
       patientBloodGlucose: row.patient_blood_glucose,
       patientPulse: row.patient_pulse,
       patientOxygenSaturation: row.patient_oxygen_saturation,
+      patientBloodPressureSystolic: row.patient_blood_pressure_systolic,
+      patientBloodPressureDiastolic: row.patient_blood_pressure_diastolic,
+      patientVisionLeftTestedDistance: row.patient_vision_left_tested_distance,
+      patientVisionLeftNormalDistance: row.patient_vision_left_normal_distance,
+      patientVisionRightTestedDistance: row.patient_vision_right_tested_distance,
+      patientVisionRightNormalDistance: row.patient_vision_right_normal_distance,
     }));
 
     return patientGeneral;

@@ -12,6 +12,9 @@ import { GeneralPatientTemperature } from "../../GeneralPatientTemperature";
 import { GeneralPatientBloodGlucose } from "../../GeneralPatientBloodGlucose";
 import { GeneralPatientPulse } from "../../GeneralPatientPulse";
 import { GeneralPatientOxygenSaturation } from "../../GeneralPatientOxygenSaturation";
+import { GeneralPatientBloodPressure } from "../../GeneralPatientBloodPressure";
+import { GeneralPatientVisionLeft } from "../../GeneralPatientVisionLeft";
+import { GeneralPatientVisionRight } from "../../GeneralPatientVisionRight";
 
 // Types
 import { GeneralAppointmentContentProps } from "../types/GeneralAppointmentContentProps";
@@ -36,6 +39,12 @@ export const GeneralAppointmentContent = ({
     patientBloodGlucose,
     patientPulse,
     patientOxygenSaturation,
+    patientBloodPressureSystolic,
+    patientBloodPressureDiastolic,
+    patientVisionLeftTestedDistance,
+    patientVisionLeftNormalDistance,
+    patientVisionRightTestedDistance,
+    patientVisionRightNormalDistance,
   } = patientGeneral;
 
   const onDeleteAppointment = async () => {
@@ -105,6 +114,23 @@ export const GeneralAppointmentContent = ({
         <GeneralPatientOxygenSaturation
           patientGeneralId={patientGeneralId}
           patientOxygenSaturation={patientOxygenSaturation}
+        />
+        <GeneralPatientBloodPressure
+          patientGeneralId={patientGeneralId}
+          patientBloodPressureSystolic={patientBloodPressureSystolic}
+          patientBloodPressureDiastolic={patientBloodPressureDiastolic}
+        />
+      </Grid>
+      <Grid columns={{ initial: "1", sm: "2" }} gap="2">
+        <GeneralPatientVisionLeft
+          patientGeneralId={patientGeneralId}
+          patientVisionLeftTestedDistance={patientVisionLeftTestedDistance}
+          patientVisionLeftNormalDistance={patientVisionLeftNormalDistance}
+        />
+        <GeneralPatientVisionRight
+          patientGeneralId={patientGeneralId}
+          patientVisionRightTestedDistance={patientVisionRightTestedDistance}
+          patientVisionRightNormalDistance={patientVisionRightNormalDistance}
         />
       </Grid>
       <Space height={50} />

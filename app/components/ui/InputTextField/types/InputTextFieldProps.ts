@@ -7,9 +7,10 @@ export interface InputTextFieldProps {
   required?: boolean;
   errorMessage?: string;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
-  type?: 'text' | 'number';
+  type?: "text" | "number";
   max?: number;
   min?: number;
   prefix?: string;
   suffix?: string;
+  className?: string;
 }

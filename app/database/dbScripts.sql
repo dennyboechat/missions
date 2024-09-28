@@ -88,6 +88,12 @@ CREATE TABLE IF NOT EXISTS patient_general (
     patient_blood_glucose INTEGER,
     patient_pulse INTEGER,
     patient_oxygen_saturation INTEGER,
+    patient_blood_pressure_systolic INTEGER,
+    patient_blood_pressure_diastolic INTEGER,
+    patient_vision_left_tested_distance INTEGER,
+    patient_vision_left_normal_distance INTEGER,
+    patient_vision_right_tested_distance INTEGER,
+    patient_vision_right_normal_distance INTEGER,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
 );
@@ -104,14 +110,13 @@ CREATE TABLE IF NOT EXISTS patient_general_prescribed_medication (
 );
 
 -- Clean up
-DROP TABLE IF EXISTS 
-    patient_general_prescribed_medication,
-    patient_general,
-    patient_dentistry_prescribed_medication,
-    patient_dentistry_tooth,
-    tooth_status,
-    patient_dentistry,
-    patient_personal,
-    project_user,
-    project,
-    app_user
+DROP TABLE IF EXISTS patient_general_prescribed_medication,
+patient_general,
+patient_dentistry_prescribed_medication,
+patient_dentistry_tooth,
+tooth_status,
+patient_dentistry,
+patient_personal,
+project_user,
+project,
+app_user

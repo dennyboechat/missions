@@ -23,9 +23,10 @@ export const InputTextField = ({
   min,
   prefix,
   suffix,
+  className,
 }: InputTextFieldProps) => (
   <Grid>
-    <Text>{`${label}${required ? " *" : ""}`}</Text>
+    {label && <Text>{`${label}${required ? " *" : ""}`}</Text>}
     <TextField.Root
       onBlur={onBlur}
       defaultValue={value}
@@ -36,6 +37,7 @@ export const InputTextField = ({
       type={type}
       max={max}
       min={min}
+      className={className}
     >
       <TextField.Slot>{prefix}</TextField.Slot>
       <TextField.Slot>{suffix}</TextField.Slot>

@@ -20,6 +20,12 @@ export interface PatientGeneralTypes {
   patientBloodGlucose?: number;
   patientPulse?: number;
   patientOxygenSaturation?: number;
+  patientBloodPressureSystolic?: number;
+  patientBloodPressureDiastolic?: number;
+  patientVisionLeftTestedDistance?: number;
+  patientVisionLeftNormalDistance?: number;
+  patientVisionRightTestedDistance?: number;
+  patientVisionRightNormalDistance?: number;
 }
 
 export interface PatientGeneral {
