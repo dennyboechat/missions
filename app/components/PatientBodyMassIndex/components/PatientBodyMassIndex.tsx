@@ -22,7 +22,7 @@ export const PatientBodyMassIndex = ({
   useEffect(() => {
     if (weight && height) {
       const calculatedBmi = getBodyMassIndex(weight, height);
-      setBmi(calculatedBmi);
+      setBmi(calculatedBmi ?? '0.00');
     } else {
       setBmi("0.00");
     }
