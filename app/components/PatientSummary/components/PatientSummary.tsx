@@ -84,6 +84,7 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
           <GeneralSummary patientPersonalId={patientPersonalId} />
           <Space />
           <DentistrySummary patientPersonalId={patientPersonalId} />
+          <Space />
         </Grid>
       </Container>
     </SideMenuLayout>

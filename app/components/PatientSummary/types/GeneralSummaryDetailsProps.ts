@@ -1,10 +1,4 @@
-// Types
-import { PatientGeneralId } from "./PatientGeneralTypes";
-import { Medication } from "./Medication";
-
-export interface PatientGeneralAppointmentSummary {
-  patientGeneralId: PatientGeneralId;
-  appointmentDate: Date;
+export interface GeneralSummaryDetailsProps {
   patientHeight: number;
   patientWeight: number;
   patientTemperature: number;
@@ -17,5 +11,4 @@ export interface PatientGeneralAppointmentSummary {
   patientVisionLeftNormalDistance: number;
   patientVisionRightTestedDistance: number;
   patientVisionRightNormalDistance: number;
-  prescribedMedication: Medication[];
 }

@@ -7,6 +7,7 @@ import { Fragment, useState, useEffect } from "react";
 import { Grid, Text } from "@radix-ui/themes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Space } from "../../ui/Space";
+import { GeneralSummaryDetails } from "./GeneralSummaryDetails";
 
 // Styles
 import styles from "../styles/PatientSummary.module.css";
@@ -66,7 +67,23 @@ export const GeneralSummary = ({
       )}
       <Space height={3} />
       {generalAppointments.map(
-        ({ patientGeneralId, appointmentDate, prescribedMedication }) => (
+        ({
+          patientGeneralId,
+          appointmentDate,
+          prescribedMedication,
+          patientHeight,
+          patientWeight,
+          patientTemperature,
+          patientPulse,
+          patientOxygenSaturation,
+          patientBloodGlucose,
+          patientBloodPressureSystolic,
+          patientBloodPressureDiastolic,
+          patientVisionLeftTestedDistance,
+          patientVisionLeftNormalDistance,
+          patientVisionRightTestedDistance,
+          patientVisionRightNormalDistance,
+        }) => (
           <Grid key={patientGeneralId} className={styles.appointments}>
             <Text weight="medium" size="3">
               {getLocaleFormattedDate({
@@ -74,10 +91,27 @@ export const GeneralSummary = ({
               })}
             </Text>
             <Space />
+            <GeneralSummaryDetails
+              patientHeight={patientHeight}
+              patientWeight={patientWeight}
+              patientTemperature={patientTemperature}
+              patientPulse={patientPulse}
+              patientOxygenSaturation={patientOxygenSaturation}
+              patientBloodGlucose={patientBloodGlucose}
+              patientBloodPressureSystolic={patientBloodPressureSystolic}
+              patientBloodPressureDiastolic={patientBloodPressureDiastolic}
+              patientVisionLeftTestedDistance={patientVisionLeftTestedDistance}
+              patientVisionLeftNormalDistance={patientVisionLeftNormalDistance}
+              patientVisionRightTestedDistance={
+                patientVisionRightTestedDistance
+              }
+              patientVisionRightNormalDistance={
+                patientVisionRightNormalDistance
+              }
+            />
+            <Space />
             <div className={styles.summary_margin}>
-              <div>
-                <Text>{"Prescribed medication by the doctor:"}</Text>
-              </div>
+              <Text>{"Prescribed medication by the doctor: "}</Text>
               {prescribedMedication.length > 0 ? (
                 <Grid
                   columns="30fr 10fr 10fr 50fr"
@@ -108,9 +142,7 @@ export const GeneralSummary = ({
                   )}
                 </Grid>
               ) : (
-                <div className={styles.summary_margin}>
-                  <Text className={styles.italic}>{"none"}</Text>
-                </div>
+                <Text className={styles.italic}>{"none"}</Text>
               )}
             </div>
             <Space />

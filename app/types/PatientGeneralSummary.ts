@@ -8,6 +8,16 @@ export interface PatientGeneralSummary {
   appointmentDate: Date;
   patientHeight: number;
   patientWeight: number;
+  patientTemperature: number;
+  patientPulse: number;
+  patientOxygenSaturation: number;
+  patientBloodGlucose: number;
+  patientBloodPressureSystolic: number;
+  patientBloodPressureDiastolic: number;
+  patientVisionLeftTestedDistance: number;
+  patientVisionLeftNormalDistance: number;
+  patientVisionRightTestedDistance: number;
+  patientVisionRightNormalDistance: number;
   patientGeneralPrescribedMedicationId: PatientGeneralPrescribedMedicationId;
   drug: Drug;
   dose: Dose;

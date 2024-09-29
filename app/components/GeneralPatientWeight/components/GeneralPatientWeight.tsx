@@ -44,7 +44,7 @@ export const GeneralPatientWeight = ({
           prevState?.map((existingPatientGeneral) =>
             existingPatientGeneral.patientGeneralId ===
             patientGeneralId
-              ? { ...existingPatientGeneral, patientHeight: value }
+              ? { ...existingPatientGeneral, patientWeight: value }
               : existingPatientGeneral
           )
       );

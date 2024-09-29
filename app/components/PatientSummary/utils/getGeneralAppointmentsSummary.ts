@@ -16,6 +16,18 @@ export const getGeneralAppointmentsSummary = ({
       const {
         patientGeneralId,
         appointmentDate,
+        patientHeight,
+        patientWeight,
+        patientTemperature,
+        patientPulse,
+        patientOxygenSaturation,
+        patientBloodGlucose,
+        patientBloodPressureSystolic,
+        patientBloodPressureDiastolic,
+        patientVisionLeftTestedDistance,
+        patientVisionLeftNormalDistance,
+        patientVisionRightTestedDistance,
+        patientVisionRightNormalDistance,
         patientGeneralPrescribedMedicationId,
         drug,
         dose,
@@ -49,8 +61,20 @@ export const getGeneralAppointmentsSummary = ({
         }
       } else {
         acc.push({
-          patientGeneralId: patientGeneralId,
-          appointmentDate: appointmentDate,
+          patientGeneralId,
+          appointmentDate,
+          patientHeight,
+          patientWeight,
+          patientTemperature,
+          patientPulse,
+          patientOxygenSaturation,
+          patientBloodGlucose,
+          patientBloodPressureSystolic,
+          patientBloodPressureDiastolic,
+          patientVisionLeftTestedDistance,
+          patientVisionLeftNormalDistance,
+          patientVisionRightTestedDistance,
+          patientVisionRightNormalDistance,
           prescribedMedication: patientGeneralPrescribedMedicationId
             ? [
                 {
