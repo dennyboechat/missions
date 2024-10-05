@@ -7,5 +7,6 @@ export interface PatientMenuItemsProps {
     | "patient-personal"
     | "patient-dentistry"
     | "patient-summary"
-    | "patient-general";
+    | "patient-general"
+    | "patient-analytics";
 }

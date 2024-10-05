@@ -13,6 +13,7 @@ import {
   faTooth,
   faListCheck,
   faUser,
+  faChartSimple,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const PatientMenuItems = ({
@@ -23,6 +24,7 @@ export const PatientMenuItems = ({
   const generalIcon = <FontAwesomeIcon icon={faNotesMedical} />;
   const dentistryIcon = <FontAwesomeIcon icon={faTooth} />;
   const personalIcon = <FontAwesomeIcon icon={faUser} />;
+  const analyticsIcon = <FontAwesomeIcon icon={faChartSimple} />;
 
   return (
     <>
@@ -53,6 +55,13 @@ export const PatientMenuItems = ({
         active={activeMenuItem === "patient-personal"}
       >
         {"Personal"}
+      </MenuItem>
+      <MenuItem
+        icon={analyticsIcon}
+        href={`/patient-analytics/${patientPersonalId}`}
+        active={activeMenuItem === "patient-analytics"}
+      >
+        {"Analytics"}
       </MenuItem>
     </>
   );

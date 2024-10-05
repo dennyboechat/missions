@@ -1,34 +1,37 @@
 "use client";
 
-// Multivariate Dependencies
-import { useState, useEffect } from "react";
-
 // Components
-import { Container, Grid } from "@radix-ui/themes";
-import { ContentHeader } from "../../ContentHeader";
+import { Container } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../ui/SideMenuLayout";
 import { PatientMenuItems } from "../../PatientMenuItems";
+import { ContentHeader } from "../../ContentHeader";
 import { Space } from "../../ui/Space";
-import { GeneralSummary } from "./GeneralSummary";
-import { DentistrySummary } from "./DentistrySummary";
-import { PersonalSummary } from "./PersonalSummary";
+import { AiChat } from "../../ui/AiChat";
 
 // Styles
 import styles from "../../../styles/content.module.css";
 
-// Database
-import { getPatientSummary } from "../../../database/patient-summary/GetPatientSummary";
+// Hooks
+import { useState, useEffect } from "react";
 
 // Types
 import { PatientPersonalSummary } from "../../../types/PatientPersonalSummary";
+import { PatientGeneralSummary } from "../../../types/PatientGeneralSummary";
+
+// Database
+import { getPatientSummary } from "../../../database/patient-summary/GetPatientSummary";
+import { getPatientGeneralSummary } from "../../../database/patient-summary/GetPatientGeneralSummary";
 
 // Utils
+import { getStringifyPatientGeneralSummary } from "../utils/getStringifyPatientGeneralSummary";
 import { getSideMenuSubHeader } from "../../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../../utils/getSideMenuSubHeaderFooter";
 
-export const PatientSummary = ({ params }: { params: { id: string } }) => {
+export const PatientAnalytics = ({ params }: { params: { id: string } }) => {
   const [patientPersonalSummary, setPatientPersonalSummary] =
     useState<PatientPersonalSummary>();
+  const [patientGeneralSummary, setPatientGeneralSummary] =
+    useState<PatientGeneralSummary[]>();
 
   const { id: patientPersonalId } = params;
 
@@ -40,6 +43,12 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
         });
 
         setPatientPersonalSummary(patientPersonalSummaryData);
+
+        const patientGeneralSummaryData = await getPatientGeneralSummary({
+          patientPersonalId,
+        });
+
+        setPatientGeneralSummary(patientGeneralSummaryData);
       }
     };
 
@@ -53,7 +62,7 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
   const patientMenuItems = (
     <PatientMenuItems
       patientPersonalId={patientPersonalId}
-      activeMenuItem="patient-summary"
+      activeMenuItem="patient-analytics"
     />
   );
 
@@ -77,15 +86,16 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
       isBoldHeader
     >
       <Container className={styles.content}>
-        <ContentHeader text="Summary" />
-        <Grid>
-          <PersonalSummary patientPersonalSummary={patientPersonalSummary} />
-          <Space />
-          <GeneralSummary patientPersonalId={patientPersonalId} />
-          <Space />
-          <DentistrySummary patientPersonalId={patientPersonalId} />
-          <Space />
-        </Grid>
+        <ContentHeader text="Analytics" subText="Use the power of AI to explore information" />
+        <Space />
+        {patientGeneralSummary && (
+          <AiChat
+            context={`${getStringifyPatientGeneralSummary(
+              patientPersonalSummary,
+              patientGeneralSummary[0]
+            )}. Return max 150 words`}
+          />
+        )}
       </Container>
     </SideMenuLayout>
   );

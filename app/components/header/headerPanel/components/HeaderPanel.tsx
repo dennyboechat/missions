@@ -75,6 +75,7 @@ export const HeaderPanel = () => {
       "/patient-general/",
       "/patient-dentistry/",
       "/patient-summary/",
+      "/patient-analytics",
       "/project-patient/",
     ];
     const hasPatientLink = patientLinks.some((path) =>
