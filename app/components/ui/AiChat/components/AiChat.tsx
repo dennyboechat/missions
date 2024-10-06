@@ -36,7 +36,7 @@ export const AiChat = ({ context }: { context: string }) => {
       <Space />
       <form onSubmit={handleSubmit}>
         <TextField.Root
-          placeholder="Ask something..."
+          placeholder="Ask something about this patient"
           value={input}
           onChange={handleInputChange}
         />
