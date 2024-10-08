@@ -17,6 +17,9 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { isPatientTemperatureValid } from "../utils/isPatientTemperatureValid";
 
+// Styles
+import styles from "../../../styles/fields.module.css";
+
 export const GeneralPatientTemperature = ({
   patientGeneralId,
   patientTemperature,
@@ -61,6 +64,7 @@ export const GeneralPatientTemperature = ({
       min={34}
       errorMessage={isTemperatureInvalid ? "Invalid" : ""}
       suffix="°C"
+      className={styles.text_align_right}
     />
   );
 };

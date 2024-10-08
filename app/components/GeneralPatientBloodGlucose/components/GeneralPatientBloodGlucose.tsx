@@ -17,6 +17,9 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { isPatientBloodGlucoseValid } from "../utils/isPatientBloodGlucoseValid";
 
+// Styles
+import styles from "../../../styles/fields.module.css";
+
 export const GeneralPatientBloodGlucose = ({
   patientGeneralId,
   patientBloodGlucose,
@@ -61,6 +64,7 @@ export const GeneralPatientBloodGlucose = ({
       min={40}
       errorMessage={isBloodGlucoseInvalid ? "Invalid" : ""}
       suffix="mg/dL"
+      className={styles.text_align_right}
     />
   );
 };

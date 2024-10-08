@@ -17,6 +17,9 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { isPatientPulseValid } from "../utils/isPatientPulseValid";
 
+// Styles
+import styles from "../../../styles/fields.module.css";
+
 export const GeneralPatientPulse = ({
   patientGeneralId,
   patientPulse,
@@ -61,6 +64,7 @@ export const GeneralPatientPulse = ({
       min={30}
       errorMessage={isPulseInvalid ? "Invalid" : ""}
       suffix="bpm"
+      className={styles.text_align_right}
     />
   );
 };

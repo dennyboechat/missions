@@ -17,12 +17,16 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { isPatientOxygenSaturationValid } from "../utils/isPatientOxygenSaturationValid";
 
+// Styles
+import styles from "../../../styles/fields.module.css";
+
 export const GeneralPatientOxygenSaturation = ({
   patientGeneralId,
   patientOxygenSaturation,
 }: GeneralPatientOxygenSaturationProps) => {
   const { setMessage } = usePopupMessage();
-  const [isOxygenSaturationInvalid, setIsOxygenSaturationInvalid] = useState(false);
+  const [isOxygenSaturationInvalid, setIsOxygenSaturationInvalid] =
+    useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
@@ -35,7 +39,8 @@ export const GeneralPatientOxygenSaturation = ({
       return;
     }
 
-    const isOxygenSaturationValid = !value || isPatientOxygenSaturationValid(value);
+    const isOxygenSaturationValid =
+      !value || isPatientOxygenSaturationValid(value);
     setIsOxygenSaturationInvalid(!isOxygenSaturationValid);
 
     if (isOxygenSaturationValid) {
@@ -61,6 +66,7 @@ export const GeneralPatientOxygenSaturation = ({
       min={70}
       errorMessage={isOxygenSaturationInvalid ? "Invalid" : ""}
       suffix="%"
+      className={styles.text_align_right}
     />
   );
 };
