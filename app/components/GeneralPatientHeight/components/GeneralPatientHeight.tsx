@@ -18,6 +18,9 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { isPatientHeightValid } from "../utils/isPatientHeightValid";
 
+// Styles
+import styles from "../../../styles/fields.module.css";
+
 export const GeneralPatientHeight = ({
   patientGeneralId,
   patientHeight,
@@ -72,6 +75,7 @@ export const GeneralPatientHeight = ({
       min={0}
       errorMessage={isHeightInvalid ? "Invalid" : ""}
       suffix="cm"
+      className={styles.text_align_right}
     />
   );
 };

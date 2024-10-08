@@ -18,10 +18,13 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { isPatientWeightValid } from "../utils/isPatientWeightValid";
 
+// Styles
+import styles from "../../../styles/fields.module.css";
+
 export const GeneralPatientWeight = ({
   patientGeneralId,
   patientWeight,
-  setPatientGeneral
+  setPatientGeneral,
 }: GeneralPatientWeightProps) => {
   const { setMessage } = usePopupMessage();
   const [isWeightInvalid, setIsWeightInvalid] = useState(false);
@@ -39,14 +42,12 @@ export const GeneralPatientWeight = ({
     setIsWeightInvalid(!isWeightValid);
 
     if (isWeightValid) {
-      setPatientGeneral(
-        (prevState: PatientGeneralTypes[] | undefined) =>
-          prevState?.map((existingPatientGeneral) =>
-            existingPatientGeneral.patientGeneralId ===
-            patientGeneralId
-              ? { ...existingPatientGeneral, patientWeight: value }
-              : existingPatientGeneral
-          )
+      setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>
+        prevState?.map((existingPatientGeneral) =>
+          existingPatientGeneral.patientGeneralId === patientGeneralId
+            ? { ...existingPatientGeneral, patientWeight: value }
+            : existingPatientGeneral
+        )
       );
 
       const updatedPatientGeneral = await updatePatientGeneral({
@@ -71,6 +72,7 @@ export const GeneralPatientWeight = ({
       min={0}
       errorMessage={isWeightInvalid ? "Invalid" : ""}
       suffix="kg"
+      className={styles.text_align_right}
     />
   );
 };
