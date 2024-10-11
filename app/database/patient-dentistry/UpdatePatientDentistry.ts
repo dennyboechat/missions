@@ -47,6 +47,7 @@ export const updatePatientDentistry = async ({
           }
 
           await new Promise((resolve) => setTimeout(resolve, 1000));
+          throw error;
         });
 
       const patientDentistries: PatientDental[] | undefined =
