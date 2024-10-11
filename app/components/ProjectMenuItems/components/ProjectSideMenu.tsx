@@ -16,6 +16,7 @@ import {
   faUserGroup,
   faUserLock,
   faGear,
+  faChartPie,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const ProjectMenuItems = ({
@@ -34,6 +35,7 @@ export const ProjectMenuItems = ({
   const projectPatientsIcon = <FontAwesomeIcon icon={faUserGroup} />;
   const projectUsersIcon = <FontAwesomeIcon icon={faUserLock} />;
   const projectIcon = <FontAwesomeIcon icon={faGear} />;
+  const projectReportsIcon = <FontAwesomeIcon icon={faChartPie} />;
 
   return (
     <>
@@ -43,6 +45,13 @@ export const ProjectMenuItems = ({
         active={activeMenuItem === "project-patients"}
       >
         {"Patients"}
+      </MenuItem>
+      <MenuItem
+        icon={projectReportsIcon}
+        href={`/project-reports/${projectId}`}
+        active={activeMenuItem === "project-reports"}
+      >
+        {"Reports"}
       </MenuItem>
       {isProjectEditable && (
         <MenuItem

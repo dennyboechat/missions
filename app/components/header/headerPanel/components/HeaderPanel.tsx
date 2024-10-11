@@ -51,7 +51,12 @@ export const HeaderPanel = () => {
 
   let backButton = <span />;
 
-  const projectLinks = ["/project-patients/", "/project-users/", "/project/"];
+  const projectLinks = [
+    "/project-patients/",
+    "/project-users/",
+    "/project/",
+    "/project-reports/",
+  ];
   const hasDashboardLink = projectLinks.some((path) =>
     currentPath.includes(path)
   );
