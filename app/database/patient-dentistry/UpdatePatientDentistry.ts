@@ -37,12 +37,6 @@ export const updatePatientDentistry = async ({
         patientDentistryId,
       ]);
 
-      if (!response) {
-        console.error('**************** ');
-      } else {
-        console.error('---------------- ');
-      }
-
       const patientDentistries: PatientDental[] = response.rows.map((row) => ({
         patientDentistryId: row.patient_dentistry_id,
         patientPersonalId: row.patient_personal_id,

@@ -25,36 +25,48 @@ export const DentalAppointmentClinicalNotes = ({
   useEffect(() => {
     const onChangeAppointmentNotes = async () => {
       if (appointmentNotes !== notes) {
-        const updatedPatientDentistry = await updatePatientDentistry({
-          patientDentistryId,
-          field: "appointment_notes",
-          value: notes,
-        });
+        const DatabaseRetries = 15;
+        let attempt = 0;
+        while (attempt < DatabaseRetries) {
+          const isOnline = navigator.onLine;
 
-        if (updatedPatientDentistry) {
-          setPatientDentistries(
-            (prevState: PatientDentistryTypes[] | undefined) =>
-              prevState?.map((existingPatientDentistry) =>
-                existingPatientDentistry.patientDentistryId ===
-                patientDentistryId
-                  ? { ...existingPatientDentistry, appointmentNotes: notes }
-                  : existingPatientDentistry
-              )
-          );
+          if (isOnline) {
+            attempt = 15;
+            const updatedPatientDentistry = await updatePatientDentistry({
+              patientDentistryId,
+              field: "appointment_notes",
+              value: notes,
+            });
 
-          if (setMessage && setMessageType) {
-            setMessage("Saved");
-            setMessageType("regular");
+            if (updatedPatientDentistry) {
+              setPatientDentistries(
+                (prevState: PatientDentistryTypes[] | undefined) =>
+                  prevState?.map((existingPatientDentistry) =>
+                    existingPatientDentistry.patientDentistryId ===
+                    patientDentistryId
+                      ? { ...existingPatientDentistry, appointmentNotes: notes }
+                      : existingPatientDentistry
+                  )
+              );
+
+              if (setMessage && setMessageType) {
+                setMessage("Saved");
+                setMessageType("regular");
+              }
+            } else {
+              if (setMessage && setMessageType) {
+                setMessage("Error to save. Please try again.");
+                setMessageType("error");
+              }
+
+              console.error(
+                `Could not update appointment by id ${patientDentistryId}`
+              );
+            }
+          } else {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            attempt++;
           }
-        } else {
-          if (setMessage && setMessageType) {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-
-          console.error(
-            `Could not update appointment by id ${patientDentistryId}`
-          );
         }
       }
     };
