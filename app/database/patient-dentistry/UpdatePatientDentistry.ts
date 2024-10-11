@@ -39,6 +39,8 @@ export const updatePatientDentistry = async ({
 
       if (!response) {
         console.error('**************** ');
+      } else {
+        console.error('---------------- ');
       }
 
       const patientDentistries: PatientDental[] = response.rows.map((row) => ({
