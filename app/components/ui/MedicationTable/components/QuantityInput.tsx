@@ -11,6 +11,9 @@ import { FocusEvent } from "react";
 // Hooks
 import { usePopupMessage } from "../../../../lib/PopupMessage";
 
+// Utils
+import { runWithRetries } from "@/app/utils/runWithRetries";
+
 export const QuantityInput = ({
   drug,
   quantity,
@@ -37,20 +40,28 @@ export const QuantityInput = ({
       )
     );
 
-    const updatedPatientMedication = await updateMedication(
-      medicationUid,
-      "quantity",
-      value
-    );
+    const codeToRun = async () => {
+      const updatedPatientMedication = await updateMedication(
+        medicationUid,
+        "quantity",
+        value
+      );
 
-    if (setMessage && setMessageType) {
-      if (updatedPatientMedication) {
-        setMessage("Saved");
-        setMessageType("regular");
-      } else {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
+      if (setMessage && setMessageType) {
+        if (updatedPatientMedication) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
+    };
+
+    const runSuccess = await runWithRetries(codeToRun);
+    if (!runSuccess && setMessage && setMessageType) {
+      setMessage("Error to save. Please try again.");
+      setMessageType("error");
     }
   };
 

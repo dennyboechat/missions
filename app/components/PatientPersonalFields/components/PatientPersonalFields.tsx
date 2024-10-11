@@ -20,6 +20,7 @@ import { isValidFullName } from "../utils/isValidFullName";
 import { getFormattedDate } from "../../../utils/getFormattedDate";
 import { getCurrentDate } from "../../../utils/getCurrentDate";
 import { isValidDate } from "../../../utils/isValidDate";
+import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Database
 import { updatePatientPersonal } from "../../../database/patient-personal/UpdatePatientPersonal";
@@ -50,28 +51,36 @@ export const PatientPersonalFields = ({
 
     if (isValidName) {
       if (patientPersonalId && patientFullName !== newValue) {
-        const updatedPatientPerson = await updatePatientPersonal({
-          patientPersonalId,
-          field: "patient_full_name",
-          value: newValue,
-        });
+        const codeToRun = async () => {
+          const updatedPatientPerson = await updatePatientPersonal({
+            patientPersonalId,
+            field: "patient_full_name",
+            value: newValue,
+          });
 
-        if (updatedPatientPerson) {
-          setPatientPersonalFields(updatedPatientPerson);
+          if (updatedPatientPerson) {
+            setPatientPersonalFields(updatedPatientPerson);
 
-          if (setMessage && setMessageType) {
-            setMessage("Saved");
-            setMessageType("regular");
+            if (setMessage && setMessageType) {
+              setMessage("Saved");
+              setMessageType("regular");
+            }
+          } else {
+            if (setMessage && setMessageType) {
+              setMessage("Error to save. Please try again.");
+              setMessageType("error");
+            }
+
+            console.error(
+              `Could not update patient full name by id ${patientPersonalId}`
+            );
           }
-        } else {
-          if (setMessage && setMessageType) {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
+        };
 
-          console.error(
-            `Could not update patient full name by id ${patientPersonalId}`
-          );
+        const runSuccess = await runWithRetries(codeToRun);
+        if (!runSuccess && setMessage && setMessageType) {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
         }
       } else {
         setPatientPersonalFields((prevFields) => {
@@ -98,28 +107,36 @@ export const PatientPersonalFields = ({
     const isMale = value === "male";
 
     if (patientPersonalId) {
-      const updatedPatientPerson = await updatePatientPersonal({
-        patientPersonalId,
-        field: "is_patient_male",
-        value: isMale,
-      });
+      const codeToRun = async () => {
+        const updatedPatientPerson = await updatePatientPersonal({
+          patientPersonalId,
+          field: "is_patient_male",
+          value: isMale,
+        });
 
-      if (updatedPatientPerson) {
-        setPatientPersonalFields(updatedPatientPerson);
+        if (updatedPatientPerson) {
+          setPatientPersonalFields(updatedPatientPerson);
 
-        if (setMessage && setMessageType) {
-          setMessage("Saved");
-          setMessageType("regular");
+          if (setMessage && setMessageType) {
+            setMessage("Saved");
+            setMessageType("regular");
+          }
+        } else {
+          if (setMessage && setMessageType) {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+
+          console.error(
+            `Could not update patient gender by id ${patientPersonalId}`
+          );
         }
-      } else {
-        if (setMessage && setMessageType) {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
-        }
+      };
 
-        console.error(
-          `Could not update patient gender by id ${patientPersonalId}`
-        );
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
     } else {
       setPatientPersonalFields((prevFields) => {
@@ -139,28 +156,36 @@ export const PatientPersonalFields = ({
     }
 
     if (patientPersonalId) {
-      const updatedPatientPerson = await updatePatientPersonal({
-        patientPersonalId,
-        field: "patient_date_of_birth",
-        value: dateOfBirth,
-      });
+      const codeToRun = async () => {
+        const updatedPatientPerson = await updatePatientPersonal({
+          patientPersonalId,
+          field: "patient_date_of_birth",
+          value: dateOfBirth,
+        });
 
-      if (updatedPatientPerson) {
-        setPatientPersonalFields(updatedPatientPerson);
+        if (updatedPatientPerson) {
+          setPatientPersonalFields(updatedPatientPerson);
 
-        if (setMessage && setMessageType) {
-          setMessage("Saved");
-          setMessageType("regular");
+          if (setMessage && setMessageType) {
+            setMessage("Saved");
+            setMessageType("regular");
+          }
+        } else {
+          if (setMessage && setMessageType) {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+
+          console.error(
+            `Could not update patient date of birth by id ${patientPersonalId}`
+          );
         }
-      } else {
-        if (setMessage && setMessageType) {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
-        }
+      };
 
-        console.error(
-          `Could not update patient date of birth by id ${patientPersonalId}`
-        );
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
     } else {
       const dateValue = new Date(dateOfBirth);

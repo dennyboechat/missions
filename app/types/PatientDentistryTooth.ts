@@ -21,7 +21,7 @@ export interface InsertPatientTooth {
 }
 
 export interface UpdatePatientTooth {
-  patientDentistryToothId: PatientDentistryToothId;
+  patientDentistryToothId?: PatientDentistryToothId;
   field: string;
   value: string | boolean | undefined;
 }

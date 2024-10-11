@@ -25,6 +25,7 @@ import { insertPatientPersonal } from "../../database/patient-personal/InsertPat
 
 // Utils
 import { isValidPatientFullName } from "../../utils/isValidPatientFullName";
+import { runWithRetries } from "@/app/utils/runWithRetries";
 
 const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -67,24 +68,32 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
     setIsPatientDateOfBirthInvalid(!isValidDateOfBirth);
 
     if (isValidFullName && isValidPatientGender && isValidDateOfBirth) {
-      const insertedPatientPersonal = await insertPatientPersonal({
-        projectId,
-        patientFullName: patientFullName ?? "",
-        isPatientMale: isPatientMale ?? true,
-        patientDateOfBirth: patientDateOfBirth ?? new Date(),
-      });
+      const codeToRun = async () => {
+        const insertedPatientPersonal = await insertPatientPersonal({
+          projectId,
+          patientFullName: patientFullName ?? "",
+          isPatientMale: isPatientMale ?? true,
+          patientDateOfBirth: patientDateOfBirth ?? new Date(),
+        });
 
-      if (setMessage && setMessageType) {
-        if (insertedPatientPersonal) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
+        if (setMessage && setMessageType) {
+          if (insertedPatientPersonal) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
         }
-      }
 
-      router.push(`/project-patients/${projectId}`);
+        router.push(`/project-patients/${projectId}`);
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
+      }
     } else {
       setIsCreatingPatient(false);
     }

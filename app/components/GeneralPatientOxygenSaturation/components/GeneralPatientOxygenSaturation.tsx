@@ -16,6 +16,7 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 
 // Utils
 import { isPatientOxygenSaturationValid } from "../utils/isPatientOxygenSaturationValid";
+import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../../../styles/fields.module.css";
@@ -44,20 +45,28 @@ export const GeneralPatientOxygenSaturation = ({
     setIsOxygenSaturationInvalid(!isOxygenSaturationValid);
 
     if (isOxygenSaturationValid) {
-      const updatedPatientGeneral = await updatePatientGeneral({
-        patientGeneralId,
-        field: "patient_oxygen_saturation",
-        value,
-      });
+      const codeToRun = async () => {
+        const updatedPatientGeneral = await updatePatientGeneral({
+          patientGeneralId,
+          field: "patient_oxygen_saturation",
+          value,
+        });
 
-      if (setMessage && setMessageType) {
-        if (updatedPatientGeneral) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
+        if (setMessage && setMessageType) {
+          if (updatedPatientGeneral) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
         }
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
     }
   };

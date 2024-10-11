@@ -14,6 +14,9 @@ import { updatePatientTooth } from "../../../database/patient-tooth/UpdatePatien
 // Hooks
 import { usePopupMessage } from "../../../lib/PopupMessage";
 
+// Utils
+import { runWithRetries } from "@/app/utils/runWithRetries";
+
 export const DentalAppointmentToothStatus = ({
   patientDentistryId,
   selectedTooth,
@@ -32,22 +35,39 @@ export const DentalAppointmentToothStatus = ({
       toothDetails?.[selectedTooth]?.patientDentistryToothId;
 
     if (patientDentistryToothId) {
-      await updatePatientTooth({
-        patientDentistryToothId,
-        field: "tooth_status",
-        value: newStatus,
-      });
-    } else {
-      const insertedPatientTooth = await insertPatientTooth({
-        patientDentistryId,
-        toothName: selectedTooth,
-        toothStatus: status,
-      });
+      const codeToRun = async () => {
+        await updatePatientTooth({
+          patientDentistryToothId,
+          field: "tooth_status",
+          value: newStatus,
+        });
+      };
 
-      if (insertedPatientTooth) {
-        patientDentistryToothId = insertedPatientTooth.patientDentistryToothId;
-      } else if (setMessage && setMessageType) {
-        setMessage("Error to insert patient tooth data");
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
+      }
+    } else {
+      const codeToRun = async () => {
+        const insertedPatientTooth = await insertPatientTooth({
+          patientDentistryId,
+          toothName: selectedTooth,
+          toothStatus: status,
+        });
+
+        if (insertedPatientTooth) {
+          patientDentistryToothId =
+            insertedPatientTooth.patientDentistryToothId;
+        } else if (setMessage && setMessageType) {
+          setMessage("Error to insert patient tooth data");
+          setMessageType("error");
+        }
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
         setMessageType("error");
       }
     }

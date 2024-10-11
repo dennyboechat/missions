@@ -12,6 +12,7 @@ import { updateProject } from "../../../database/project/UpdateProject";
 
 // Utils
 import { isValidProjectName } from "../../../utils/isValidProjectName";
+import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Hooks
 import { useState } from "react";
@@ -43,24 +44,32 @@ export const ProjectFields = ({
     setIsNameInvalid(!isValidName);
 
     if (isValidName && projectId && projectName !== newValue) {
-      const updatedProject = await updateProject({
-        projectId,
-        field: "project_name",
-        value: newValue,
-      });
+      const codeToRun = async () => {
+        const updatedProject = await updateProject({
+          projectId,
+          field: "project_name",
+          value: newValue,
+        });
 
-      if (setProject) {
-        setProject(updatedProject);
-      }
-
-      if (setMessage && setMessageType) {
-        if (updatedProject) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
+        if (setProject) {
+          setProject(updatedProject);
         }
+
+        if (setMessage && setMessageType) {
+          if (updatedProject) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+        }
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
     }
   };
@@ -73,20 +82,28 @@ export const ProjectFields = ({
     }
 
     if (projectId && projectDescription !== e.target.value) {
-      const updatedProject = await updateProject({
-        projectId,
-        field: "project_description",
-        value: e.target.value,
-      });
+      const codeToRun = async () => {
+        const updatedProject = await updateProject({
+          projectId,
+          field: "project_description",
+          value: e.target.value,
+        });
 
-      if (setMessage && setMessageType) {
-        if (updatedProject) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
+        if (setMessage && setMessageType) {
+          if (updatedProject) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
         }
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
     }
   };

@@ -26,6 +26,7 @@ import { ProjectUserId } from "../../types/ProjectUserTypes";
 
 // Utils
 import { getFilteredProjectUsers } from "../../utils/getFilteredProjectUsers";
+import { runWithRetries } from "@/app/utils/runWithRetries";
 
 const ProjectUsers = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -60,19 +61,27 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
     isUserActive: boolean;
   }) => {
     if (project) {
-      const updatedProjectUser = await updateProjectUser({
-        projectUserId,
-        isUserActive: isUserActive,
-      });
+      const codeToRun = async () => {
+        const updatedProjectUser = await updateProjectUser({
+          projectUserId,
+          isUserActive: isUserActive,
+        });
 
-      if (setMessage && setMessageType) {
-        if (updatedProjectUser) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
+        if (setMessage && setMessageType) {
+          if (updatedProjectUser) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
         }
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
     }
   };

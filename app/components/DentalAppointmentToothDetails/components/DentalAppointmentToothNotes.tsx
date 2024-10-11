@@ -15,6 +15,9 @@ import { updatePatientTooth } from "../../../database/patient-tooth/UpdatePatien
 import { useEffect, useRef } from "react";
 import { usePopupMessage } from "../../../lib/PopupMessage";
 
+// Utils
+import { runWithRetries } from "@/app/utils/runWithRetries";
+
 export const DentalAppointmentToothNotes = ({
   patientDentistryId,
   selectedTooth,
@@ -39,46 +42,62 @@ export const DentalAppointmentToothNotes = ({
       previousRef.current = { patientDentistryToothId, selectedTooth, notes };
 
       if (patientDentistryToothId) {
-        const updatedPatientTooth = await updatePatientTooth({
-          patientDentistryToothId,
-          field: "tooth_notes",
-          value: notes,
-        });
+        const codeToRun = async () => {
+          const updatedPatientTooth = await updatePatientTooth({
+            patientDentistryToothId,
+            field: "tooth_notes",
+            value: notes,
+          });
 
-        if (setMessage && setMessageType) {
-          if (updatedPatientTooth) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
+          if (setMessage && setMessageType) {
+            if (updatedPatientTooth) {
+              setMessage("Saved");
+              setMessageType("regular");
+            } else {
+              setMessage("Error to save. Please try again.");
+              setMessageType("error");
+            }
           }
+        };
+
+        const runSuccess = await runWithRetries(codeToRun);
+        if (!runSuccess && setMessage && setMessageType) {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
         }
       } else {
-        const insertedPatientTooth = await insertPatientTooth({
-          patientDentistryId,
-          toothName: selectedTooth,
-          toothNotes: notes,
-        });
+        const codeToRun = async () => {
+          const insertedPatientTooth = await insertPatientTooth({
+            patientDentistryId,
+            toothName: selectedTooth,
+            toothNotes: notes,
+          });
 
-        if (setMessage && setMessageType) {
-          if (insertedPatientTooth) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
+          if (setMessage && setMessageType) {
+            if (insertedPatientTooth) {
+              setMessage("Saved");
+              setMessageType("regular");
+            } else {
+              setMessage("Error to save. Please try again.");
+              setMessageType("error");
+            }
           }
-        }
 
-        setToothDetails((prevToothDetails: any) => ({
-          ...prevToothDetails,
-          [selectedTooth]: {
-            ...prevToothDetails?.[selectedTooth],
-            patientDentistryToothId:
-              insertedPatientTooth?.patientDentistryToothId,
-          },
-        }));
+          setToothDetails((prevToothDetails: any) => ({
+            ...prevToothDetails,
+            [selectedTooth]: {
+              ...prevToothDetails?.[selectedTooth],
+              patientDentistryToothId:
+                insertedPatientTooth?.patientDentistryToothId,
+            },
+          }));
+        };
+
+        const runSuccess = await runWithRetries(codeToRun);
+        if (!runSuccess && setMessage && setMessageType) {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     };
 

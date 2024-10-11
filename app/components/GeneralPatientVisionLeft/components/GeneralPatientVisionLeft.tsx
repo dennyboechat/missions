@@ -18,6 +18,7 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { isPatientVisionLeftNormalDistanceValid } from "../utils/isPatientVisionLeftNormalDistanceValid";
 import { isPatientVisionLeftTestedDistanceValid } from "../utils/isPatientVisionLeftTestedDistanceValid";
+import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../../../styles/fields.module.css";
@@ -55,20 +56,28 @@ export const GeneralPatientVisionLeft = ({
     setIsVisionLeftNormalDistanceInvalid(!isNormalDistanceValid);
 
     if (isNormalDistanceValid) {
-      const updatedPatientGeneral = await updatePatientGeneral({
-        patientGeneralId,
-        field: "patient_vision_left_normal_distance",
-        value,
-      });
+      const codeToRun = async () => {
+        const updatedPatientGeneral = await updatePatientGeneral({
+          patientGeneralId,
+          field: "patient_vision_left_normal_distance",
+          value,
+        });
 
-      if (setMessage && setMessageType) {
-        if (updatedPatientGeneral) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
+        if (setMessage && setMessageType) {
+          if (updatedPatientGeneral) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
         }
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
     }
   };
@@ -91,20 +100,28 @@ export const GeneralPatientVisionLeft = ({
     setIsVisionLeftTestedDistanceInvalid(!isTestedDistanceValid);
 
     if (isTestedDistanceValid) {
-      const updatedPatientGeneral = await updatePatientGeneral({
-        patientGeneralId,
-        field: "patient_vision_left_tested_distance",
-        value,
-      });
+      const codeToRun = async () => {
+        const updatedPatientGeneral = await updatePatientGeneral({
+          patientGeneralId,
+          field: "patient_vision_left_tested_distance",
+          value,
+        });
 
-      if (setMessage && setMessageType) {
-        if (updatedPatientGeneral) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
+        if (setMessage && setMessageType) {
+          if (updatedPatientGeneral) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
         }
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
     }
   };

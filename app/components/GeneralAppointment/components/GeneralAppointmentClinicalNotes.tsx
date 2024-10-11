@@ -14,6 +14,9 @@ import { usePopupMessage } from "../../../lib/PopupMessage";
 // Database
 import { updatePatientGeneral } from "../../../database/patient-general/UpdatePatientGeneral";
 
+// Utils
+import { runWithRetries } from "@/app/utils/runWithRetries";
+
 export const GeneralAppointmentClinicalNotes = ({
   patientGeneral,
   setPatientGeneral,
@@ -25,34 +28,42 @@ export const GeneralAppointmentClinicalNotes = ({
   useEffect(() => {
     const onChangeAppointmentNotes = async () => {
       if (appointmentNotes !== notes) {
-        const updatedPatientGeneral = await updatePatientGeneral({
-          patientGeneralId,
-          field: "appointment_notes",
-          value: notes,
-        });
+        const codeToRun = async () => {
+          const updatedPatientGeneral = await updatePatientGeneral({
+            patientGeneralId,
+            field: "appointment_notes",
+            value: notes,
+          });
 
-        if (updatedPatientGeneral) {
-          setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>
-            prevState?.map((existingPatientGeneral) =>
-              existingPatientGeneral.patientGeneralId === patientGeneralId
-                ? { ...existingPatientGeneral, appointmentNotes: notes }
-                : existingPatientGeneral
-            )
-          );
+          if (updatedPatientGeneral) {
+            setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>
+              prevState?.map((existingPatientGeneral) =>
+                existingPatientGeneral.patientGeneralId === patientGeneralId
+                  ? { ...existingPatientGeneral, appointmentNotes: notes }
+                  : existingPatientGeneral
+              )
+            );
 
-          if (setMessage && setMessageType) {
-            setMessage("Saved");
-            setMessageType("regular");
+            if (setMessage && setMessageType) {
+              setMessage("Saved");
+              setMessageType("regular");
+            }
+          } else {
+            if (setMessage && setMessageType) {
+              setMessage("Error to save. Please try again.");
+              setMessageType("error");
+            }
+
+            console.error(
+              `Could not update appointment by id ${patientGeneralId}`
+            );
           }
-        } else {
-          if (setMessage && setMessageType) {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
+        };
 
-          console.error(
-            `Could not update appointment by id ${patientGeneralId}`
-          );
+        const runSuccess = await runWithRetries(codeToRun);
+        if (!runSuccess && setMessage && setMessageType) {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
         }
       }
     };

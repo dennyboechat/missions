@@ -14,6 +14,9 @@ import { faRemove } from "@fortawesome/free-solid-svg-icons";
 // Hooks
 import { usePopupMessage } from "../../../../lib/PopupMessage";
 
+// Utils
+import { runWithRetries } from "@/app/utils/runWithRetries";
+
 export const Actions = ({
   medicationUid,
   drug,
@@ -33,16 +36,24 @@ export const Actions = ({
       )
     );
 
-    const deletedMedication = await deleteMedication(medicationUid);
+    const codeToRun = async () => {
+      const deletedMedication = await deleteMedication(medicationUid);
 
-    if (setMessage && setMessageType) {
-      if (deletedMedication) {
-        setMessage("Saved");
-        setMessageType("regular");
-      } else {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
+      if (setMessage && setMessageType) {
+        if (deletedMedication) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
+    };
+
+    const runSuccess = await runWithRetries(codeToRun);
+    if (!runSuccess && setMessage && setMessageType) {
+      setMessage("Error to save. Please try again.");
+      setMessageType("error");
     }
   };
 

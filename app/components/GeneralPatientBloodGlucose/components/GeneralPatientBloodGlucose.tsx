@@ -16,6 +16,7 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 
 // Utils
 import { isPatientBloodGlucoseValid } from "../utils/isPatientBloodGlucoseValid";
+import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../../../styles/fields.module.css";
@@ -42,20 +43,28 @@ export const GeneralPatientBloodGlucose = ({
     setIsBloodGlucoseInvalid(!isBloodGlucoseValid);
 
     if (isBloodGlucoseValid) {
-      const updatedPatientGeneral = await updatePatientGeneral({
-        patientGeneralId,
-        field: "patient_blood_glucose",
-        value,
-      });
+      const codeToRun = async () => {
+        const updatedPatientGeneral = await updatePatientGeneral({
+          patientGeneralId,
+          field: "patient_blood_glucose",
+          value,
+        });
 
-      if (setMessage && setMessageType) {
-        if (updatedPatientGeneral) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
+        if (setMessage && setMessageType) {
+          if (updatedPatientGeneral) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
         }
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
     }
   };

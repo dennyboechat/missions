@@ -25,6 +25,7 @@ import { PatientDentistryTypes } from "../../types/PatientDentistryTypes";
 // Utils
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../utils/getSideMenuSubHeaderFooter";
+import { runWithRetries } from "@/app/utils/runWithRetries";
 
 const PatientDentistry = ({ params }: { params: { id: string } }) => {
   const { setMessage, setMessageType } = usePopupMessage();
@@ -82,27 +83,35 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
   };
 
   const onCreateAppointment = async () => {
-    const patientDentistryData = await insertPatientDentistry({
-      patientPersonalId: patientPersonalId,
-    });
+    const codeToRun = async () => {
+      const patientDentistryData = await insertPatientDentistry({
+        patientPersonalId: patientPersonalId,
+      });
 
-    if (patientDentistryData) {
-      const newLastestAppointment = {
-        ...lastestAppointment,
-        patientDentistryId: patientDentistryData.patientDentistryId,
-        appointmentDate: patientDentistryData.appointmentDate,
-        appointmentNotes: patientDentistryData.appointmentNotes,
-      };
+      if (patientDentistryData) {
+        const newLastestAppointment = {
+          ...lastestAppointment,
+          patientDentistryId: patientDentistryData.patientDentistryId,
+          appointmentDate: patientDentistryData.appointmentDate,
+          appointmentNotes: patientDentistryData.appointmentNotes,
+        };
 
-      setLastestAppointment(newLastestAppointment);
+        setLastestAppointment(newLastestAppointment);
 
-      if (setMessage && setMessageType) {
-        setMessage("Saved");
-        setMessageType("regular");
+        if (setMessage && setMessageType) {
+          setMessage("Saved");
+          setMessageType("regular");
+        }
+
+        updateAppointments();
+      } else if (setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
       }
+    };
 
-      updateAppointments();
-    } else if (setMessage && setMessageType) {
+    const runSuccess = await runWithRetries(codeToRun);
+    if (!runSuccess && setMessage && setMessageType) {
       setMessage("Error to save. Please try again.");
       setMessageType("error");
     }

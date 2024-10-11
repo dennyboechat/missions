@@ -28,6 +28,7 @@ import { insertProjectUser } from "../../../database/project-user/InsertProjectU
 // Utils
 import { isValidEmail } from "../../../utils/isValidEmail";
 import { isValidProjectUserName } from "../utils/isValidProjectUserName";
+import { runWithRetries } from "@/app/utils/runWithRetries";
 
 export const ProjectUser = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -86,22 +87,30 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
         return;
       }
 
-      const insertedProjectUser = await insertProjectUser({
-        projectId,
-        userId: newUserId,
-      });
+      const codeToRun = async () => {
+        const insertedProjectUser = await insertProjectUser({
+          projectId,
+          userId: newUserId,
+        });
 
-      if (setMessage && setMessageType) {
-        if (insertedProjectUser) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
+        if (setMessage && setMessageType) {
+          if (insertedProjectUser) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
         }
-      }
 
-      router.push(`/project-users/${projectId}`);
+        router.push(`/project-users/${projectId}`);
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
+      }
     } else {
       setIsCreatingUser(false);
     }
