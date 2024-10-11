@@ -22,7 +22,7 @@ export const DentalAppointmentToothNotes = ({
   notes,
   setToothDetails,
 }: DentalAppointmentToothNotesProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const previousRef = useRef<DentalAppointmentToothNotesPreviousState>({
     patientDentistryToothId: undefined,
     selectedTooth: undefined,
@@ -39,17 +39,37 @@ export const DentalAppointmentToothNotes = ({
       previousRef.current = { patientDentistryToothId, selectedTooth, notes };
 
       if (patientDentistryToothId) {
-        await updatePatientTooth({
+        const updatedPatientTooth = await updatePatientTooth({
           patientDentistryToothId,
           field: "tooth_notes",
           value: notes,
         });
+
+        if (setMessage && setMessageType) {
+          if (updatedPatientTooth) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+        }
       } else {
         const insertedPatientTooth = await insertPatientTooth({
           patientDentistryId,
           toothName: selectedTooth,
           toothNotes: notes,
         });
+
+        if (setMessage && setMessageType) {
+          if (insertedPatientTooth) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+        }
 
         setToothDetails((prevToothDetails: any) => ({
           ...prevToothDetails,
@@ -59,10 +79,6 @@ export const DentalAppointmentToothNotes = ({
               insertedPatientTooth?.patientDentistryToothId,
           },
         }));
-      }
-
-      if (setMessage) {
-        setMessage("Saved");
       }
     };
 
@@ -78,6 +94,7 @@ export const DentalAppointmentToothNotes = ({
     selectedTooth,
     setMessage,
     setToothDetails,
+    setMessageType,
   ]);
 
   return (

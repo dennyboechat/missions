@@ -27,7 +27,7 @@ export const GeneralPatientVisionRight = ({
   patientVisionRightNormalDistance,
   patientVisionRightTestedDistance,
 }: GeneralPatientVisionRightProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [
     isVisionRightNormalDistanceInvalid,
     setIsVisionRightNormalDistanceInvalid,
@@ -61,8 +61,15 @@ export const GeneralPatientVisionRight = ({
         field: "patient_vision_right_normal_distance",
         value,
       });
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };
@@ -91,8 +98,15 @@ export const GeneralPatientVisionRight = ({
         field: "patient_vision_right_tested_distance",
         value,
       });
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

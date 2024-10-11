@@ -28,7 +28,7 @@ export const GeneralAppointmentMedicationPrescribed = ({
 }: {
   patientGeneralId: PatientGeneralId;
 }) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [medications, setMedications] = useState<Medication[]>([]);
 
   useEffect(() => {
@@ -92,10 +92,16 @@ export const GeneralAppointmentMedicationPrescribed = ({
         medicationUid: insertedMedication.patientGeneralPrescribedMedicationId,
       };
 
-      if (setMessage) {
+      if (setMessage && setMessageType) {
         setMessage("Saved");
+        setMessageType("regular");
       }
     } else {
+      if (setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
+      }
+
       console.error("Error to insert drug to prescribed medications.");
     }
   };
@@ -113,7 +119,7 @@ export const GeneralAppointmentMedicationPrescribed = ({
   };
 
   const deleteMedication = async (medicationUid: string) => {
-    await deletePatientGeneralMedication({
+    return await deletePatientGeneralMedication({
       patientGeneralPrescribedMedicationId: medicationUid,
     });
   };

@@ -26,7 +26,7 @@ export const GeneralPatientWeight = ({
   patientWeight,
   setPatientGeneral,
 }: GeneralPatientWeightProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isWeightInvalid, setIsWeightInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
@@ -56,8 +56,14 @@ export const GeneralPatientWeight = ({
         value,
       });
 
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

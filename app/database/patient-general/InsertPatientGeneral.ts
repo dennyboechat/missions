@@ -45,5 +45,6 @@ export const insertPatientGeneral = async ({
       : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

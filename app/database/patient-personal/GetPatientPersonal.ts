@@ -41,5 +41,6 @@ export const getPatientPersonal = async ({
       : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

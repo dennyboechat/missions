@@ -20,7 +20,10 @@ export const deleteProject = async ({
     `;
 
     await sql.query(query, [projectId]);
+
+    return 'deleted';
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

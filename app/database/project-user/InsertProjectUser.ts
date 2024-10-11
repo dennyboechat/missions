@@ -38,5 +38,6 @@ export const insertProjectUser = async ({
     return projectUsers;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

@@ -48,5 +48,6 @@ export const updatePatientTooth = async ({
       : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

@@ -42,5 +42,6 @@ export const updatePatientGeneral = async ({
       : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

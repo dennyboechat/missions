@@ -18,9 +18,9 @@ export const Actions = ({
   medicationUid,
   drug,
   setMedications,
-  deleteMedication
+  deleteMedication,
 }: ActionsProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
 
   const onDeleteRow = async () => {
     if (!drug || !medicationUid) {
@@ -33,10 +33,16 @@ export const Actions = ({
       )
     );
 
-    await deleteMedication(medicationUid);
+    const deletedMedication = await deleteMedication(medicationUid);
 
-    if (setMessage) {
-      setMessage("Saved");
+    if (setMessage && setMessageType) {
+      if (deletedMedication) {
+        setMessage("Saved");
+        setMessageType("regular");
+      } else {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
+      }
     }
   };
 

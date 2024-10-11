@@ -24,7 +24,7 @@ export const GeneralPatientTemperature = ({
   patientGeneralId,
   patientTemperature,
 }: GeneralPatientTemperatureProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isTemperatureInvalid, setIsTemperatureInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
@@ -48,8 +48,14 @@ export const GeneralPatientTemperature = ({
         value,
       });
 
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

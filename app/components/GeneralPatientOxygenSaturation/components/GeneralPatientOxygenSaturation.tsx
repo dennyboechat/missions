@@ -24,7 +24,7 @@ export const GeneralPatientOxygenSaturation = ({
   patientGeneralId,
   patientOxygenSaturation,
 }: GeneralPatientOxygenSaturationProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isOxygenSaturationInvalid, setIsOxygenSaturationInvalid] =
     useState(false);
 
@@ -50,8 +50,14 @@ export const GeneralPatientOxygenSaturation = ({
         value,
       });
 
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

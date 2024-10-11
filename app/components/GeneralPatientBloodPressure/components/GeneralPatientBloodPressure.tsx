@@ -27,7 +27,7 @@ export const GeneralPatientBloodPressure = ({
   patientBloodPressureSystolic,
   patientBloodPressureDiastolic,
 }: GeneralPatientBloodPressureProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isBloodPressureSystolicInvalid, setIsBloodPressureSystolicInvalid] =
     useState(false);
   const [isBloodPressureDiastolicInvalid, setIsBloodPressureDiastolicInvalid] =
@@ -56,8 +56,15 @@ export const GeneralPatientBloodPressure = ({
         field: "patient_blood_pressure_systolic",
         value,
       });
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };
@@ -85,8 +92,15 @@ export const GeneralPatientBloodPressure = ({
         field: "patient_blood_pressure_diastolic",
         value,
       });
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

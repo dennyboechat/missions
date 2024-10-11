@@ -41,5 +41,6 @@ export const getProjects = async ({
     return projects;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

@@ -32,7 +32,7 @@ import { isValidProjectUserName } from "../utils/isValidProjectUserName";
 export const ProjectUser = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const { project } = useProject();
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isCreatingUser, setIsCreatingUser] = useState(false);
 
   const [isProjectUserNameInvalid, setIsProjectUserNameInvalid] =
@@ -60,7 +60,8 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
     const isValidUserName = isValidProjectUserName({ userName });
     setIsProjectUserNameInvalid(!isValidUserName);
 
-    const isValidUserEmail = userEmail?.trim().length > 0 && isValidEmail(userEmail);
+    const isValidUserEmail =
+      userEmail?.trim().length > 0 && isValidEmail(userEmail);
     setIsProjectUserEmailInvalid(!isValidUserEmail);
 
     if (isValidUserName && isValidUserEmail) {
@@ -85,10 +86,19 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
         return;
       }
 
-      await insertProjectUser({ projectId, userId: newUserId });
+      const insertedProjectUser = await insertProjectUser({
+        projectId,
+        userId: newUserId,
+      });
 
-      if (setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (insertedProjectUser) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
 
       router.push(`/project-users/${projectId}`);

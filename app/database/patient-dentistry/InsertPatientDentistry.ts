@@ -45,5 +45,6 @@ export const insertPatientDentistry = async ({
       : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

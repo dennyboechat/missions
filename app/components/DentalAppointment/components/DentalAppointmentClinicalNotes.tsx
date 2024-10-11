@@ -18,7 +18,7 @@ export const DentalAppointmentClinicalNotes = ({
   patientDentistry,
   setPatientDentistries,
 }: DentalAppointmentClinicalNotesProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [notes, setNotes] = useState(patientDentistry.appointmentNotes);
   const { patientDentistryId, appointmentNotes } = patientDentistry;
 
@@ -31,7 +31,7 @@ export const DentalAppointmentClinicalNotes = ({
           value: notes,
         });
 
-        if (updatedPatientDentistry && setMessage) {
+        if (updatedPatientDentistry) {
           setPatientDentistries(
             (prevState: PatientDentistryTypes[] | undefined) =>
               prevState?.map((existingPatientDentistry) =>
@@ -42,8 +42,16 @@ export const DentalAppointmentClinicalNotes = ({
               )
           );
 
-          setMessage("Saved");
+          if (setMessage && setMessageType) {
+            setMessage("Saved");
+            setMessageType("regular");
+          }
         } else {
+          if (setMessage && setMessageType) {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+
           console.error(
             `Could not update appointment by id ${patientDentistryId}`
           );
@@ -62,6 +70,7 @@ export const DentalAppointmentClinicalNotes = ({
     patientDentistryId,
     setPatientDentistries,
     setMessage,
+    setMessageType,
   ]);
 
   return (

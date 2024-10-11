@@ -24,7 +24,7 @@ export const GeneralPatientBloodGlucose = ({
   patientGeneralId,
   patientBloodGlucose,
 }: GeneralPatientBloodGlucoseProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isBloodGlucoseInvalid, setIsBloodGlucoseInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
@@ -48,8 +48,14 @@ export const GeneralPatientBloodGlucose = ({
         value,
       });
 
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

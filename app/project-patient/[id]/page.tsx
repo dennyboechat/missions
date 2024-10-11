@@ -29,7 +29,7 @@ import { isValidPatientFullName } from "../../utils/isValidPatientFullName";
 const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const { project } = useProject();
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isCreatingPatient, setIsCreatingPatient] = useState(false);
   const [patientPersonalFields, setPatientPersonalFields] =
     useState<PatientPersonalFieldsTypes>({
@@ -67,15 +67,21 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
     setIsPatientDateOfBirthInvalid(!isValidDateOfBirth);
 
     if (isValidFullName && isValidPatientGender && isValidDateOfBirth) {
-      await insertPatientPersonal({
+      const insertedPatientPersonal = await insertPatientPersonal({
         projectId,
         patientFullName: patientFullName ?? "",
         isPatientMale: isPatientMale ?? true,
         patientDateOfBirth: patientDateOfBirth ?? new Date(),
       });
 
-      if (setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (insertedPatientPersonal) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
 
       router.push(`/project-patients/${projectId}`);

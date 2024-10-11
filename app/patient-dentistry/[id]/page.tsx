@@ -27,7 +27,7 @@ import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../utils/getSideMenuSubHeaderFooter";
 
 const PatientDentistry = ({ params }: { params: { id: string } }) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [patientDentistries, setPatientDentistries] =
     useState<PatientDentistryTypes[]>();
   const [lastestAppointment, setLastestAppointment] =
@@ -86,7 +86,7 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
       patientPersonalId: patientPersonalId,
     });
 
-    if (patientDentistryData && setMessage) {
+    if (patientDentistryData) {
       const newLastestAppointment = {
         ...lastestAppointment,
         patientDentistryId: patientDentistryData.patientDentistryId,
@@ -96,9 +96,15 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
 
       setLastestAppointment(newLastestAppointment);
 
-      setMessage("Saved");
+      if (setMessage && setMessageType) {
+        setMessage("Saved");
+        setMessageType("regular");
+      }
 
       updateAppointments();
+    } else if (setMessage && setMessageType) {
+      setMessage("Error to save. Please try again.");
+      setMessageType("error");
     }
   };
 
@@ -121,9 +127,7 @@ const PatientDentistry = ({ params }: { params: { id: string } }) => {
     >
       <Container className={styles.content}>
         <ContentHeader text="Dental" />
-        <Button onClick={onCreateAppointment}>
-          {"Create appointment"}
-        </Button>
+        <Button onClick={onCreateAppointment}>{"Create appointment"}</Button>
         <Space height={20} />
         {lastestAppointment.patientDentistryId && (
           <DentalAppointment

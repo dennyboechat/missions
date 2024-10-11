@@ -47,5 +47,6 @@ export const insertPatientTooth = async ({
       : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

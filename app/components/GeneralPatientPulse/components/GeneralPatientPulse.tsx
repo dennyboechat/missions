@@ -24,15 +24,13 @@ export const GeneralPatientPulse = ({
   patientGeneralId,
   patientPulse,
 }: GeneralPatientPulseProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isPulseInvalid, setIsPulseInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const value = rawValue === "" ? undefined : Number(rawValue);
-    const previousQuantity = patientPulse
-      ? Number(patientPulse)
-      : undefined;
+    const previousQuantity = patientPulse ? Number(patientPulse) : undefined;
 
     if (previousQuantity === value) {
       return;
@@ -48,8 +46,14 @@ export const GeneralPatientPulse = ({
         value,
       });
 
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

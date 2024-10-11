@@ -4,11 +4,16 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 // Types
-import { PopupMessageContextType } from "./types/PopupMessageContextType";
+import {
+  PopupMessageContextType,
+  PopupMessageType,
+} from "./types/PopupMessageContextType";
 
 const defaultContextValue: PopupMessageContextType = {
   message: undefined,
-  setMessage: (message?: string) => {},
+  setMessage: () => {},
+  messageType: "regular",
+  setMessageType: () => {},
 };
 
 const PopupMessageContext =
@@ -16,9 +21,12 @@ const PopupMessageContext =
 
 export const PopupMessageProvider = ({ children }: { children: ReactNode }) => {
   const [message, setMessage] = useState<string | undefined>();
+  const [messageType, setMessageType] = useState<PopupMessageType>();
 
   return (
-    <PopupMessageContext.Provider value={{ message, setMessage }}>
+    <PopupMessageContext.Provider
+      value={{ message, setMessage, messageType, setMessageType }}
+    >
       {children}
     </PopupMessageContext.Provider>
   );

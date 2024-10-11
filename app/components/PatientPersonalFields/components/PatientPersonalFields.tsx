@@ -34,7 +34,7 @@ export const PatientPersonalFields = ({
   const [dateOfBirth, setDateOfBirth] = useState(
     getFormattedDate(patientPersonalFields.patientDateOfBirth)
   );
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isFullNameInvalid, setIsFullNameInvalid] = useState(
     isPatientFullNameInvalid
   );
@@ -59,10 +59,16 @@ export const PatientPersonalFields = ({
         if (updatedPatientPerson) {
           setPatientPersonalFields(updatedPatientPerson);
 
-          if (setMessage) {
+          if (setMessage && setMessageType) {
             setMessage("Saved");
+            setMessageType("regular");
           }
         } else {
+          if (setMessage && setMessageType) {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+
           console.error(
             `Could not update patient full name by id ${patientPersonalId}`
           );
@@ -101,10 +107,16 @@ export const PatientPersonalFields = ({
       if (updatedPatientPerson) {
         setPatientPersonalFields(updatedPatientPerson);
 
-        if (setMessage) {
+        if (setMessage && setMessageType) {
           setMessage("Saved");
+          setMessageType("regular");
         }
       } else {
+        if (setMessage && setMessageType) {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
+
         console.error(
           `Could not update patient gender by id ${patientPersonalId}`
         );
@@ -136,10 +148,16 @@ export const PatientPersonalFields = ({
       if (updatedPatientPerson) {
         setPatientPersonalFields(updatedPatientPerson);
 
-        if (setMessage) {
+        if (setMessage && setMessageType) {
           setMessage("Saved");
+          setMessageType("regular");
         }
       } else {
+        if (setMessage && setMessageType) {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
+
         console.error(
           `Could not update patient date of birth by id ${patientPersonalId}`
         );

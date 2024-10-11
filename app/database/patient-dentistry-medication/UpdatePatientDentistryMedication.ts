@@ -50,5 +50,6 @@ export const updatePatientDentistryMedication = async ({
       : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

@@ -30,7 +30,7 @@ import { getFilteredProjectUsers } from "../../utils/getFilteredProjectUsers";
 const ProjectUsers = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const { project } = useProject();
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [projectUsers, setProjectUsers] = useState<ProjectUser[]>([]);
   const [searchText, setSearchText] = useState<string | undefined>();
 
@@ -60,13 +60,19 @@ const ProjectUsers = ({ params }: { params: { id: string } }) => {
     isUserActive: boolean;
   }) => {
     if (project) {
-      await updateProjectUser({
+      const updatedProjectUser = await updateProjectUser({
         projectUserId,
         isUserActive: isUserActive,
       });
 
-      if (setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (updatedProjectUser) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

@@ -39,5 +39,6 @@ export const getPatientSummary = async ({
       : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

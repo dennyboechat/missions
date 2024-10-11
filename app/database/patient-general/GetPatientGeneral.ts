@@ -56,5 +56,6 @@ export const getPatientGeneral = async ({
     return patientGeneral;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

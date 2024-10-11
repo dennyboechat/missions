@@ -28,7 +28,7 @@ export const ProjectFields = ({
   isProjectNameInvalid,
 }: ProjectFieldsProps) => {
   const { setProject } = useProject();
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isNameInvalid, setIsNameInvalid] = useState(isProjectNameInvalid);
 
   const onProjectNameChanged = async (
@@ -53,8 +53,14 @@ export const ProjectFields = ({
         setProject(updatedProject);
       }
 
-      if (setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (updatedProject) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };
@@ -67,14 +73,20 @@ export const ProjectFields = ({
     }
 
     if (projectId && projectDescription !== e.target.value) {
-      await updateProject({
+      const updatedProject = await updateProject({
         projectId,
         field: "project_description",
         value: e.target.value,
       });
 
-      if (setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (updatedProject) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

@@ -18,7 +18,7 @@ export const GeneralAppointmentClinicalNotes = ({
   patientGeneral,
   setPatientGeneral,
 }: GeneralAppointmentClinicalNotesProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [notes, setNotes] = useState(patientGeneral.appointmentNotes);
   const { patientGeneralId, appointmentNotes } = patientGeneral;
 
@@ -31,19 +31,25 @@ export const GeneralAppointmentClinicalNotes = ({
           value: notes,
         });
 
-        if (updatedPatientGeneral && setMessage) {
-          setPatientGeneral(
-            (prevState: PatientGeneralTypes[] | undefined) =>
-              prevState?.map((existingPatientGeneral) =>
-                existingPatientGeneral.patientGeneralId ===
-                patientGeneralId
-                  ? { ...existingPatientGeneral, appointmentNotes: notes }
-                  : existingPatientGeneral
-              )
+        if (updatedPatientGeneral) {
+          setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>
+            prevState?.map((existingPatientGeneral) =>
+              existingPatientGeneral.patientGeneralId === patientGeneralId
+                ? { ...existingPatientGeneral, appointmentNotes: notes }
+                : existingPatientGeneral
+            )
           );
 
-          setMessage("Saved");
+          if (setMessage && setMessageType) {
+            setMessage("Saved");
+            setMessageType("regular");
+          }
         } else {
+          if (setMessage && setMessageType) {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+
           console.error(
             `Could not update appointment by id ${patientGeneralId}`
           );
@@ -62,6 +68,7 @@ export const GeneralAppointmentClinicalNotes = ({
     patientGeneralId,
     setPatientGeneral,
     setMessage,
+    setMessageType,
   ]);
 
   return (

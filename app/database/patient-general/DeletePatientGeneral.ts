@@ -19,7 +19,10 @@ export const deletePatientGeneral = async ({
         patient_general_id = $1`;
 
     await sql.query(query, [patientGeneralId]);
+
+    return 'deleted';
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

@@ -40,5 +40,6 @@ export const getProjectUsers = async ({
     return projectUsers;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

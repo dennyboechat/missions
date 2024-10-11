@@ -33,5 +33,6 @@ export const getProject = async ({
     return projects && projects.length > 0 ? projects[0] : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

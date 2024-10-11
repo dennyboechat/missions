@@ -18,7 +18,7 @@ export const InstructionsInput = ({
   setMedications,
   updateMedication,
 }: InstructionsProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -41,8 +41,14 @@ export const InstructionsInput = ({
       value
     );
 
-    if (updatedPatientMedication && setMessage) {
-      setMessage("Saved");
+    if (setMessage && setMessageType) {
+      if (updatedPatientMedication) {
+        setMessage("Saved");
+        setMessageType("regular");
+      } else {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
+      }
     }
   };
 

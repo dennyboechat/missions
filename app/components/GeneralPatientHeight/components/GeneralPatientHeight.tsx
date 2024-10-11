@@ -26,7 +26,7 @@ export const GeneralPatientHeight = ({
   patientHeight,
   setPatientGeneral,
 }: GeneralPatientHeightProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [isHeightInvalid, setIsHeightInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
@@ -42,14 +42,12 @@ export const GeneralPatientHeight = ({
     setIsHeightInvalid(!isHeightValid);
 
     if (isHeightValid) {
-      setPatientGeneral(
-        (prevState: PatientGeneralTypes[] | undefined) =>
-          prevState?.map((existingPatientGeneral) =>
-            existingPatientGeneral.patientGeneralId ===
-            patientGeneralId
-              ? { ...existingPatientGeneral, patientHeight: value }
-              : existingPatientGeneral
-          )
+      setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>
+        prevState?.map((existingPatientGeneral) =>
+          existingPatientGeneral.patientGeneralId === patientGeneralId
+            ? { ...existingPatientGeneral, patientHeight: value }
+            : existingPatientGeneral
+        )
       );
 
       const updatedPatientGeneral = await updatePatientGeneral({
@@ -58,8 +56,14 @@ export const GeneralPatientHeight = ({
         value,
       });
 
-      if (updatedPatientGeneral && setMessage) {
-        setMessage("Saved");
+      if (setMessage && setMessageType) {
+        if (updatedPatientGeneral) {
+          setMessage("Saved");
+          setMessageType("regular");
+        } else {
+          setMessage("Error to save. Please try again.");
+          setMessageType("error");
+        }
       }
     }
   };

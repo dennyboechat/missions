@@ -5,5 +5,5 @@ export interface ActionsProps {
   medicationUid?: MedicationUid;
   drug?: Drug;
   setMedications: (medications: any) => Medication[] | void;
-  deleteMedication: (medicationUid: string) => void;
+  deleteMedication: (medicationUid: string) => {};
 }

@@ -79,5 +79,6 @@ export const getPatientGeneralSummary = async ({
     return patientGeneralSummary;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

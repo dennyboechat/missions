@@ -45,5 +45,6 @@ export const updatePatientPersonal = async ({
     return patientPersonals?.length > 0 ? patientPersonals[0] : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

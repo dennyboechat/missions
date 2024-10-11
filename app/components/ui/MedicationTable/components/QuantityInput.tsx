@@ -18,7 +18,7 @@ export const QuantityInput = ({
   setMedications,
   updateMedication,
 }: QuantityProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
@@ -43,8 +43,14 @@ export const QuantityInput = ({
       value
     );
 
-    if (updatedPatientMedication && setMessage) {
-      setMessage("Saved");
+    if (setMessage && setMessageType) {
+      if (updatedPatientMedication) {
+        setMessage("Saved");
+        setMessageType("regular");
+      } else {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
+      }
     }
   };
 

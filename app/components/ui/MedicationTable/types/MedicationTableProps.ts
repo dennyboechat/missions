@@ -18,5 +18,5 @@ export interface MedicationTableProps {
   ) => Promise<
     DentistryPrescribedMedication | GeneralPrescribedMedication | undefined
   >;
-  deleteMedication: (medicationUid: string) => void;
+  deleteMedication: (medicationUid: string) => {};
 }

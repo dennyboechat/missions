@@ -43,5 +43,6 @@ export const insertAppUserWithThirdPartyId = async ({
     return users?.length > 0 ? users[0] : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

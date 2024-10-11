@@ -58,5 +58,6 @@ export const getPatientDentalSummary = async ({
     return patientDentalSummary;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

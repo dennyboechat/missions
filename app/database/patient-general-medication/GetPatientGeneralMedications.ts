@@ -38,5 +38,6 @@ export const getPatientGeneralMedications = async ({
     return generalPrescribedMedications;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

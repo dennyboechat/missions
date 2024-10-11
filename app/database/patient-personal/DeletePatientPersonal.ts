@@ -19,7 +19,10 @@ export const deletePatientPersonal = async ({
         patient_personal_id = $1`;
 
     await sql.query(query, [patientPersonalId]);
+
+    return 'deleted';
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

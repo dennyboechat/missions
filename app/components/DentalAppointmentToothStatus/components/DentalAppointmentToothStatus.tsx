@@ -20,7 +20,7 @@ export const DentalAppointmentToothStatus = ({
   toothDetails,
   setToothDetails,
 }: DentalAppointmentToothStatusProps) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
 
   const onSelectStatus = async (status: ToothStatus) => {
     const newStatus =
@@ -46,8 +46,9 @@ export const DentalAppointmentToothStatus = ({
 
       if (insertedPatientTooth) {
         patientDentistryToothId = insertedPatientTooth.patientDentistryToothId;
-      } else if (setMessage) {
+      } else if (setMessage && setMessageType) {
         setMessage("Error to insert patient tooth data");
+        setMessageType("error");
       }
     }
 
@@ -60,8 +61,9 @@ export const DentalAppointmentToothStatus = ({
       },
     }));
 
-    if (setMessage) {
+    if (setMessage && setMessageType) {
       setMessage("Saved");
+      setMessageType("regular");
     }
   };
 

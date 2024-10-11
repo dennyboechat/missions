@@ -37,5 +37,6 @@ export const getPatientToothMap = async ({
     return patientToothMap;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

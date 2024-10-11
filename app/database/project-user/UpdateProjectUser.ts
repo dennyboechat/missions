@@ -36,5 +36,6 @@ export const updateProjectUser = async ({
     return projectUsers?.length > 0 ? projectUsers[0] : undefined;
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

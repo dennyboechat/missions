@@ -20,7 +20,10 @@ export const deletePatientGeneralMedication = async ({
     `;
 
     await sql.query(query, [patientGeneralPrescribedMedicationId]);
+
+    return 'deleted';
   } catch (error) {
     console.error(error);
+    return undefined;
   }
 };

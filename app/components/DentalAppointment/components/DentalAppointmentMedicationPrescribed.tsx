@@ -28,7 +28,7 @@ export const DentalAppointmentMedicationPrescribed = ({
 }: {
   patientDentistryId: PatientDentistryId;
 }) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [medications, setMedications] = useState<Medication[]>([]);
 
   useEffect(() => {
@@ -93,10 +93,16 @@ export const DentalAppointmentMedicationPrescribed = ({
           insertedMedication.patientDentistryPrescribedMedicationId,
       };
 
-      if (setMessage) {
+      if (setMessage && setMessageType) {
         setMessage("Saved");
+        setMessageType("regular");
       }
     } else {
+      if (setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
+      }
+
       console.error("Error to insert drug to prescribed medications.");
     }
   };
@@ -114,7 +120,7 @@ export const DentalAppointmentMedicationPrescribed = ({
   };
 
   const deleteMedication = async (medicationUid: string) => {
-    await deletePatientDentistryMedication({
+    return await deletePatientDentistryMedication({
       patientDentistryPrescribedMedicationId: medicationUid,
     });
   };

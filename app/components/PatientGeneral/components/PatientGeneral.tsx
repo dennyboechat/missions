@@ -27,7 +27,7 @@ import { getSideMenuSubHeader } from "../../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../../utils/getSideMenuSubHeaderFooter";
 
 export const PatientGeneral = ({ params }: { params: { id: string } }) => {
-  const { setMessage } = usePopupMessage();
+  const { setMessage, setMessageType } = usePopupMessage();
   const [patientGeneral, setPatientGeneral] = useState<PatientGeneralTypes[]>();
   const [lastestAppointment, setLastestAppointment] =
     useState<PatientGeneralTypes>();
@@ -85,7 +85,7 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
       patientPersonalId: patientPersonalId,
     });
 
-    if (patientGeneralData && setMessage) {
+    if (patientGeneralData) {
       const newLastestAppointment = {
         ...lastestAppointment,
         patientGeneralId: patientGeneralData.patientGeneralId,
@@ -95,9 +95,17 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
 
       setLastestAppointment(newLastestAppointment);
 
-      setMessage("Saved");
+      if (setMessage && setMessageType) {
+        setMessage("Saved");
+        setMessageType("regular");
+      }
 
       updateAppointments();
+    } else {
+      if (setMessage && setMessageType) {
+        setMessage("Error to save. Please try again.");
+        setMessageType("error");
+      }
     }
   };
 

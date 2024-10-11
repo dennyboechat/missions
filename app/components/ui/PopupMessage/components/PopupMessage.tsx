@@ -11,22 +11,29 @@ import { usePopupMessage } from "../../../../lib/PopupMessage";
 import styles from "../styles/PopupMessage.module.css";
 
 export const PopupMessage = () => {
-  const { message, setMessage } = usePopupMessage();
+  const { message, setMessage, messageType } = usePopupMessage();
 
   useEffect(() => {
     if (message) {
-      const timer = setTimeout(() => {
-        if (setMessage) {
-          setMessage(undefined);
-        }
-      }, 3000); // 3 seconds
+      const timer = setTimeout(
+        () => {
+          if (setMessage) {
+            setMessage(undefined);
+          }
+        },
+        messageType === "error" ? 10000 : 3000
+      );
 
       return () => clearTimeout(timer);
     }
-  }, [message, setMessage]);
+  }, [message, setMessage, messageType]);
 
   return message ? (
-    <Box className={styles.popup_message}>
+    <Box
+      className={`${styles.popup_message} ${
+        messageType === "error" ? styles.popup_error : ""
+      }`}
+    >
       <Text>{message}</Text>
     </Box>
   ) : null;
