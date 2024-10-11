@@ -8,16 +8,16 @@ import {
   PatientDental,
   UpdatePatientDentistry,
 } from "../../types/PatientDentistryTypes";
+import { DatabaseRetries } from "../../types/DatabaseRetries";
 
 export const updatePatientDentistry = async ({
   patientDentistryId,
   field,
   value,
 }: UpdatePatientDentistry): Promise<PatientDental | undefined> => {
-  const maxRetries = 15;
   let attempt = 0;
 
-  while (attempt < maxRetries) {
+  while (attempt < DatabaseRetries) {
     try {
       const query = `
       UPDATE 
@@ -51,7 +51,7 @@ export const updatePatientDentistry = async ({
       attempt++;
       console.error(`Attempt ${attempt} failed:`, error);
 
-      if (attempt >= maxRetries) {
+      if (attempt >= DatabaseRetries) {
         console.error("Max retries reached.");
         return undefined;
       }
