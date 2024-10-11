@@ -10,6 +10,6 @@ export const ProjectReportsMedication = ({
   medications,
 }: ProjectReportsMedicationProps) => (
   <div>
-    <Text>{"In development ..."}</Text>
+    <Text>{"Coming soon ..."}</Text>
   </div>
 );
