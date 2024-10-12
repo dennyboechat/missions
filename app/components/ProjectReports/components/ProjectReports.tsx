@@ -6,6 +6,7 @@ import { SideMenuLayout } from "../../ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../ProjectMenuItems";
 import { ContentHeader } from "../../ContentHeader";
 import { ProjectReportsFilter } from "../../ProjectReportsFilter";
+import { ProjectReportsAppointments } from "../../ProjectReportsAppointments";
 import { ProjectReportsMedication } from "../../ProjectReportsMedication";
 import { Space } from "../../ui/Space";
 
@@ -20,24 +21,37 @@ import styles from "../../../styles/content.module.css";
 import { isReportStartDateValid } from "../utils/isReportStartDateValid";
 import { isReportEndDateValid } from "../utils/isReportEndDateValid";
 import { getCurrentDate } from "../../../utils/getCurrentDate";
+import { subtractDaysToDate } from "../../../utils/subtractDaysToDate";
+import { getFormattedDate } from "../../../utils/getFormattedDate";
 
 // Database
-import { getProjectReports } from "../../../database/project-reports/GetProjectReports";
+import { getProjectReportsMedication } from "../../../database/project-reports/GetProjectReportsMedication";
+import { getProjectReportsAppointment } from "../../../database/project-reports/GetProjectReportsAppointment";
 
 // Types
-import { ProjectReportsTypes } from "../../../types/ProjectReportsTypes";
+import { ProjectReportsMedicationTypes } from "../../../types/ProjectReportsMedicationTypes";
+import { ProjectReportsAppointmentTypes } from "../../../types/ProjectReportsAppointmentTypes";
 
 export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
-  const [startDate, setStartDate] = useState<string>();
-  const [endDate, setEndDate] = useState<string>(getCurrentDate());
+  const currentDate = getCurrentDate();
+  const startDateFilter = getFormattedDate(
+    subtractDaysToDate({ date: currentDate, days: 14 })
+  );
+  const [startDate, setStartDate] = useState<string>(startDateFilter);
+  const [endDate, setEndDate] = useState<string>(currentDate);
   const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
   const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
   const [isLoadingMedicationReport, setIsLoadingMedicationReport] =
     useState(false);
   const [medications, setMedications] = useState<
-    ProjectReportsTypes[] | undefined
+    ProjectReportsMedicationTypes[] | undefined
   >();
+  const [appointments, setAppointments] = useState<
+    ProjectReportsAppointmentTypes[] | undefined
+  >();
+  const [isLoadingAppointmentReport, setIsLoadingAppointmentReport] =
+    useState(false);
 
   const { id: projectId } = params;
 
@@ -47,6 +61,7 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
 
   const onGenerateReports = async () => {
     setIsLoadingMedicationReport(true);
+    setIsLoadingAppointmentReport(true);
     const isStartValid = isReportStartDateValid(startDate);
     setIsStartDateInvalid(!isStartValid);
 
@@ -54,16 +69,25 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     setIsEndDateInvalid(!isEndValid);
 
     if (isStartValid && isEndValid) {
-      const projectReports = await getProjectReports({
+      const projectReportsMedication = await getProjectReportsMedication({
         projectId,
         startDate,
         endDate,
       });
 
-      setMedications(projectReports);
+      setMedications(projectReportsMedication);
+
+      const projectReportsAppointment = await getProjectReportsAppointment({
+        projectId,
+        startDate,
+        endDate,
+      });
+
+      setAppointments(projectReportsAppointment);
     }
 
     setIsLoadingMedicationReport(false);
+    setIsLoadingAppointmentReport(false);
   };
 
   return (
@@ -85,6 +109,10 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
         />
         <Space height={30} />
         <Grid gap="10px" columns={{ sm: "2" }}>
+          <ProjectReportsAppointments
+            appointments={appointments}
+            isLoadingReport={isLoadingAppointmentReport}
+          />
           <ProjectReportsMedication
             medications={medications}
             isLoadingReport={isLoadingMedicationReport}

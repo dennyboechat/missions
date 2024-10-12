@@ -4,10 +4,10 @@
 import { sql } from "@vercel/postgres";
 
 // Types
-import { ProjectReportsTypes } from "../../types/ProjectReportsTypes";
+import { ProjectReportsMedicationTypes } from "../../types/ProjectReportsMedicationTypes";
 import { ProjectId } from "../../types/ProjectTypes";
 
-export const getProjectReports = async ({
+export const getProjectReportsMedication = async ({
   projectId,
   startDate,
   endDate,
@@ -15,7 +15,7 @@ export const getProjectReports = async ({
   projectId: ProjectId;
   startDate?: string;
   endDate?: string;
-}): Promise<ProjectReportsTypes[] | undefined> => {
+}): Promise<ProjectReportsMedicationTypes[] | undefined> => {
   try {
     const query = `
       (
@@ -61,7 +61,7 @@ export const getProjectReports = async ({
 
     const response = await sql.query(query, [projectId, startDate, endDate]);
 
-    const projectReports: ProjectReportsTypes[] = response.rows.map((row) => ({
+    const projectReports: ProjectReportsMedicationTypes[] = response.rows.map((row) => ({
       drug: row.drug_name,
       dose: row.dose,
       quantity: row.quantity,

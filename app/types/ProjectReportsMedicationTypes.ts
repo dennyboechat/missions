@@ -1,7 +1,7 @@
 // Types
 import { Drug, Dose } from "./Medication";
 
-export interface ProjectReportsTypes {
+export interface ProjectReportsMedicationTypes {
   drug: Drug;
   dose: Dose;
   quantity: number;

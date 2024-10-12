@@ -1,7 +1,7 @@
 // Types
-import { ProjectReportsTypes } from "../../../types/ProjectReportsTypes";
+import { ProjectReportsMedicationTypes } from "../../../types/ProjectReportsMedicationTypes";
 
 export interface ProjectReportsMedicationProps {
-  medications: ProjectReportsTypes[] | undefined;
+  medications: ProjectReportsMedicationTypes[] | undefined;
   isLoadingReport?: boolean;
 }

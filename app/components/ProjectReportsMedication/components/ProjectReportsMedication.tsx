@@ -22,7 +22,7 @@ export const ProjectReportsMedication = ({
   let medicationTotalQuantity = 0;
   const consolidatedMedications: ConsolidatedMedication[] = [];
 
-  medications?.map(({ drug, dose, quantity }, i) => {
+  medications?.map(({ drug, dose, quantity }) => {
     if (drug) {
       const medication = `${drug} ${dose ?? ""}`;
 
