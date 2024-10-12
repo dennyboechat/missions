@@ -103,7 +103,7 @@ export const DentalAppointmentToothNotes = ({
 
     const updateData = setTimeout(() => {
       onNoteChanged();
-    }, 1000);
+    }, 300);
 
     return () => clearTimeout(updateData);
   }, [

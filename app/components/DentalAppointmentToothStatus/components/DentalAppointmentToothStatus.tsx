@@ -36,11 +36,30 @@ export const DentalAppointmentToothStatus = ({
 
     if (patientDentistryToothId) {
       const codeToRun = async () => {
-        await updatePatientTooth({
+        const updatedPatientTooth = await updatePatientTooth({
           patientDentistryToothId,
           field: "tooth_status",
           value: newStatus,
         });
+
+        if (setMessage && setMessageType) {
+          if (updatedPatientTooth) {
+            setMessage("Saved");
+            setMessageType("regular");
+          } else {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+        }
+
+        setToothDetails((prevToothDetails: any) => ({
+          ...prevToothDetails,
+          [selectedTooth]: {
+            ...prevToothDetails?.[selectedTooth],
+            toothStatus: newStatus,
+            patientDentistryToothId,
+          },
+        }));
       };
 
       const runSuccess = await runWithRetries(codeToRun);
@@ -63,6 +82,15 @@ export const DentalAppointmentToothStatus = ({
           setMessage("Error to insert patient tooth data");
           setMessageType("error");
         }
+
+        setToothDetails((prevToothDetails: any) => ({
+          ...prevToothDetails,
+          [selectedTooth]: {
+            ...prevToothDetails?.[selectedTooth],
+            toothStatus: newStatus,
+            patientDentistryToothId,
+          },
+        }));
       };
 
       const runSuccess = await runWithRetries(codeToRun);

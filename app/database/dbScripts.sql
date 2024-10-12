@@ -110,13 +110,13 @@ CREATE TABLE IF NOT EXISTS patient_general_prescribed_medication (
 );
 
 -- Clean up
-DROP TABLE IF EXISTS patient_general_prescribed_medication,
-patient_general,
-patient_dentistry_prescribed_medication,
-patient_dentistry_tooth,
-tooth_status,
-patient_dentistry,
-patient_personal,
-project_user,
-project,
-app_user
+-- DROP TABLE IF EXISTS patient_general_prescribed_medication,
+-- patient_general,
+-- patient_dentistry_prescribed_medication,
+-- patient_dentistry_tooth,
+-- tooth_status,
+-- patient_dentistry,
+-- patient_personal,
+-- project_user,
+-- project,
+-- app_user

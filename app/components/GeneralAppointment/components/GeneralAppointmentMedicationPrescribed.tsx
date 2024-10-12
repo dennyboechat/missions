@@ -8,6 +8,7 @@ import { Space } from "../../ui/Space";
 // Types
 import { Medication } from "../../../types/Medication";
 import { PatientGeneralId } from "../../../types/PatientGeneralTypes";
+import { databaseRetries } from "../../../types/DatabaseRetries";
 
 // Hooks
 import { useState, useEffect } from "react";
@@ -77,32 +78,51 @@ export const GeneralAppointmentMedicationPrescribed = ({
     drug: string,
     updatedMedications: Medication[]
   ) => {
-    const insertedMedication = await insertPatientGeneralMedication({
-      patientGeneralId,
-      medication: {
-        drug,
-      },
-    });
+    let attempt = 0;
+    let isOnline;
 
-    if (insertedMedication) {
-      const lastIndex = updatedMedications.length - 1;
-      updatedMedications[lastIndex] = {
-        ...updatedMedications[lastIndex],
-        drug,
-        medicationUid: insertedMedication.patientGeneralPrescribedMedicationId,
-      };
+    while (attempt < databaseRetries && !isOnline) {
+      isOnline = navigator.onLine;
 
-      if (setMessage && setMessageType) {
-        setMessage("Saved");
-        setMessageType("regular");
+      if (isOnline) {
+        const insertedMedication = await insertPatientGeneralMedication({
+          patientGeneralId,
+          medication: {
+            drug,
+          },
+        });
+
+        if (insertedMedication) {
+          const lastIndex = updatedMedications.length - 1;
+          updatedMedications[lastIndex] = {
+            ...updatedMedications[lastIndex],
+            drug,
+            medicationUid:
+              insertedMedication.patientGeneralPrescribedMedicationId,
+          };
+
+          if (setMessage && setMessageType) {
+            setMessage("Saved");
+            setMessageType("regular");
+          }
+        } else {
+          if (setMessage && setMessageType) {
+            setMessage("Error to save. Please try again.");
+            setMessageType("error");
+          }
+
+          console.error("Error to insert drug to prescribed medications.");
+        }
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        attempt++;
+        console.warn(`Attempt to run ${attempt}`);
       }
-    } else {
-      if (setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
+    }
 
-      console.error("Error to insert drug to prescribed medications.");
+    if (!isOnline && setMessage && setMessageType) {
+      setMessage("Error to save medication. Please try again.");
+      setMessageType("error");
     }
   };
 
