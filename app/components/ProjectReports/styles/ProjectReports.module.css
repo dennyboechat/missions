@@ -1,0 +1,20 @@
+.container {
+  background-color: #fbfbfb;
+  padding: 20px;
+}
+
+.container_title {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.container_title > :nth-child(even) {
+  justify-self: end;
+}
+
+.table_item {
+  background-color: #f0f0f0;
+  padding-left: 3px;
+  padding-right: 3px;
+}

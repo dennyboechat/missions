@@ -23,6 +23,7 @@ export const ProjectReportsFilter = ({
         value={startDate}
         onChange={(value) => setStartDate(value)}
         required
+        autoFocus
         errorMessage={isStartDateInvalid ? 'Invalid' : ''}
       />
       <DateTime

@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Container } from "@radix-ui/themes";
+import { Container, Grid } from "@radix-ui/themes";
 import { SideMenuLayout } from "../../ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../ProjectMenuItems";
 import { ContentHeader } from "../../ContentHeader";
@@ -19,6 +19,7 @@ import styles from "../../../styles/content.module.css";
 // Utils
 import { isReportStartDateValid } from "../utils/isReportStartDateValid";
 import { isReportEndDateValid } from "../utils/isReportEndDateValid";
+import { getCurrentDate } from "../../../utils/getCurrentDate";
 
 // Database
 import { getProjectReports } from "../../../database/project-reports/GetProjectReports";
@@ -29,9 +30,11 @@ import { ProjectReportsTypes } from "../../../types/ProjectReportsTypes";
 export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
   const [startDate, setStartDate] = useState<string>();
-  const [endDate, setEndDate] = useState<string>();
+  const [endDate, setEndDate] = useState<string>(getCurrentDate());
   const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
   const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
+  const [isLoadingMedicationReport, setIsLoadingMedicationReport] =
+    useState(false);
   const [medications, setMedications] = useState<
     ProjectReportsTypes[] | undefined
   >();
@@ -43,6 +46,7 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
   );
 
   const onGenerateReports = async () => {
+    setIsLoadingMedicationReport(true);
     const isStartValid = isReportStartDateValid(startDate);
     setIsStartDateInvalid(!isStartValid);
 
@@ -52,10 +56,14 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     if (isStartValid && isEndValid) {
       const projectReports = await getProjectReports({
         projectId,
+        startDate,
+        endDate,
       });
 
       setMedications(projectReports);
     }
+
+    setIsLoadingMedicationReport(false);
   };
 
   return (
@@ -75,8 +83,13 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
           isEndDateInvalid={isEndDateInvalid}
           onGenerateReports={onGenerateReports}
         />
-        <Space />
-        <ProjectReportsMedication medications={medications} />
+        <Space height={30} />
+        <Grid gap="10px" columns={{ sm: "2" }}>
+          <ProjectReportsMedication
+            medications={medications}
+            isLoadingReport={isLoadingMedicationReport}
+          />
+        </Grid>
       </Container>
     </SideMenuLayout>
   );

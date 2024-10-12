@@ -6,7 +6,7 @@ export interface ProjectReportsFilterProps {
   setStartDate: Dispatch<SetStateAction<string | undefined>>;
   isStartDateInvalid?: boolean;
   endDate?: string;
-  setEndDate: Dispatch<SetStateAction<string | undefined>>;
+  setEndDate: Dispatch<SetStateAction<string>>;
   isEndDateInvalid?: boolean;
   onGenerateReports: () => void;
 }
