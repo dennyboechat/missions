@@ -1,6 +1,5 @@
 // Multivariate Dependencies
 import { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { AppUserProvider } from "./lib/AppUserContext";
 import { ProjectProvider } from "./lib/ProjectContext";
@@ -42,7 +41,6 @@ export default function RootLayout({
                 </PopupMessageProvider>
               </ProjectProvider>
             </AppUserProvider>
-            <Analytics />
           </Theme>
         </body>
       </html>
