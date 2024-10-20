@@ -40,8 +40,12 @@ export const PatientPersonalFields = ({
     isPatientFullNameInvalid
   );
 
-  const { patientPersonalId, patientFullName, isPatientMale } =
-    patientPersonalFields;
+  const {
+    patientPersonalId,
+    patientFullName,
+    isPatientMale,
+    patientPhoneNumber,
+  } = patientPersonalFields;
 
   const onFullNameChanged = async (e: FocusEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -199,6 +203,51 @@ export const PatientPersonalFields = ({
     }
   };
 
+  const onPhoneNumberChanged = async (e: FocusEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+
+    if (patientPersonalId && patientPhoneNumber !== newValue) {
+      const codeToRun = async () => {
+        const updatedPatientPerson = await updatePatientPersonal({
+          patientPersonalId,
+          field: "patient_phone_number",
+          value: newValue,
+        });
+
+        if (updatedPatientPerson) {
+          setPatientPersonalFields(updatedPatientPerson);
+
+          if (setMessage && setMessageType) {
+            setMessage("Saved");
+            setMessageType("regular");
+          }
+        } else {
+          if (setMessage && setMessageType) {
+            setMessage("Error to save phone number. Please try again.");
+            setMessageType("error");
+          }
+
+          console.error(
+            `Could not update patient phone number by id ${patientPersonalId}`
+          );
+        }
+      };
+
+      const runSuccess = await runWithRetries(codeToRun);
+      if (!runSuccess && setMessage && setMessageType) {
+        setMessage("Error to save phone number. Please try again.");
+        setMessageType("error");
+      }
+    } else {
+      setPatientPersonalFields((prevFields) => {
+        return {
+          ...prevFields,
+          patientPhoneNumber: newValue,
+        };
+      });
+    }
+  };
+
   return (
     <Grid gap="10px" width={{ xs: "auto", sm: "500px" }}>
       <InputTextField
@@ -226,6 +275,11 @@ export const PatientPersonalFields = ({
         onBlur={onDateOfBirthChange}
         required
         errorMessage={isPatientDateOfBirthInvalid ? "Required field" : ""}
+      />
+      <InputTextField
+        label="Phone number"
+        value={patientPhoneNumber}
+        onBlur={onPhoneNumberChanged}
       />
     </Grid>
   );

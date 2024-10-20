@@ -11,4 +11,5 @@ export interface PatientPersonalSummary {
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
   patientDateOfBirth: Date;
+  patientPhoneNumber: string;
 }

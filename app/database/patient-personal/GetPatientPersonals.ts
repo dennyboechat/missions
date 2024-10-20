@@ -33,6 +33,7 @@ export const getPatientPersonals = async ({
         patientFullName: row.patient_full_name,
         isPatientMale: row.is_patient_male,
         patientDateOfBirth: row.patient_date_of_birth,
+        patientPhoneNumber: row.patient_phone_number,
       })
     );
 

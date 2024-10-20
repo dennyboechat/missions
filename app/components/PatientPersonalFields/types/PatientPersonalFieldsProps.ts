@@ -14,6 +14,7 @@ export interface PatientPersonalFieldsTypes {
   patientFullName?: PatientPersonalFullName;
   isPatientMale?: boolean;
   patientDateOfBirth?: Date;
+  patientPhoneNumber?: string;
 }
 
 export interface PatientPersonalFieldsProps {

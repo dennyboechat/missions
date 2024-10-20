@@ -40,6 +40,13 @@ export const getFilteredPatientPersonals = ({
         ) {
           patientPersonal.filterOrder = 3;
           sortedPatientPersonals.push(patientPersonal);
+        } else if (
+          getParsedCharacterText({
+            text: patientPersonal.patientPhoneNumber,
+          }).includes(filterText.toLowerCase())
+        ) {
+          patientPersonal.filterOrder = 4;
+          sortedPatientPersonals.push(patientPersonal);
         }
       });
 

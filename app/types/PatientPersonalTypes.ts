@@ -11,6 +11,7 @@ export interface PatientPersonalTypes {
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
   patientDateOfBirth: Date;
+  patientPhoneNumber: string;
   filterOrder?: number;
 }
 
@@ -19,6 +20,7 @@ export interface NewPatientPersonal {
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
   patientDateOfBirth: Date;
+  patientPhoneNumber?: string;
 }
 
 export interface UpdatePatientPersonal {

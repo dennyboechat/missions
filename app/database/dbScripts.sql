@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS patient_personal (
     patient_full_name VARCHAR(255) NOT NULL,
     is_patient_male BOOLEAN NOT NULL,
     patient_date_of_birth DATE,
+    patient_phone_number VARCHAR(255),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE
 );

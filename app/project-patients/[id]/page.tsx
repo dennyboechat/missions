@@ -26,6 +26,7 @@ import { PatientPersonalTypes } from "../../types/PatientPersonalTypes";
 import { getFilteredPatientPersonals } from "../../utils/getFilteredPatientPersonals";
 import { getLocaleFormattedDate } from "../../utils/getLocaleFormattedDate";
 import { getGenderLabel } from "../../utils/getGenderLabel";
+import { getAge } from "../../utils/getAge";
 
 const ProjectPatients = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -56,9 +57,10 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
 
   const tableHeader = (
     <Table.Row>
-      <Table.ColumnHeaderCell>{"Full Name"}</Table.ColumnHeaderCell>
-      <Table.ColumnHeaderCell>{"Date of Birth"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Full name"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Date of birth"}</Table.ColumnHeaderCell>
       <Table.ColumnHeaderCell>{"Gender"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Phone number"}</Table.ColumnHeaderCell>
     </Table.Row>
   );
 
@@ -94,6 +96,7 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
               patientFullName,
               patientDateOfBirth,
               isPatientMale,
+              patientPhoneNumber,
             }) => (
               <Table.Row key={patientPersonalId}>
                 <Table.RowHeaderCell>
@@ -102,9 +105,14 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
                   </Link>
                 </Table.RowHeaderCell>
                 <Table.Cell>
-                  {getLocaleFormattedDate({ date: patientDateOfBirth })}
+                  {`${getLocaleFormattedDate({
+                    date: patientDateOfBirth,
+                  })} (${getAge({
+                    date: patientDateOfBirth,
+                  })}yo)`}
                 </Table.Cell>
                 <Table.Cell>{getGenderLabel({ isPatientMale })}</Table.Cell>
+                <Table.Cell>{patientPhoneNumber}</Table.Cell>
               </Table.Row>
             )
           )}

@@ -17,17 +17,18 @@ export const insertPatientPersonal = async ({
   patientFullName,
   isPatientMale,
   patientDateOfBirth,
+  patientPhoneNumber,
 }: NewPatientPersonal): Promise<PatientPersonalTypes | undefined> => {
   try {
     const parsedPatientDateOfBirth = getFormattedDate(patientDateOfBirth);
 
     const query = `
       INSERT INTO 
-        patient_personal (project_id, patient_full_name, is_patient_male, patient_date_of_birth)
+        patient_personal (project_id, patient_full_name, is_patient_male, patient_date_of_birth, patient_phone_number)
       VALUES 
-        ($1, $2, $3, $4)
+        ($1, $2, $3, $4, $5)
       RETURNING 
-        patient_personal_id, project_id, patient_full_name, is_patient_male, patient_date_of_birth
+        patient_personal_id, project_id, patient_full_name, is_patient_male, patient_date_of_birth, patient_phone_number
     `;
 
     const response = await sql.query(query, [
@@ -35,6 +36,7 @@ export const insertPatientPersonal = async ({
       patientFullName.trim(),
       isPatientMale,
       parsedPatientDateOfBirth,
+      patientPhoneNumber,
     ]);
 
     const patientPersonals: PatientPersonalTypes[] = response.rows.map(
@@ -44,6 +46,7 @@ export const insertPatientPersonal = async ({
         patientFullName: row.patient_full_name,
         isPatientMale: row.is_patient_male,
         patientDateOfBirth: row.patient_date_of_birth,
+        patientPhoneNumber: row.patient_phone_number,
       })
     );
 

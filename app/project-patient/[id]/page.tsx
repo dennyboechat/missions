@@ -55,7 +55,7 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
   const onConfirmButtonClick = async () => {
     setIsCreatingPatient(true);
 
-    const { patientFullName, isPatientMale, patientDateOfBirth } =
+    const { patientFullName, isPatientMale, patientDateOfBirth, patientPhoneNumber } =
       patientPersonalFields;
 
     const isValidFullName = isValidPatientFullName({ patientFullName });
@@ -74,6 +74,7 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
           patientFullName: patientFullName ?? "",
           isPatientMale: isPatientMale ?? true,
           patientDateOfBirth: patientDateOfBirth ?? new Date(),
+          patientPhoneNumber,
         });
 
         if (setMessage && setMessageType) {
@@ -81,7 +82,7 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
             setMessage("Saved");
             setMessageType("regular");
           } else {
-            setMessage("Error to save. Please try again.");
+            setMessage("Error to save patient data. Please try again.");
             setMessageType("error");
           }
         }
@@ -91,7 +92,7 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
 
       const runSuccess = await runWithRetries(codeToRun);
       if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
+        setMessage("Error to save patient data. Please try again.");
         setMessageType("error");
       }
     } else {

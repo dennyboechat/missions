@@ -24,8 +24,12 @@ export const PersonalSummary = ({
 }: {
   patientPersonalSummary: PatientPersonalSummary;
 }) => {
-  const { patientFullName, patientDateOfBirth, isPatientMale } =
-    patientPersonalSummary;
+  const {
+    patientFullName,
+    patientDateOfBirth,
+    isPatientMale,
+    patientPhoneNumber,
+  } = patientPersonalSummary;
 
   const patientAge = getAge({
     date: patientDateOfBirth,
@@ -53,6 +57,12 @@ export const PersonalSummary = ({
           isPatientMale,
         })}
       </Text>
+      <div className={styles.summary_margin}>
+        <Text>{`Phone: ${patientPhoneNumber ? patientPhoneNumber : ""}`}</Text>
+        {!patientPhoneNumber && (
+          <Text className={styles.italic}>{"undefined"}</Text>
+        )}
+      </div>
     </>
   );
 };
