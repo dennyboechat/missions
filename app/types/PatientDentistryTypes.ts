@@ -18,6 +18,7 @@ export interface PatientDentistryTypes {
   patientPersonalId: PatientPersonalId;
   appointmentDate: Date;
   appointmentNotes: string;
+  appointmentReferral: string;
   projectId: ProjectId;
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
