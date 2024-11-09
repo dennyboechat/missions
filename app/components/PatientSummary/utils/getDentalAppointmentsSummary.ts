@@ -19,6 +19,7 @@ export const getDentalAppointmentsSummary = ({
         toothName,
         toothStatus,
         appointmentDate,
+        appointmentReferral,
         patientDentistryPrescribedMedicationId,
         drug,
         dose,
@@ -80,7 +81,8 @@ export const getDentalAppointmentsSummary = ({
       } else {
         acc.push({
           patientDentistryId: patientDentistryId,
-          appointmentDate: appointmentDate,
+          appointmentDate,
+          appointmentReferral,
           treatedTeeth: treatedTooth ? [treatedTooth] : [],
           extractedTeeth: extractedTooth ? [extractedTooth] : [],
           prescribedMedication: patientDentistryPrescribedMedicationId

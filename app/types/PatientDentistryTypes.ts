@@ -10,6 +10,7 @@ export interface PatientDental {
   patientPersonalId: PatientPersonalId;
   appointmentDate: Date;
   appointmentNotes: string;
+  appointmentReferral: string;
 }
 
 export interface PatientDentistryTypes {

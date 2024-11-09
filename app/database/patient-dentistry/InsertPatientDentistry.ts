@@ -20,16 +20,17 @@ export const insertPatientDentistry = async ({
 
     const query = `
       INSERT INTO
-        patient_dentistry (patient_personal_id, appointment_date, appointment_notes)
+        patient_dentistry (patient_personal_id, appointment_date, appointment_notes, appointment_referral)
       VALUES 
-        ($1, $2, $3)
+        ($1, $2, $3, $4)
       RETURNING 
-        patient_dentistry_id, patient_personal_id, appointment_date, appointment_notes
+        patient_dentistry_id, patient_personal_id, appointment_date, appointment_notes, appointment_referral
     `;
 
     const response = await sql.query(query, [
       patientPersonalId,
       currentDate,
+      "",
       "",
     ]);
 
@@ -37,6 +38,7 @@ export const insertPatientDentistry = async ({
       patientDentistryId: row.patient_dentistry_id,
       patientPersonalId: row.patient_personal_id,
       appointmentNotes: row.appointment_notes,
+      appointmentReferral: row.appointment_referral,
       appointmentDate: row.appointment_date,
     }));
 

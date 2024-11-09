@@ -16,6 +16,7 @@ import { GeneralPatientBloodPressure } from "../../GeneralPatientBloodPressure";
 import { GeneralPatientVisionLeft } from "../../GeneralPatientVisionLeft";
 import { GeneralPatientVisionRight } from "../../GeneralPatientVisionRight";
 import { PatientBodyMassIndex } from "../../PatientBodyMassIndex";
+import { GeneralAppointmentReferral } from "./GeneralAppointmentReferral";
 
 // Types
 import { GeneralAppointmentContentProps } from "../types/GeneralAppointmentContentProps";
@@ -167,6 +168,11 @@ export const GeneralAppointmentContent = ({
       />
       <Space height={40} />
       <GeneralAppointmentClinicalNotes
+        patientGeneral={patientGeneral}
+        setPatientGeneral={setPatientGeneral}
+      />
+      <Space height={40} />
+      <GeneralAppointmentReferral
         patientGeneral={patientGeneral}
         setPatientGeneral={setPatientGeneral}
       />

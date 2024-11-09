@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS patient_dentistry (
     patient_personal_id UUID NOT NULL,
     appointment_date DATE NOT NULL,
     appointment_notes VARCHAR(2550),
+    appointment_referral VARCHAR(2550),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
 );
@@ -83,6 +84,7 @@ CREATE TABLE IF NOT EXISTS patient_general (
     patient_personal_id UUID NOT NULL,
     appointment_date DATE NOT NULL,
     appointment_notes VARCHAR(2550),
+    appointment_referral VARCHAR(2550),
     patient_height NUMERIC(5, 2),
     patient_weight NUMERIC(5, 2),
     patient_temperature NUMERIC(5, 2),

@@ -4,13 +4,14 @@
 import { Fragment, useState, useEffect } from "react";
 
 // Components
-import { Grid, Text } from "@radix-ui/themes";
+import { Grid, Text, Tooltip } from "@radix-ui/themes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Space } from "../../ui/Space";
 import { GeneralSummaryDetails } from "./GeneralSummaryDetails";
 
 // Styles
 import styles from "../styles/PatientSummary.module.css";
+import generalStyles from "../../../styles/general.module.css";
 
 // Databases
 import { getPatientGeneralSummary } from "../../../database/patient-summary/GetPatientGeneralSummary";
@@ -83,6 +84,7 @@ export const GeneralSummary = ({
           patientVisionLeftNormalDistance,
           patientVisionRightTestedDistance,
           patientVisionRightNormalDistance,
+          appointmentReferral,
         }) => (
           <Grid key={patientGeneralId} className={styles.appointments}>
             <Text weight="medium" size="3">
@@ -109,6 +111,25 @@ export const GeneralSummary = ({
                 patientVisionRightNormalDistance
               }
             />
+            <Space />
+            <div className={styles.summary_margin}>
+              <div>
+                <Text>{"Referral:"}</Text>
+              </div>
+              {appointmentReferral ? (
+                <Tooltip content={appointmentReferral}>
+                  <Text
+                    className={`${styles.summary_margin} ${generalStyles.ellipsis_one_line}`}
+                  >
+                    {appointmentReferral}
+                  </Text>
+                </Tooltip>
+              ) : (
+                <div className={styles.summary_margin}>
+                  <Text className={styles.italic}>{"none"}</Text>
+                </div>
+              )}
+            </div>
             <Space />
             <div className={styles.summary_margin}>
               <Text>{"Prescribed medication by the doctor: "}</Text>

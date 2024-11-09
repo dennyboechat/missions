@@ -6,6 +6,7 @@ import { Space } from "../../ui/Space";
 import { PopupConfirmation } from "../../ui/PopupConfirmation";
 import { DentalAppointmentMap } from "../../DentalAppointmentMap";
 import { DentalAppointmentClinicalNotes } from "./DentalAppointmentClinicalNotes";
+import { DentalAppointmentReferral } from "./DentalAppointmentReferral";
 import { DentalAppointmentMedicationPrescribed } from "./DentalAppointmentMedicationPrescribed";
 
 // Types
@@ -73,6 +74,11 @@ export const DentalAppointmentContent = ({
       />
       <Space height={50} />
       <DentalAppointmentClinicalNotes
+        patientDentistry={patientDentistry}
+        setPatientDentistries={setPatientDentistries}
+      />
+      <Space height={40} />
+      <DentalAppointmentReferral
         patientDentistry={patientDentistry}
         setPatientDentistries={setPatientDentistries}
       />

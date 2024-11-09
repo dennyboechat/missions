@@ -35,6 +35,7 @@ export const getPatientDentistries = async ({
         patientDentistryId: row.patient_dentistry_id,
         patientPersonalId: row.patient_personal_id,
         appointmentNotes: row.appointment_notes,
+        appointmentReferral: row.appointment_referral,
         appointmentDate: row.appointment_date,
         projectId: row.project_id,
         patientFullName: row.patient_full_name,
