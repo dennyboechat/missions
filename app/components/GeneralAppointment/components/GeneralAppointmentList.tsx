@@ -15,6 +15,7 @@ export const GeneralAppointmentList = ({
   patientGeneral: PatientGeneralTypes;
 }) => {
   const { patientGeneralId, appointmentDate } = patientGeneral;
+  console.log('**********' + appointmentDate);
 
   const formattedAppointmentDate = getLocaleFormattedDate({
     date: appointmentDate,
