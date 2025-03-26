@@ -7,6 +7,6 @@ export const getLocaleFormattedDate = ({ date }: { date: Date }) => {
     month: "short",
     day: "numeric",
     year: "numeric",
-    // timeZone: userTimeZone,
+    timeZone: userTimeZone,
   }).format(date);
 };
