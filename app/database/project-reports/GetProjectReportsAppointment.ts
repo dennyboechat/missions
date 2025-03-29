@@ -16,11 +16,14 @@ export const getProjectReportsAppointment = async ({
   startDate?: string;
   endDate?: string;
 }): Promise<ProjectReportsAppointmentTypes[] | undefined> => {
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   try {
     const query = `
       (
         SELECT
-          patient_general.appointment_date,
+          DATE_TRUNC('day', patient_general.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}') AS appointment_date,
+          MIN(patient_general.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}') AS original_appointment_date,
           COUNT(patient_general.patient_general_id) AS appointment_count,
           'general' AS appointment_type
         FROM 
@@ -33,14 +36,15 @@ export const getProjectReportsAppointment = async ({
           project.project_id = $1 AND
           patient_general.appointment_date BETWEEN $2 AND $3
         GROUP BY
-          patient_general.appointment_date  
+          DATE_TRUNC('day', patient_general.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}')
         ORDER BY
-          patient_general.appointment_date
+          DATE_TRUNC('day', patient_general.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}')
       )
-      UNION ALL  
+      UNION ALL
       (
         SELECT 
-          patient_dentistry.appointment_date,
+          DATE_TRUNC('day', patient_dentistry.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}') AS appointment_date,
+          MIN(patient_dentistry.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}') AS original_appointment_date,
           COUNT(patient_dentistry.patient_dentistry_id) AS appointment_count,
           'dental' AS appointment_type
         FROM 
@@ -53,9 +57,9 @@ export const getProjectReportsAppointment = async ({
           project.project_id = $1 AND
           patient_dentistry.appointment_date BETWEEN $2 AND $3
         GROUP BY
-          patient_dentistry.appointment_date
+          DATE_TRUNC('day', patient_dentistry.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}')
         ORDER BY
-          patient_dentistry.appointment_date
+          DATE_TRUNC('day', patient_dentistry.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}')
       )
     `;
 
@@ -63,7 +67,7 @@ export const getProjectReportsAppointment = async ({
 
     const projectReports: ProjectReportsAppointmentTypes[] = response.rows.map(
       (row) => ({
-        appointmentDate: row.appointment_date,
+        appointmentDate: row.original_appointment_date,
         quantity: row.appointment_count,
         appointmentType: row.appointment_type,
       })

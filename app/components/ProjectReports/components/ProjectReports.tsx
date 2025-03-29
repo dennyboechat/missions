@@ -20,7 +20,7 @@ import styles from "../../../styles/content.module.css";
 // Utils
 import { isReportStartDateValid } from "../utils/isReportStartDateValid";
 import { isReportEndDateValid } from "../utils/isReportEndDateValid";
-import { getCurrentDate } from "../../../utils/getCurrentDate";
+import { getCurrentUTCDateTime } from "../../../utils/getCurrentUTCDateTime";
 import { subtractDaysToDate } from "../../../utils/subtractDaysToDate";
 import { getFormattedDate } from "../../../utils/getFormattedDate";
 
@@ -34,7 +34,7 @@ import { ProjectReportsAppointmentTypes } from "../../../types/ProjectReportsApp
 
 export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
-  const currentDate = getCurrentDate();
+  const currentDate = getCurrentUTCDateTime();
   const startDateFilter = getFormattedDate(
     subtractDaysToDate({ date: currentDate, days: 14 })
   );

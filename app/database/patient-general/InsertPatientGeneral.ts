@@ -8,7 +8,7 @@ import { PatientGeneral } from "../../types/PatientGeneralTypes";
 import { PatientPersonalId } from "../../types/PatientPersonalTypes";
 
 // Utils
-import { getCurrentDate } from "@/app/utils/getCurrentDate";
+import { getCurrentUTCDateTime } from "@/app/utils/getCurrentUTCDateTime";
 
 export const insertPatientGeneral = async ({
   patientPersonalId,
@@ -16,7 +16,7 @@ export const insertPatientGeneral = async ({
   patientPersonalId: PatientPersonalId;
 }): Promise<PatientGeneral | undefined> => {
   try {
-    const currentDate = getCurrentDate();
+    const currentDate = getCurrentUTCDateTime();
 
     const query = `
       INSERT INTO

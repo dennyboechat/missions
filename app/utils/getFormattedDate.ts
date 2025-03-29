@@ -1,9 +1,11 @@
 export const getFormattedDate = (date?: Date) => {
   if (!date) return "";
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
 
-  return `${year}-${month}-${day}`;
+  return formatter.format(date);
 };

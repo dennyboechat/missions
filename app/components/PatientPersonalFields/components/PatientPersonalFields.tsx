@@ -18,7 +18,7 @@ import { usePopupMessage } from "../../../lib/PopupMessage";
 // Utils
 import { isValidFullName } from "../utils/isValidFullName";
 import { getFormattedDate } from "../../../utils/getFormattedDate";
-import { getCurrentDate } from "../../../utils/getCurrentDate";
+import { getCurrentUTCDateTime } from "../../../utils/getCurrentUTCDateTime";
 import { isValidDate } from "../../../utils/isValidDate";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
@@ -270,7 +270,7 @@ export const PatientPersonalFields = ({
       <DateTime
         label="Date of birth"
         value={dateOfBirth}
-        maxDate={getCurrentDate()}
+        maxDate={getCurrentUTCDateTime()}
         onChange={(value) => setDateOfBirth(value)}
         onBlur={onDateOfBirthChange}
         required
