@@ -2,10 +2,9 @@ export const subtractDaysToDate = ({
   date,
   days,
 }: {
-  date: string;
+  date: Date;
   days: number;
 }) => {
-  let result = new Date(date);
-  result.setDate(result.getDate() - days);
-  return result;
+  date.setDate(date.getDate() - days);
+  return date;
 };

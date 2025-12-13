@@ -20,7 +20,7 @@ import styles from "../../../styles/content.module.css";
 // Utils
 import { isReportStartDateValid } from "../utils/isReportStartDateValid";
 import { isReportEndDateValid } from "../utils/isReportEndDateValid";
-import { getCurrentUTCDateTime } from "../../../utils/getCurrentUTCDateTime";
+import { getCurrentDateTime } from "../../../utils/getCurrentDateTime";
 import { subtractDaysToDate } from "../../../utils/subtractDaysToDate";
 import { getFormattedDate } from "../../../utils/getFormattedDate";
 
@@ -34,12 +34,12 @@ import { ProjectReportsAppointmentTypes } from "../../../types/ProjectReportsApp
 
 export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
-  const currentDate = getCurrentUTCDateTime();
+  const currentDate = getCurrentDateTime();
   const startDateFilter = getFormattedDate(
     subtractDaysToDate({ date: currentDate, days: 14 })
   );
   const [startDate, setStartDate] = useState<string>(startDateFilter);
-  const [endDate, setEndDate] = useState<string>(currentDate);
+  const [endDate, setEndDate] = useState<string>(getFormattedDate(currentDate));
   const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
   const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
   const [isLoadingMedicationReport, setIsLoadingMedicationReport] =

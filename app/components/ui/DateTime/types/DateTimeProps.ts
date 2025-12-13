@@ -4,7 +4,7 @@ export interface DateTimeProps {
   autoFocus?: boolean;
   required?: boolean;
   errorMessage?: string;
-  maxDate?: string;
+  maxDate?: Date;
   onChange: (value: string) => void;
   onBlur?: () => void;
 }

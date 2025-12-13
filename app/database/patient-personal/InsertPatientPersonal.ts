@@ -9,9 +9,6 @@ import {
   NewPatientPersonal,
 } from "../../types/PatientPersonalTypes";
 
-// Utils
-import { getFormattedDate } from "../../utils/getFormattedDate";
-
 export const insertPatientPersonal = async ({
   projectId,
   patientFullName,
@@ -20,8 +17,6 @@ export const insertPatientPersonal = async ({
   patientPhoneNumber,
 }: NewPatientPersonal): Promise<PatientPersonalTypes | undefined> => {
   try {
-    const parsedPatientDateOfBirth = getFormattedDate(patientDateOfBirth);
-
     const query = `
       INSERT INTO 
         patient_personal (project_id, patient_full_name, is_patient_male, patient_date_of_birth, patient_phone_number)
@@ -35,7 +30,7 @@ export const insertPatientPersonal = async ({
       projectId,
       patientFullName.trim(),
       isPatientMale,
-      parsedPatientDateOfBirth,
+      patientDateOfBirth,
       patientPhoneNumber,
     ]);
 

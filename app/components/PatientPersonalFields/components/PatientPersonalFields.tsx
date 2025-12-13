@@ -17,13 +17,13 @@ import { usePopupMessage } from "../../../lib/PopupMessage";
 
 // Utils
 import { isValidFullName } from "../utils/isValidFullName";
-import { getFormattedDate } from "../../../utils/getFormattedDate";
-import { getCurrentUTCDateTime } from "../../../utils/getCurrentUTCDateTime";
+import { getCurrentDateTime } from "../../../utils/getCurrentDateTime";
 import { isValidDate } from "../../../utils/isValidDate";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Database
 import { updatePatientPersonal } from "../../../database/patient-personal/UpdatePatientPersonal";
+import { getYearFormattedDate } from "@/app/utils/getYearFormattedDate";
 
 export const PatientPersonalFields = ({
   patientPersonalFields,
@@ -33,7 +33,7 @@ export const PatientPersonalFields = ({
   isPatientDateOfBirthInvalid,
 }: PatientPersonalFieldsProps) => {
   const [dateOfBirth, setDateOfBirth] = useState(
-    getFormattedDate(patientPersonalFields.patientDateOfBirth)
+    getYearFormattedDate(patientPersonalFields.patientDateOfBirth)
   );
   const { setMessage, setMessageType } = usePopupMessage();
   const [isFullNameInvalid, setIsFullNameInvalid] = useState(
@@ -270,7 +270,7 @@ export const PatientPersonalFields = ({
       <DateTime
         label="Date of birth"
         value={dateOfBirth}
-        maxDate={getCurrentUTCDateTime()}
+        maxDate={getCurrentDateTime()}
         onChange={(value) => setDateOfBirth(value)}
         onBlur={onDateOfBirthChange}
         required

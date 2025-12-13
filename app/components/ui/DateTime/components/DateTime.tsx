@@ -9,6 +9,7 @@ import { DateTimeProps } from "../types/DateTimeProps";
 // Styles
 import styles from "../../../../styles/fields.module.css";
 import dateTimeStyles from "../styles/DateTime.module.css";
+import { getFormattedDate } from "@/app/utils/getFormattedDate";
 
 export const DateTime = ({
   label,
@@ -29,7 +30,7 @@ export const DateTime = ({
       required={required}
       onChange={(e) => onChange(e.target.value)}
       onBlur={onBlur}
-      max={maxDate}
+      max={maxDate ? getFormattedDate(maxDate) : undefined}
       className={dateTimeStyles.input_date}
     />
     <Container height="25px">
