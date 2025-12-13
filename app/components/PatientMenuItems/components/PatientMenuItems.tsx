@@ -56,13 +56,14 @@ export const PatientMenuItems = ({
       >
         {"Personal"}
       </MenuItem>
-      <MenuItem
+      {/* Hidden for now */}
+      {/* <MenuItem
         icon={analyticsIcon}
         href={`/patient-analytics/${patientPersonalId}`}
         active={activeMenuItem === "patient-analytics"}
       >
         {"Analytics"}
-      </MenuItem>
+      </MenuItem> */}
     </>
   );
 };
