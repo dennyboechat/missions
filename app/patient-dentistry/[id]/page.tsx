@@ -16,7 +16,8 @@ import { getPatientDentistries } from "../../database/patient-dentistry/GetPatie
 import { insertPatientDentistry } from "../../database/patient-dentistry/InsertPatientDentistry";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
+import { useRouter } from "next/navigation";
 import { usePopupMessage } from "../../lib/PopupMessage";
 
 // Types
@@ -27,14 +28,14 @@ import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../utils/getSideMenuSubHeaderFooter";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
-const PatientDentistry = ({ params }: { params: { id: string } }) => {
+const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: patientPersonalId } = use(params);
+  const router = useRouter();
   const { setMessage, setMessageType } = usePopupMessage();
   const [patientDentistries, setPatientDentistries] =
     useState<PatientDentistryTypes[]>();
   const [lastestAppointment, setLastestAppointment] =
     useState<PatientDentistryTypes>();
-
-  const { id: patientPersonalId } = params;
 
   useEffect(() => {
     const fetchPatientDentistry = async () => {

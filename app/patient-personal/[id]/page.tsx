@@ -16,7 +16,7 @@ import { getPatientPersonal } from "../../database/patient-personal/GetPatientPe
 import { deletePatientPersonal } from "../../database/patient-personal/DeletePatientPersonal";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 
 // Types
@@ -26,7 +26,8 @@ import { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFiel
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../utils/getSideMenuSubHeaderFooter";
 
-const PatientPersonal = ({ params }: { params: { id: string } }) => {
+const PatientPersonal = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: patientPersonalId } = use(params);
   const router = useRouter();
   const [patientPersonalFields, setPatientPersonalFields] =
     useState<PatientPersonalFieldsTypes>({
@@ -37,8 +38,6 @@ const PatientPersonal = ({ params }: { params: { id: string } }) => {
       patientDateOfBirth: undefined,
     });
   const [isDeletingPatient, setIsDeletingPatient] = useState(false);
-
-  const { id: patientPersonalId } = params;
 
   useEffect(() => {
     const fetchPatientPersonal = async () => {

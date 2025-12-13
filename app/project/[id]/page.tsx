@@ -24,22 +24,21 @@ import { getProject } from "../../database/project/GetProject";
 import { deleteProject } from "../../database/project/DeleteProject";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useProject } from "../../lib/ProjectContext";
 
 // Styles
 import styles from "../../styles/content.module.css";
 
-const ProjectId = ({ params }: { params: { id: string } }) => {
+const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: projectId } = use(params);
   const router = useRouter();
   const { project } = useProject();
   const [projectName, setProjectName] = useState<ProjectName>("");
   const [projectDescription, setProjectDescription] =
     useState<ProjectDescription>("");
   const [isDeletingProject, setIsDeletingProject] = useState(false);
-
-  const { id: projectId } = params;
   const projectMenuItems = (
     <ProjectMenuItems projectId={projectId} activeMenuItem="project" />
   );

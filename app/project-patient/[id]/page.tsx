@@ -9,7 +9,7 @@ import { ContentHeader } from "../../components/ContentHeader";
 import { PatientPersonalFields } from "../../components/PatientPersonalFields";
 
 // Hooks
-import { useState } from "react";
+import { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { useProject } from "../../lib/ProjectContext";
 import { usePopupMessage } from "../../lib/PopupMessage";
@@ -27,7 +27,8 @@ import { insertPatientPersonal } from "../../database/patient-personal/InsertPat
 import { isValidPatientFullName } from "../../utils/isValidPatientFullName";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
-const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
+const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: projectId } = use(params);
   const router = useRouter();
   const { project } = useProject();
   const { setMessage, setMessageType } = usePopupMessage();
@@ -35,7 +36,7 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
   const [patientPersonalFields, setPatientPersonalFields] =
     useState<PatientPersonalFieldsTypes>({
       patientPersonalId: "",
-      projectId: params.id,
+      projectId: projectId,
       patientFullName: "",
       isPatientMale: undefined,
       patientDateOfBirth: undefined,
@@ -45,8 +46,6 @@ const ProjectPatientNew = ({ params }: { params: { id: string } }) => {
   const [isPatientGenderInvalid, setIsPatientGenderInvalid] = useState(false);
   const [isPatientDateOfBirthInvalid, setIsPatientDateOfBirthInvalid] =
     useState(false);
-
-  const { id: projectId } = params;
 
   const projectMenuItems = (
     <ProjectMenuItems projectId={projectId} activeMenuItem="project-patients" />

@@ -5,7 +5,7 @@ import { Container, Button, Text, TextField } from "@radix-ui/themes";
 import { Space } from "../../Space";
 
 // Hooks
-import { useChat } from "ai/react";
+import { useChat } from "@ai-sdk/react";
 
 // Styles
 import styles from "../styles/AiChat.module.css";

@@ -12,7 +12,7 @@ import styles from "../../styles/content.module.css";
 
 // Hooks
 import { useProject } from "../../lib/ProjectContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { usePopupMessage } from "../../lib/PopupMessage";
 import { useRouter } from "next/navigation";
 
@@ -28,14 +28,13 @@ import { ProjectUserId } from "../../types/ProjectUserTypes";
 import { getFilteredProjectUsers } from "../../utils/getFilteredProjectUsers";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
-const ProjectUsers = ({ params }: { params: { id: string } }) => {
+const ProjectUsers = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: projectId } = use(params);
   const router = useRouter();
   const { project } = useProject();
   const { setMessage, setMessageType } = usePopupMessage();
   const [projectUsers, setProjectUsers] = useState<ProjectUser[]>([]);
   const [searchText, setSearchText] = useState<string | undefined>();
-
-  const { id: projectId } = params;
   const projectMenuItems = (
     <ProjectMenuItems projectId={projectId} activeMenuItem="project-users" />
   );

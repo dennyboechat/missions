@@ -47,10 +47,8 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
       userEmail: "",
     });
 
-  const { id: projectId } = params;
-
   const projectMenuItems = (
-    <ProjectMenuItems projectId={projectId} activeMenuItem="project-users" />
+    <ProjectMenuItems projectId={params.id} activeMenuItem="project-users" />
   );
 
   const onConfirmButtonClick = async () => {
@@ -89,7 +87,7 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
 
       const codeToRun = async () => {
         const insertedProjectUser = await insertProjectUser({
-          projectId,
+          projectId: params.id,
           userId: newUserId,
         });
 
@@ -103,7 +101,7 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
           }
         }
 
-        router.push(`/project-users/${projectId}`);
+        router.push(`/project-users/${params.id}`);
       };
 
       const runSuccess = await runWithRetries(codeToRun);

@@ -12,7 +12,7 @@ import { Space } from "../../components/ui/Space";
 import styles from "../../styles/content.module.css";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useProject } from "../../lib/ProjectContext";
 
@@ -28,7 +28,8 @@ import { getLocaleFormattedDate } from "../../utils/getLocaleFormattedDate";
 import { getGenderLabel } from "../../utils/getGenderLabel";
 import { getAge } from "../../utils/getAge";
 
-const ProjectPatients = ({ params }: { params: { id: string } }) => {
+const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: projectId } = use(params);
   const router = useRouter();
   const { project } = useProject();
   const [patientPersonals, setPatientPersonals] = useState<
@@ -50,7 +51,6 @@ const ProjectPatients = ({ params }: { params: { id: string } }) => {
     fetchProjects();
   }, [project]);
 
-  const { id: projectId } = params;
   const projectMenuItems = (
     <ProjectMenuItems projectId={projectId} activeMenuItem="project-patients" />
   );
