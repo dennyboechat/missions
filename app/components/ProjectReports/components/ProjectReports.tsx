@@ -35,11 +35,12 @@ import { ProjectReportsAppointmentTypes } from "../../../types/ProjectReportsApp
 export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
   const currentDate = getCurrentDateTime();
-  const startDateFilter = getFormattedDate(
-    subtractDaysToDate({ date: currentDate, days: 14 })
-  );
+  const startDateFilter = getFormattedDate({
+    date: subtractDaysToDate({ date: currentDate, days: 14 }),
+    format: 'yyyy-MM-dd'
+  });
   const [startDate, setStartDate] = useState<string>(startDateFilter);
-  const [endDate, setEndDate] = useState<string>(getFormattedDate(currentDate));
+  const [endDate, setEndDate] = useState<string>(getFormattedDate({date: currentDate, format: 'yyyy-MM-dd'}));
   const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
   const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
   const [isLoadingMedicationReport, setIsLoadingMedicationReport] =

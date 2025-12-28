@@ -30,7 +30,7 @@ export const DateTime = ({
       required={required}
       onChange={(e) => onChange(e.target.value)}
       onBlur={onBlur}
-      max={maxDate ? getFormattedDate(maxDate) : undefined}
+      max={maxDate ? getFormattedDate({date: maxDate}) : undefined}
       className={dateTimeStyles.input_date}
     />
     <Container height="25px">

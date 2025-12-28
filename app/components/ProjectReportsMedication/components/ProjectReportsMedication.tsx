@@ -10,6 +10,7 @@ import { ConsolidatedMedication } from "../types/ConsolidatedMedication";
 
 // Styles
 import styles from "../../ProjectReports/styles/ProjectReports.module.css";
+import { Fragment } from "react/jsx-runtime";
 
 export const ProjectReportsMedication = ({
   medications,
@@ -56,7 +57,7 @@ export const ProjectReportsMedication = ({
           </div>
           <Space />
           {consolidatedMedications.map(({ medication, quantity }, i) => (
-            <>
+            <Fragment key={i}>
               <div
                 key={i}
                 className={`${styles.container_title} ${styles.table_item}`}
@@ -65,7 +66,7 @@ export const ProjectReportsMedication = ({
                 <Text>{quantity}</Text>
               </div>
               <Space />
-            </>
+            </Fragment>
           ))}
         </div>
       )}

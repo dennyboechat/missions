@@ -13,6 +13,7 @@ import styles from "../../ProjectReports/styles/ProjectReports.module.css";
 
 // Utils
 import { getFormattedDate } from "../../../utils/getFormattedDate";
+import { Fragment } from "react/jsx-runtime";
 
 export const ProjectReportsAppointments = ({
   appointments,
@@ -58,16 +59,15 @@ export const ProjectReportsAppointments = ({
             <Text size="5">{appointmentsGeneralQuantity}</Text>
           </div>
           {generalAppointments.map(({ appointmentDate, quantity }, i) => (
-            <>
+            <Fragment key={i}>
               <div
-                key={i}
                 className={`${styles.container_title} ${styles.table_item}`}
               >
-                <Text>{getFormattedDate(appointmentDate)}</Text>
+                <Text>{getFormattedDate({date: appointmentDate})}</Text>
                 <Text>{quantity}</Text>
               </div>
               <Space />
-            </>
+            </Fragment>
           ))}
           <Space />
           <div className={styles.container_title}>
@@ -75,16 +75,15 @@ export const ProjectReportsAppointments = ({
             <Text size="5">{appointmentsDentalQuantity}</Text>
           </div>
           {dentalAppointments.map(({ appointmentDate, quantity }, i) => (
-            <>
+            <Fragment key={i}>
               <div
-                key={i}
                 className={`${styles.container_title} ${styles.table_item}`}
               >
-                <Text>{getFormattedDate(appointmentDate)}</Text>
+                <Text>{getFormattedDate({date: appointmentDate})}</Text>
                 <Text>{quantity}</Text>
               </div>
               <Space />
-            </>
+            </Fragment>
           ))}
         </div>
       )}

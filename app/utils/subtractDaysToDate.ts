@@ -5,6 +5,7 @@ export const subtractDaysToDate = ({
   date: Date;
   days: number;
 }) => {
-  date.setDate(date.getDate() - days);
-  return date;
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() - days);
+  return newDate;
 };

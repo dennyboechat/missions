@@ -22,8 +22,8 @@ export const getProjectReportsAppointment = async ({
     const query = `
       (
         SELECT
-          DATE_TRUNC('day', patient_general.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}') AS appointment_date,
-          MIN(patient_general.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}') AS original_appointment_date,
+          DATE_TRUNC('day', patient_general.appointment_date) AS appointment_date,
+          MIN(patient_general.appointment_date) AS original_appointment_date,
           COUNT(patient_general.patient_general_id) AS appointment_count,
           'general' AS appointment_type
         FROM 
@@ -34,17 +34,17 @@ export const getProjectReportsAppointment = async ({
           patient_general ON patient_general.patient_personal_id = patient_personal.patient_personal_id
         WHERE 
           project.project_id = $1 AND
-          patient_general.appointment_date BETWEEN $2 AND $3
+          (patient_general.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
         GROUP BY
-          DATE_TRUNC('day', patient_general.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}')
+          patient_general.appointment_date
         ORDER BY
-          DATE_TRUNC('day', patient_general.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}')
+          patient_general.appointment_date
       )
       UNION ALL
       (
         SELECT 
-          DATE_TRUNC('day', patient_dentistry.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}') AS appointment_date,
-          MIN(patient_dentistry.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}') AS original_appointment_date,
+          DATE_TRUNC('day', patient_dentistry.appointment_date) AS appointment_date,
+          MIN(patient_dentistry.appointment_date) AS original_appointment_date,
           COUNT(patient_dentistry.patient_dentistry_id) AS appointment_count,
           'dental' AS appointment_type
         FROM 
@@ -55,15 +55,15 @@ export const getProjectReportsAppointment = async ({
           patient_dentistry ON patient_dentistry.patient_personal_id = patient_personal.patient_personal_id
         WHERE 
           project.project_id = $1 AND
-          patient_dentistry.appointment_date BETWEEN $2 AND $3
+          (patient_dentistry.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
         GROUP BY
-          DATE_TRUNC('day', patient_dentistry.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}')
+          patient_dentistry.appointment_date
         ORDER BY
-          DATE_TRUNC('day', patient_dentistry.appointment_date AT TIME ZONE 'UTC' AT TIME ZONE '${timeZone}')
+          patient_dentistry.appointment_date
       )
     `;
 
-    const response = await sql.query(query, [projectId, startDate, endDate]);
+    const response = await sql.query(query, [projectId, startDate, endDate, timeZone]);
 
     const projectReports: ProjectReportsAppointmentTypes[] = response.rows.map(
       (row) => ({

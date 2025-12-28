@@ -16,6 +16,8 @@ export const getProjectReportsMedication = async ({
   startDate?: string;
   endDate?: string;
 }): Promise<ProjectReportsMedicationTypes[] | undefined> => {
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   try {
     const query = `
       (
@@ -33,7 +35,7 @@ export const getProjectReportsMedication = async ({
           patient_general_prescribed_medication ON patient_general_prescribed_medication.patient_general_id = patient_general.patient_general_id
         WHERE 
           project.project_id = $1 AND
-          patient_general.appointment_date BETWEEN $2 AND $3
+          (patient_general.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
         ORDER BY
           patient_general_prescribed_medication.drug_name
       )
@@ -53,13 +55,13 @@ export const getProjectReportsMedication = async ({
           patient_dentistry_prescribed_medication ON patient_dentistry_prescribed_medication.patient_dentistry_id = patient_dentistry.patient_dentistry_id  
         WHERE 
           project.project_id = $1 AND
-          patient_dentistry.appointment_date BETWEEN $2 AND $3
+          (patient_dentistry.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
         ORDER BY
           patient_dentistry_prescribed_medication.drug_name
       )
     `;
 
-    const response = await sql.query(query, [projectId, startDate, endDate]);
+    const response = await sql.query(query, [projectId, startDate, endDate, timeZone]);
 
     const projectReports: ProjectReportsMedicationTypes[] = response.rows.map((row) => ({
       drug: row.drug_name,
