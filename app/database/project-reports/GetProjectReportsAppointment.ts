@@ -22,7 +22,7 @@ export const getProjectReportsAppointment = async ({
     const query = `
       (
         SELECT
-          DATE_TRUNC('day', patient_general.appointment_date) AS appointment_date,
+          DATE_TRUNC('day', (patient_general.appointment_date AT TIME ZONE $4)::date) AS appointment_date,
           MIN(patient_general.appointment_date) AS original_appointment_date,
           COUNT(patient_general.patient_general_id) AS appointment_count,
           'general' AS appointment_type
@@ -36,14 +36,14 @@ export const getProjectReportsAppointment = async ({
           project.project_id = $1 AND
           (patient_general.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
         GROUP BY
-          patient_general.appointment_date
+          DATE_TRUNC('day', (patient_general.appointment_date AT TIME ZONE $4)::date)
         ORDER BY
-          patient_general.appointment_date
+          DATE_TRUNC('day', (patient_general.appointment_date AT TIME ZONE $4)::date)
       )
       UNION ALL
       (
         SELECT 
-          DATE_TRUNC('day', patient_dentistry.appointment_date) AS appointment_date,
+          DATE_TRUNC('day', (patient_dentistry.appointment_date AT TIME ZONE $4)::date) AS appointment_date,
           MIN(patient_dentistry.appointment_date) AS original_appointment_date,
           COUNT(patient_dentistry.patient_dentistry_id) AS appointment_count,
           'dental' AS appointment_type
@@ -57,9 +57,9 @@ export const getProjectReportsAppointment = async ({
           project.project_id = $1 AND
           (patient_dentistry.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
         GROUP BY
-          patient_dentistry.appointment_date
+          DATE_TRUNC('day', (patient_dentistry.appointment_date AT TIME ZONE $4)::date)
         ORDER BY
-          patient_dentistry.appointment_date
+          DATE_TRUNC('day', (patient_dentistry.appointment_date AT TIME ZONE $4)::date)
       )
     `;
 
