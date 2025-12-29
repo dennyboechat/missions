@@ -6,6 +6,7 @@ import { Medication } from "./Medication";
 export interface PatientDentalAppointmentSummary {
   patientDentistryId: PatientDentistryId;
   appointmentDate: Date;
+  appointmentHasReferral: boolean;
   appointmentReferral: string;
   treatedTeeth: (Tooth | undefined)[];
   extractedTeeth: (Tooth | undefined)[];

@@ -23,7 +23,7 @@ export const updatePatientDentistry = async ({
       WHERE
         patient_dentistry_id = $2
       RETURNING
-        patient_dentistry_id, patient_personal_id, appointment_date, appointment_notes, appointment_referral
+        patient_dentistry_id, patient_personal_id, appointment_date, appointment_notes, appointment_has_referral, appointment_referral
     `;
 
     const validatedValue = typeof value === "string" ? value.trim() : value;
@@ -37,6 +37,7 @@ export const updatePatientDentistry = async ({
       patientDentistryId: row.patient_dentistry_id,
       patientPersonalId: row.patient_personal_id,
       appointmentNotes: row.appointment_notes,
+      appointmentHasReferral: row.appointment_has_referral,
       appointmentReferral: row.appointment_referral,
       appointmentDate: row.appointment_date,
     }));

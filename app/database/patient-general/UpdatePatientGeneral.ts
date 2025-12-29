@@ -23,7 +23,7 @@ export const updatePatientGeneral = async ({
       WHERE
         patient_general_id = $2
       RETURNING
-        patient_general_id, patient_personal_id, appointment_date, appointment_notes, appointment_referral
+        patient_general_id, patient_personal_id, appointment_date, appointment_notes, appointment_has_referral, appointment_referral
     `;
 
     const validatedValue = typeof value === "string" ? value.trim() : value;
@@ -34,6 +34,7 @@ export const updatePatientGeneral = async ({
       patientGeneralId: row.patient_general_id,
       patientPersonalId: row.patient_personal_id,
       appointmentNotes: row.appointment_notes,
+      appointmentHasReferral: row.appointment_has_referral,
       appointmentReferral: row.appointment_referral,
       appointmentDate: row.appointment_date,
     }));

@@ -84,6 +84,7 @@ export const GeneralSummary = ({
           patientVisionLeftNormalDistance,
           patientVisionRightTestedDistance,
           patientVisionRightNormalDistance,
+          appointmentHasReferral,
           appointmentReferral,
         }) => (
           <Grid key={patientGeneralId} className={styles.appointments}>
@@ -113,8 +114,13 @@ export const GeneralSummary = ({
             />
             <Space />
             <div className={styles.summary_margin}>
+                <Text>{"Has referral: "}</Text>
+                {appointmentHasReferral ? "Yes" : "No"}
+            </div>
+            <Space />
+            <div className={styles.summary_margin}>
               <div>
-                <Text>{"Referral:"}</Text>
+                <Text>{"Referral details:"}</Text>
               </div>
               {appointmentReferral ? (
                 <Tooltip content={appointmentReferral}>

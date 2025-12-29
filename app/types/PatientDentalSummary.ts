@@ -8,6 +8,7 @@ import { PatientDentistryPrescribedMedicationId } from "./DentistryPrescribedMed
 export interface PatientDentalSummary {
   patientDentistryId: PatientDentistryId;
   appointmentDate: Date;
+  appointmentHasReferral: boolean;
   appointmentReferral: string;
   toothName: Tooth;
   toothStatus: ToothStatus;

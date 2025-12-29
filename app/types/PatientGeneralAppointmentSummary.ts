@@ -17,6 +17,7 @@ export interface PatientGeneralAppointmentSummary {
   patientVisionLeftNormalDistance: number;
   patientVisionRightTestedDistance: number;
   patientVisionRightNormalDistance: number;
+  appointmentHasReferral: boolean;
   appointmentReferral: string;
   prescribedMedication: Medication[];
 }

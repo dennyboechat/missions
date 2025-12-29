@@ -28,6 +28,7 @@ export const getGeneralAppointmentsSummary = ({
         patientVisionLeftNormalDistance,
         patientVisionRightTestedDistance,
         patientVisionRightNormalDistance,
+        appointmentHasReferral,
         appointmentReferral,
         patientGeneralPrescribedMedicationId,
         drug,
@@ -76,6 +77,7 @@ export const getGeneralAppointmentsSummary = ({
           patientVisionLeftNormalDistance,
           patientVisionRightTestedDistance,
           patientVisionRightNormalDistance,
+          appointmentHasReferral,
           appointmentReferral,
           prescribedMedication: patientGeneralPrescribedMedicationId
             ? [

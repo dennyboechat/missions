@@ -72,6 +72,7 @@ export const DentistrySummary = ({
         ({
           patientDentistryId,
           appointmentDate,
+          appointmentHasReferral,
           appointmentReferral,
           treatedTeeth,
           extractedTeeth,
@@ -129,8 +130,13 @@ export const DentistrySummary = ({
             </div>
             <Space />
             <div className={styles.summary_margin}>
+                <Text>{"Has referral: "}</Text>
+                {appointmentHasReferral ? "Yes" : "No"}
+            </div>
+            <Space />
+            <div className={styles.summary_margin}>
               <div>
-                <Text>{"Referral:"}</Text>
+                <Text>{"Referral details:"}</Text>
               </div>
               {appointmentReferral ? (
                 <Tooltip content={appointmentReferral}>

@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS patient_dentistry (
     appointment_date TIMESTAMP WITH TIME ZONE NOT NULL,
     appointment_notes VARCHAR(2550),
     appointment_referral VARCHAR(2550),
+    appointment_has_referral BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_patient_personal FOREIGN KEY(patient_personal_id) REFERENCES patient_personal(patient_personal_id) ON DELETE CASCADE
 );
@@ -85,6 +86,7 @@ CREATE TABLE IF NOT EXISTS patient_general (
     appointment_date TIMESTAMP WITH TIME ZONE NOT NULL,
     appointment_notes VARCHAR(2550),
     appointment_referral VARCHAR(2550),
+    appointment_has_referral BOOLEAN NOT NULL DEFAULT FALSE,
     patient_height NUMERIC(5, 2),
     patient_weight NUMERIC(5, 2),
     patient_temperature NUMERIC(5, 2),

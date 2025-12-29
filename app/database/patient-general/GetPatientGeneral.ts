@@ -51,6 +51,7 @@ export const getPatientGeneral = async ({
       patientVisionLeftNormalDistance: row.patient_vision_left_normal_distance,
       patientVisionRightTestedDistance: row.patient_vision_right_tested_distance,
       patientVisionRightNormalDistance: row.patient_vision_right_normal_distance,
+      appointmentHasReferral: row.appointment_has_referral,
       appointmentReferral: row.appointment_referral,
     }));
 

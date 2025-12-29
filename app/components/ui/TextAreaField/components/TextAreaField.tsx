@@ -19,6 +19,7 @@ export const TextAreaField = ({
   autoFocus,
   required,
   errorMessage,
+  disabled,
   size = "3",
   onChange,
   onBlur,
@@ -37,6 +38,7 @@ export const TextAreaField = ({
       autoFocus={autoFocus}
       required={required}
       className={textAreaStyles.text_area}
+      disabled={disabled}
     />
     <Container height="25px">
       <Text className={styles.required_field}>{errorMessage}</Text>

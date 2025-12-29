@@ -17,6 +17,7 @@ export const getPatientDentalSummary = async ({
       SELECT 
         patient_dentistry.patient_dentistry_id,
         appointment_date,
+        appointment_has_referral,
         appointment_referral,
         tooth_name,
         tooth_status,
@@ -45,6 +46,7 @@ export const getPatientDentalSummary = async ({
       (row) => ({
         patientDentistryId: row.patient_dentistry_id,
         appointmentDate: row.appointment_date,
+        appointmentHasReferral: row.appointment_has_referral,
         appointmentReferral: row.appointment_referral,
         toothName: row.tooth_name,
         toothStatus: row.tooth_status,
