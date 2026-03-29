@@ -9,4 +9,5 @@ export interface ProjectReportsFilterProps {
   setEndDate: Dispatch<SetStateAction<string>>;
   isEndDateInvalid?: boolean;
   onGenerateReports: () => void;
+  onDownloadAllData: () => void;
 }

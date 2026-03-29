@@ -15,6 +15,7 @@ export const ProjectReportsFilter = ({
   setEndDate,
   isEndDateInvalid,
   onGenerateReports,
+  onDownloadAllData,
 }: ProjectReportsFilterProps) => (
   <div>
     <Grid gap="10px" columns={{ sm: "2" }}>
@@ -34,8 +35,13 @@ export const ProjectReportsFilter = ({
         errorMessage={isEndDateInvalid ? 'Invalid' : ''}
       />
     </Grid>
-    <Button onClick={onGenerateReports}>
-      {"Generate reports"}
-    </Button>
+    <Grid gap="10px" columns={{ sm: "6" }}>
+      <Button onClick={onGenerateReports}>
+        {"Generate reports"}
+      </Button>
+      <Button onClick={onDownloadAllData}>
+        {"Download all data"}
+      </Button>
+    </Grid>
   </div>
 );
