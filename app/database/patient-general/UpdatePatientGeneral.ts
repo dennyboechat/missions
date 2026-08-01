@@ -91,9 +91,9 @@ export const updatePatientGeneral = async ({
     const patientGeneral: PatientGeneral[] = response.rows.map((row) => ({
       patientGeneralId: row.patient_general_id,
       patientPersonalId: row.patient_personal_id,
-      appointmentNotes: row.appointment_notes,
+      appointmentNotes: row.appointment_notes ?? "",
       appointmentHasReferral: row.appointment_has_referral,
-      appointmentReferral: row.appointment_referral,
+      appointmentReferral: row.appointment_referral ?? "",
       appointmentDate: row.appointment_date,
     }));
 

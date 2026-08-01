@@ -92,7 +92,7 @@ export const getPatientGeneralSummary = async ({
         patientVisionRightNormalDistance:
           row.patient_vision_right_normal_distance,
         appointmentHasReferral: row.appointment_has_referral,
-        appointmentReferral: row.appointment_referral,
+        appointmentReferral: row.appointment_referral ?? "",
         patientGeneralPrescribedMedicationId:
           row.patient_general_prescribed_medication_id,
         drug: row.drug_name,

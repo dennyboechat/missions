@@ -69,7 +69,7 @@ export const getPatientDentalSummary = async ({
         patientDentistryId: row.patient_dentistry_id,
         appointmentDate: row.appointment_date,
         appointmentHasReferral: row.appointment_has_referral,
-        appointmentReferral: row.appointment_referral,
+        appointmentReferral: row.appointment_referral ?? "",
         toothName: row.tooth_name,
         toothStatus: row.tooth_status,
         patientDentistryPrescribedMedicationId:

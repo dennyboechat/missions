@@ -74,7 +74,7 @@ export const getPatientGeneral = async ({
     const patientGeneral: PatientGeneralTypes[] = response.rows.map((row) => ({
       patientGeneralId: row.patient_general_id,
       patientPersonalId: row.patient_personal_id,
-      appointmentNotes: row.appointment_notes,
+      appointmentNotes: row.appointment_notes ?? "",
       appointmentDate: row.appointment_date,
       projectId: row.project_id,
       patientFullName: row.patient_full_name,
@@ -93,7 +93,7 @@ export const getPatientGeneral = async ({
       patientVisionRightTestedDistance: row.patient_vision_right_tested_distance,
       patientVisionRightNormalDistance: row.patient_vision_right_normal_distance,
       appointmentHasReferral: row.appointment_has_referral,
-      appointmentReferral: row.appointment_referral,
+      appointmentReferral: row.appointment_referral ?? "",
     }));
 
     return actionOk(patientGeneral);

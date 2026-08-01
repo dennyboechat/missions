@@ -30,7 +30,10 @@ export const TextAreaField = ({
       size={size}
       resize="vertical"
       onBlur={onBlur}
-      value={value}
+      // Null would hand React a controlled field with no value and get the
+      // field swapped to uncontrolled mid-edit, losing what was typed. Undefined
+      // is left alone: that is the caller saying to use defaultValue instead.
+      value={value === null ? "" : value}
       defaultValue={defaultValue}
       onChange={onChange}
       placeholder={placeholder}

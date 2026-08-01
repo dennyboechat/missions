@@ -66,7 +66,7 @@ export const updatePatientTooth = async ({
         patientDentistryId: row.patient_dentistry_id,
         toothName: row.tooth_name,
         toothStatus: row.tooth_status,
-        toothNotes: row.tooth_notes,
+        toothNotes: row.tooth_notes ?? "",
       })
     );
 
