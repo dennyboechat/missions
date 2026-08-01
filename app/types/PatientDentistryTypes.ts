@@ -8,7 +8,8 @@ export type PatientDentistryId = string;
 export interface PatientDental {
   patientDentistryId: PatientDentistryId;
   patientPersonalId: PatientPersonalId;
-  appointmentDate: Date;
+  /** Calendar day in the project's timezone, YYYY-MM-DD. */
+  appointmentDate: string;
   appointmentNotes: string;
   appointmentReferral: string;
 }
@@ -16,14 +17,16 @@ export interface PatientDental {
 export interface PatientDentistryTypes {
   patientDentistryId: PatientDentistryId;
   patientPersonalId: PatientPersonalId;
-  appointmentDate: Date;
+  /** Calendar day in the project's timezone, YYYY-MM-DD. */
+  appointmentDate: string;
   appointmentNotes: string;
   appointmentHasReferral: boolean;
   appointmentReferral: string;
   projectId: ProjectId;
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
-  patientDateOfBirth: Date;
+  /** Plain calendar date, YYYY-MM-DD. */
+  patientDateOfBirth: string;
 }
 
 export interface UpdatePatientDentistry {

@@ -6,16 +6,23 @@ import { sql } from "@vercel/postgres";
 // Types
 import { User } from "../../types/UserTypes";
 
+// Auth
+import {
+  getClerkUserId,
+  getClerkPrimaryEmail,
+} from "../auth/projectAccess";
+
 export const insertAppUserWithThirdPartyId = async ({
-  userThirdPartyId,
   userName,
-  userEmail,
 }: {
-  userThirdPartyId: string;
   userName: string;
-  userEmail: string;
 }): Promise<User | undefined> => {
   try {
+    // Identity comes from the session, not the request, so a caller cannot
+    // register a row under someone else's Clerk id or email address.
+    const userThirdPartyId = await getClerkUserId();
+    const userEmail = await getClerkPrimaryEmail();
+
     const query = `
       INSERT INTO 
         app_user (user_third_party_id, user_name, user_email) 

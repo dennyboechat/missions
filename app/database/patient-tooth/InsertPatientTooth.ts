@@ -3,6 +3,9 @@
 // Database
 import { sql } from "@vercel/postgres";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 // Types
 import {
   PatientDentistryTooth,
@@ -16,6 +19,8 @@ export const insertPatientTooth = async ({
   toothNotes,
 }: InsertPatientTooth): Promise<PatientDentistryTooth | undefined> => {
   try {
+    await assertProjectAccess({ patientDentistryId });
+
     const query = `
       INSERT INTO
         patient_dentistry_tooth (patient_dentistry_id, tooth_name, tooth_status, tooth_notes)

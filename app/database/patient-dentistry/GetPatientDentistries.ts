@@ -8,20 +8,32 @@ import { PatientDentistryTypes } from "../../types/PatientDentistryTypes";
 
 import { PatientPersonalId } from "../../types/PatientPersonalTypes";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const getPatientDentistries = async ({
   patientPersonalId,
 }: {
   patientPersonalId: PatientPersonalId;
 }): Promise<PatientDentistryTypes[] | undefined> => {
   try {
+    await assertProjectAccess({ patientPersonalId });
+
     const query = `
-      SELECT 
-        * 
+      SELECT
+        *,
+        TO_CHAR(patient_personal.patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth_text,
+        TO_CHAR(
+          (patient_dentistry.appointment_date AT TIME ZONE project.project_timezone)::date,
+          'YYYY-MM-DD'
+        ) AS appointment_date_text
       FROM
         patient_personal
+      INNER JOIN
+        project ON project.project_id = patient_personal.project_id
       LEFT JOIN
         patient_dentistry ON patient_dentistry.patient_personal_id = patient_personal.patient_personal_id
-      WHERE 
+      WHERE
         patient_personal.patient_personal_id = $1
       ORDER BY
         patient_dentistry.appointment_date DESC,
@@ -37,11 +49,11 @@ export const getPatientDentistries = async ({
         appointmentNotes: row.appointment_notes,
         appointmentHasReferral: row.appointment_has_referral,
         appointmentReferral: row.appointment_referral,
-        appointmentDate: row.appointment_date,
+        appointmentDate: row.appointment_date_text,
         projectId: row.project_id,
         patientFullName: row.patient_full_name,
         isPatientMale: row.is_patient_male,
-        patientDateOfBirth: row.patient_date_of_birth,
+        patientDateOfBirth: row.patient_date_of_birth_text,
       })
     );
 

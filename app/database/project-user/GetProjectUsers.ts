@@ -7,12 +7,17 @@ import { sql } from "@vercel/postgres";
 import { ProjectUser } from "../../types/ProjectUserTypes";
 import { ProjectId } from "../../types/ProjectTypes";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const getProjectUsers = async ({
   projectId,
 }: {
   projectId: ProjectId;
 }): Promise<ProjectUser[] | undefined> => {
   try {
+    await assertProjectAccess({ projectId }, { ownerOnly: true });
+
     const query = `
       SELECT 
         * 

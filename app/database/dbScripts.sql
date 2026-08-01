@@ -13,6 +13,10 @@ CREATE TABLE IF NOT EXISTS project (
     project_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     project_name VARCHAR(255) NOT NULL,
     project_description VARCHAR(255),
+    -- IANA timezone of the mission location (e.g. 'Pacific/Fiji').
+    -- Reports group appointments by the calendar day in this zone, so that a
+    -- report reads the same no matter where it is opened from.
+    project_timezone VARCHAR(64) NOT NULL DEFAULT 'UTC',
     owner_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_owner FOREIGN KEY(owner_id) REFERENCES app_user(user_id) ON DELETE CASCADE
@@ -33,7 +37,9 @@ CREATE TABLE IF NOT EXISTS patient_personal (
     project_id UUID NOT NULL,
     patient_full_name VARCHAR(255) NOT NULL,
     is_patient_male BOOLEAN NOT NULL,
-    patient_date_of_birth TIMESTAMP WITH TIME ZONE,
+    -- A birth date has no time and no timezone; keep it a plain DATE so it
+    -- cannot shift when rendered from another part of the world.
+    patient_date_of_birth DATE,
     patient_phone_number VARCHAR(255),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE

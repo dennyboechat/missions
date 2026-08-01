@@ -7,16 +7,24 @@ import { sql } from "@vercel/postgres";
 import { PatientPersonalId } from "../../types/PatientPersonalTypes";
 import { PatientDentalSummary } from "../../types/PatientDentalSummary";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const getPatientDentalSummary = async ({
   patientPersonalId,
 }: {
   patientPersonalId: PatientPersonalId;
 }): Promise<PatientDentalSummary[] | undefined> => {
   try {
+    await assertProjectAccess({ patientPersonalId });
+
     const query = `
       SELECT 
         patient_dentistry.patient_dentistry_id,
-        appointment_date,
+        TO_CHAR(
+          (patient_dentistry.appointment_date AT TIME ZONE project.project_timezone)::date,
+          'YYYY-MM-DD'
+        ) AS appointment_date,
         appointment_has_referral,
         appointment_referral,
         tooth_name,
@@ -28,14 +36,18 @@ export const getPatientDentalSummary = async ({
         instructions_usage
       FROM
         patient_dentistry
-      LEFT JOIN 
+      INNER JOIN
+        patient_personal ON patient_personal.patient_personal_id = patient_dentistry.patient_personal_id
+      INNER JOIN
+        project ON project.project_id = patient_personal.project_id
+      LEFT JOIN
         patient_dentistry_tooth ON patient_dentistry_tooth.patient_dentistry_id = patient_dentistry.patient_dentistry_id
-      LEFT JOIN 
+      LEFT JOIN
         patient_dentistry_prescribed_medication ON patient_dentistry_prescribed_medication.patient_dentistry_id = patient_dentistry.patient_dentistry_id
-      WHERE 
+      WHERE
         patient_dentistry.patient_personal_id = $1
       ORDER BY
-        appointment_date DESC,
+        patient_dentistry.appointment_date DESC,
         tooth_name,
         drug_name
     `;

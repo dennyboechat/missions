@@ -7,6 +7,9 @@ import { sql } from "@vercel/postgres";
 import { DentistryPrescribedMedication } from "../../types/DentistryPrescribedMedication";
 import { UpdatePatientDentistryMedication } from "../../types/DentistryPrescribedMedication";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const updatePatientDentistryMedication = async ({
   patientDentistryPrescribedMedicationId,
   field,
@@ -15,6 +18,8 @@ export const updatePatientDentistryMedication = async ({
   DentistryPrescribedMedication | undefined
 > => {
   try {
+    await assertProjectAccess({ patientDentistryPrescribedMedicationId });
+
     const query = `
       UPDATE
         patient_dentistry_prescribed_medication 

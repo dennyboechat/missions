@@ -5,7 +5,8 @@ import { PatientGeneralPrescribedMedicationId } from "./GeneralPrescribedMedicat
 
 export interface PatientGeneralSummary {
   patientGeneralId: PatientGeneralId;
-  appointmentDate: Date;
+  /** Calendar day in the project's timezone, YYYY-MM-DD. */
+  appointmentDate: string;
   patientHeight: number;
   patientWeight: number;
   patientTemperature: number;

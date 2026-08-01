@@ -10,6 +10,9 @@ import {
 } from "../../types/GeneralPrescribedMedication";
 import { PatientGeneralId } from "../../types/PatientGeneralTypes";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const insertPatientGeneralMedication = async ({
   patientGeneralId,
   medication,
@@ -18,6 +21,8 @@ export const insertPatientGeneralMedication = async ({
   medication: InsertPatientGeneralMedication;
 }): Promise<GeneralPrescribedMedication | undefined> => {
   try {
+    await assertProjectAccess({ patientGeneralId });
+
     const { drug, dose, quantity, instructions } = medication;
 
     const query = `

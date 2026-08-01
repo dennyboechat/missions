@@ -7,6 +7,9 @@ import { sql } from "@vercel/postgres";
 import { ProjectReportsAppointmentTypes } from "../../types/ProjectReportsAppointmentTypes";
 import { ProjectId } from "../../types/ProjectTypes";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const getProjectReportsAppointment = async ({
   projectId,
   startDate,
@@ -16,58 +19,66 @@ export const getProjectReportsAppointment = async ({
   startDate?: string;
   endDate?: string;
 }): Promise<ProjectReportsAppointmentTypes[] | undefined> => {
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
   try {
+    await assertProjectAccess({ projectId });
+
+    // Days are bucketed in the project's own timezone, read from the row that
+    // is already joined here. The date is returned as a YYYY-MM-DD string so
+    // the browser renders the bucket itself and cannot re-derive a different
+    // day from a timestamp.
     const query = `
       (
         SELECT
-          DATE_TRUNC('day', (patient_general.appointment_date AT TIME ZONE $4)::date) AS appointment_date,
-          MIN(patient_general.appointment_date) AS original_appointment_date,
+          TO_CHAR(
+            (patient_general.appointment_date AT TIME ZONE project.project_timezone)::date,
+            'YYYY-MM-DD'
+          ) AS appointment_date,
           COUNT(patient_general.patient_general_id) AS appointment_count,
           'general' AS appointment_type
-        FROM 
+        FROM
           project
         INNER JOIN
           patient_personal ON patient_personal.project_id = project.project_id
         LEFT JOIN
           patient_general ON patient_general.patient_personal_id = patient_personal.patient_personal_id
-        WHERE 
+        WHERE
           project.project_id = $1 AND
-          (patient_general.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
+          (patient_general.appointment_date AT TIME ZONE project.project_timezone)::date BETWEEN $2::date AND $3::date
         GROUP BY
-          DATE_TRUNC('day', (patient_general.appointment_date AT TIME ZONE $4)::date)
+          1
         ORDER BY
-          DATE_TRUNC('day', (patient_general.appointment_date AT TIME ZONE $4)::date)
+          1
       )
       UNION ALL
       (
-        SELECT 
-          DATE_TRUNC('day', (patient_dentistry.appointment_date AT TIME ZONE $4)::date) AS appointment_date,
-          MIN(patient_dentistry.appointment_date) AS original_appointment_date,
+        SELECT
+          TO_CHAR(
+            (patient_dentistry.appointment_date AT TIME ZONE project.project_timezone)::date,
+            'YYYY-MM-DD'
+          ) AS appointment_date,
           COUNT(patient_dentistry.patient_dentistry_id) AS appointment_count,
           'dental' AS appointment_type
-        FROM 
+        FROM
           project
         INNER JOIN
           patient_personal ON patient_personal.project_id = project.project_id
         LEFT JOIN
           patient_dentistry ON patient_dentistry.patient_personal_id = patient_personal.patient_personal_id
-        WHERE 
+        WHERE
           project.project_id = $1 AND
-          (patient_dentistry.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
+          (patient_dentistry.appointment_date AT TIME ZONE project.project_timezone)::date BETWEEN $2::date AND $3::date
         GROUP BY
-          DATE_TRUNC('day', (patient_dentistry.appointment_date AT TIME ZONE $4)::date)
+          1
         ORDER BY
-          DATE_TRUNC('day', (patient_dentistry.appointment_date AT TIME ZONE $4)::date)
+          1
       )
     `;
 
-    const response = await sql.query(query, [projectId, startDate, endDate, timeZone]);
+    const response = await sql.query(query, [projectId, startDate, endDate]);
 
     const projectReports: ProjectReportsAppointmentTypes[] = response.rows.map(
       (row) => ({
-        appointmentDate: row.original_appointment_date,
+        appointmentDate: row.appointment_date,
         quantity: row.appointment_count,
         appointmentType: row.appointment_type,
       })

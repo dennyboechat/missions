@@ -17,7 +17,11 @@ import { PopupConfirmation } from "../../components/ui/PopupConfirmation";
 import { ContentHeader } from "../../components/ContentHeader";
 
 // Types
-import { ProjectName, ProjectDescription } from "../../types/ProjectTypes";
+import {
+  ProjectName,
+  ProjectDescription,
+  ProjectTimezone,
+} from "../../types/ProjectTypes";
 
 // Database
 import { getProject } from "../../database/project/GetProject";
@@ -38,6 +42,7 @@ const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
   const [projectName, setProjectName] = useState<ProjectName>("");
   const [projectDescription, setProjectDescription] =
     useState<ProjectDescription>("");
+  const [projectTimezone, setProjectTimezone] = useState<ProjectTimezone>("");
   const [isDeletingProject, setIsDeletingProject] = useState(false);
   const projectMenuItems = (
     <ProjectMenuItems projectId={projectId} activeMenuItem="project" />
@@ -49,6 +54,7 @@ const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
         const projectData = await getProject({ projectId });
         setProjectName(projectData?.projectName ?? "");
         setProjectDescription(projectData?.projectDescription ?? "");
+        setProjectTimezone(projectData?.projectTimezone ?? "UTC");
       }
     };
 
@@ -97,10 +103,12 @@ const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
         <ProjectFields
           projectName={projectName}
           projectDescription={projectDescription}
+          projectTimezone={projectTimezone}
           onProjectNameChange={(e) => setProjectName(e.target.value)}
           onProjectDescriptionChange={(e) =>
             setProjectDescription(e.target.value)
           }
+          onProjectTimezoneChange={setProjectTimezone}
           projectId={projectId}
         />
         <Grid

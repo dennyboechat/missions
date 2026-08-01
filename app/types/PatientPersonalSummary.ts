@@ -10,6 +10,7 @@ export interface PatientPersonalSummary {
   projectId: ProjectId;
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
-  patientDateOfBirth: Date;
+  /** Plain calendar date, YYYY-MM-DD. */
+  patientDateOfBirth: string;
   patientPhoneNumber: string;
 }

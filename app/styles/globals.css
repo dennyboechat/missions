@@ -35,3 +35,19 @@ div[role="dialog"] .cl-cardBox {
 .autocomplete_readonly > .wrapper > div:nth-of-type(2) {
   display: none !important;
 }
+
+/* Autocomplete: keep the suggestion list closed until the field is focused.
+   The library repopulates its results whenever the value prop changes, so a
+   form that loads with a value already set would otherwise render with the
+   list hanging open. Selection happens on mousedown with preventDefault, so
+   focus is still on the input when a suggestion is clicked. */
+.autocomplete > .wrapper:not(:focus-within) > div:nth-of-type(2) {
+  display: none !important;
+}
+
+/* Autocomplete: closed after choosing an item. Selecting changes the value
+   prop, which makes the library rebuild its result list while the input still
+   holds focus, so the rule above cannot catch it. */
+.autocomplete_list_closed > .wrapper > div:nth-of-type(2) {
+  display: none !important;
+}

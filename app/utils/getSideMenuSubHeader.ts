@@ -5,7 +5,7 @@ import { getLocaleFormattedDate } from "./getLocaleFormattedDate";
 export const getSideMenuSubHeader = ({
   patientDateOfBirth,
 }: {
-  patientDateOfBirth?: Date;
+  patientDateOfBirth?: string;
 }) => {
   const patientAge = getAge({
     date: patientDateOfBirth,

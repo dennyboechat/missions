@@ -8,14 +8,16 @@ export type PatientGeneralId = string;
 export interface PatientGeneralTypes {
   patientGeneralId: PatientGeneralId;
   patientPersonalId: PatientPersonalId;
-  appointmentDate: Date;
+  /** Calendar day in the project's timezone, YYYY-MM-DD. */
+  appointmentDate: string;
   appointmentNotes: string;
   appointmentHasReferral: boolean;
   appointmentReferral: string;
   projectId: ProjectId;
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
-  patientDateOfBirth: Date;
+  /** Plain calendar date, YYYY-MM-DD. */
+  patientDateOfBirth: string;
   patientHeight?: number;
   patientWeight?: number;
   patientTemperature?: number;
@@ -33,7 +35,8 @@ export interface PatientGeneralTypes {
 export interface PatientGeneral {
   patientGeneralId: PatientGeneralId;
   patientPersonalId: PatientPersonalId;
-  appointmentDate: Date;
+  /** Calendar day in the project's timezone, YYYY-MM-DD. */
+  appointmentDate: string;
   appointmentNotes: string;
 }
 

@@ -4,7 +4,8 @@ import { Medication } from "./Medication";
 
 export interface PatientGeneralAppointmentSummary {
   patientGeneralId: PatientGeneralId;
-  appointmentDate: Date;
+  /** Calendar day in the project's timezone, YYYY-MM-DD. */
+  appointmentDate: string;
   patientHeight: number;
   patientWeight: number;
   patientTemperature: number;

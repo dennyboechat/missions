@@ -7,6 +7,9 @@ import { sql } from "@vercel/postgres";
 import { ProjectId } from "../../types/ProjectTypes";
 import { ProjectReportsAllData } from "@/app/types/ProjectReportsAllData";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const getProjectReportsAllData = async ({
   projectId,
   startDate,
@@ -16,9 +19,11 @@ export const getProjectReportsAllData = async ({
   startDate?: string;
   endDate?: string;
 }): Promise<ProjectReportsAllData[] | undefined> => {
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
   try {
+    await assertProjectAccess({ projectId });
+
+    // Appointment dates are emitted as YYYY-MM-DD in the project's timezone so
+    // the exported CSV matches the on-screen report exactly.
     const query = `
 WITH general_meds AS (
   SELECT
@@ -43,13 +48,16 @@ dental_teeth AS (
 )
 SELECT
   patient_personal.patient_full_name,
-  patient_personal.patient_date_of_birth,
+  TO_CHAR(patient_personal.patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth,
   patient_personal.patient_phone_number,
   CASE 
     WHEN patient_personal.is_patient_male THEN 'male'
     ELSE 'female'
   END AS gender,
-  patient_general.appointment_date AS general_appointment_date,
+  TO_CHAR(
+    (patient_general.appointment_date AT TIME ZONE project.project_timezone)::date,
+    'YYYY-MM-DD'
+  ) AS general_appointment_date,
   patient_general.appointment_notes AS general_notes,
   general_meds.prescribed_medications AS general_prescribed_medications,
   patient_general.patient_height AS patient_height,
@@ -59,7 +67,7 @@ SELECT
   patient_general.patient_pulse AS patient_pulse,
   patient_general.patient_oxygen_saturation AS patient_oxygen_saturation,
   patient_general.patient_blood_pressure_diastolic AS patient_blood_pressure_diastolic,
-  NULL AS dental_appointment_date,
+  NULL::text AS dental_appointment_date,
   NULL AS dental_notes,
   NULL AS dental_prescribed_medications,
   NULL AS teeth_names
@@ -73,17 +81,17 @@ LEFT JOIN
   general_meds ON general_meds.patient_general_id = patient_general.patient_general_id
 WHERE
   project.project_id = $1
-  AND (patient_general.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
+  AND (patient_general.appointment_date AT TIME ZONE project.project_timezone)::date BETWEEN $2::date AND $3::date
 UNION ALL
 SELECT
   patient_personal.patient_full_name,
-  patient_personal.patient_date_of_birth,
+  TO_CHAR(patient_personal.patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth,
   patient_personal.patient_phone_number,
   CASE 
     WHEN patient_personal.is_patient_male THEN 'male'
     ELSE 'female'
   END AS gender,
-  NULL AS general_appointment_date,
+  NULL::text AS general_appointment_date,
   NULL AS general_notes,
   NULL AS general_prescribed_medications,
   NULL AS patient_height,
@@ -93,7 +101,10 @@ SELECT
   NULL AS patient_pulse,
   NULL AS patient_oxygen_saturation,
   NULL AS patient_blood_pressure_diastolic,
-  patient_dentistry.appointment_date AS dental_appointment_date,
+  TO_CHAR(
+    (patient_dentistry.appointment_date AT TIME ZONE project.project_timezone)::date,
+    'YYYY-MM-DD'
+  ) AS dental_appointment_date,
   patient_dentistry.appointment_notes AS dental_notes,
   dental_meds.prescribed_medications AS dental_prescribed_medications,
   dental_teeth.teeth_names
@@ -109,12 +120,12 @@ LEFT JOIN
   dental_teeth ON dental_teeth.patient_dentistry_id = patient_dentistry.patient_dentistry_id
 WHERE
   project.project_id = $1
-  AND (patient_dentistry.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
+  AND (patient_dentistry.appointment_date AT TIME ZONE project.project_timezone)::date BETWEEN $2::date AND $3::date
 ORDER BY
   patient_full_name
     `;
 
-    const response = await sql.query(query, [projectId, startDate, endDate, timeZone]);
+    const response = await sql.query(query, [projectId, startDate, endDate]);
 
     const allData: ProjectReportsAllData[] = response.rows.map(
       (row) => ({

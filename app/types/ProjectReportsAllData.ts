@@ -3,7 +3,8 @@ export interface ProjectReportsAllData {
   patientDateOfBirth: Date;
   patientPhoneNumber: string;
   gender: "male" | "female";
-  generalAppointmentDate: Date;
+  /** Calendar day in the project's timezone, as YYYY-MM-DD. */
+  generalAppointmentDate: string;
   generalNotes: string;
   generalPrescribedMedications: string;
   patientHeight: number;
@@ -13,7 +14,8 @@ export interface ProjectReportsAllData {
   patientPulse: number;
   patientOxygenSaturation: number;
   patientBloodPressureDiastolic: number;
-  dentalAppointmentDate: Date;
+  /** Calendar day in the project's timezone, as YYYY-MM-DD. */
+  dentalAppointmentDate: string;
   dentalNotes: string;
   dentalPrescribedMedications: string;
   teethNames: string;

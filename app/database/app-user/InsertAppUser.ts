@@ -6,11 +6,18 @@ import { sql } from "@vercel/postgres";
 // Types
 import { AppUser, InsertAppUser } from "../../types/AppUser";
 
+// Auth
+import { getAuthenticatedUserId } from "../auth/projectAccess";
+
 export const insertAppUser = async ({
   userName,
   userEmail,
 }: InsertAppUser): Promise<AppUser | undefined> => {
   try {
+    // Pre-creates a row for someone being invited to a project, so the caller
+    // must at least be an established user themselves.
+    await getAuthenticatedUserId();
+
     const query = `
       INSERT INTO 
         app_user (user_name, user_email)

@@ -38,7 +38,7 @@ const DashboardPage = () => {
       }
 
       if (loggedUser) {
-        const projectsData = await getProjects({ userId: loggedUser.userId });
+        const projectsData = await getProjects();
         setProjects(projectsData ?? []);
       }
     };
@@ -64,9 +64,7 @@ const DashboardPage = () => {
         if (timeDifference < fiveMinutesInMilli) {
           try {
             const addedUser = await insertAppUserWithThirdPartyId({
-              userThirdPartyId,
               userName: fullName ?? "",
-              userEmail: emailAddress,
             });
 
             loggedUser = addedUser;

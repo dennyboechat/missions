@@ -12,7 +12,7 @@ import { ProjectReportsAppointmentTypes } from "../../../types/ProjectReportsApp
 import styles from "../../ProjectReports/styles/ProjectReports.module.css";
 
 // Utils
-import { getFormattedDate } from "../../../utils/getFormattedDate";
+import { getFormattedIsoDate } from "../../../utils/getFormattedIsoDate";
 import { Fragment } from "react/jsx-runtime";
 
 export const ProjectReportsAppointments = ({
@@ -63,7 +63,7 @@ export const ProjectReportsAppointments = ({
               <div
                 className={`${styles.container_title} ${styles.table_item}`}
               >
-                <Text>{getFormattedDate({date: appointmentDate})}</Text>
+                <Text>{getFormattedIsoDate({ date: appointmentDate })}</Text>
                 <Text>{quantity}</Text>
               </div>
               <Space />
@@ -79,7 +79,7 @@ export const ProjectReportsAppointments = ({
               <div
                 className={`${styles.container_title} ${styles.table_item}`}
               >
-                <Text>{getFormattedDate({date: appointmentDate})}</Text>
+                <Text>{getFormattedIsoDate({ date: appointmentDate })}</Text>
                 <Text>{quantity}</Text>
               </div>
               <Space />

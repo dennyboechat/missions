@@ -23,7 +23,6 @@ import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Database
 import { updatePatientPersonal } from "../../../database/patient-personal/UpdatePatientPersonal";
-import { getYearFormattedDate } from "@/app/utils/getYearFormattedDate";
 
 export const PatientPersonalFields = ({
   patientPersonalFields,
@@ -32,8 +31,9 @@ export const PatientPersonalFields = ({
   isPatientGenderInvalid,
   isPatientDateOfBirthInvalid,
 }: PatientPersonalFieldsProps) => {
+  // Already YYYY-MM-DD, which is exactly what <input type="date"> expects.
   const [dateOfBirth, setDateOfBirth] = useState(
-    getYearFormattedDate(patientPersonalFields.patientDateOfBirth)
+    patientPersonalFields.patientDateOfBirth ?? ""
   );
   const { setMessage, setMessageType } = usePopupMessage();
   const [isFullNameInvalid, setIsFullNameInvalid] = useState(
@@ -192,12 +192,10 @@ export const PatientPersonalFields = ({
         setMessageType("error");
       }
     } else {
-      const dateValue = new Date(dateOfBirth);
-
       setPatientPersonalFields((prevFields) => {
         return {
           ...prevFields,
-          patientDateOfBirth: dateValue,
+          patientDateOfBirth: dateOfBirth,
         };
       });
     }

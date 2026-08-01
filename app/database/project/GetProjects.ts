@@ -4,14 +4,17 @@
 import { sql } from "@vercel/postgres";
 
 // Types
-import { Project, ProjectOwnerId } from "../../types/ProjectTypes";
+import { Project } from "../../types/ProjectTypes";
 
-export const getProjects = async ({
-  userId,
-}: {
-  userId: ProjectOwnerId;
-}): Promise<Project[] | undefined> => {
+// Auth
+import { getAuthenticatedUserId } from "../auth/projectAccess";
+
+export const getProjects = async (): Promise<Project[] | undefined> => {
   try {
+    // Always the caller's own projects; passing an id in would let anyone
+    // enumerate another user's projects.
+    const userId = await getAuthenticatedUserId();
+
     const query = `
       SELECT 
         DISTINCT project.*
@@ -35,6 +38,7 @@ export const getProjects = async ({
       projectId: row.project_id,
       projectName: row.project_name,
       projectDescription: row.project_description,
+      projectTimezone: row.project_timezone,
       ownerId: row.owner_id,
     }));
 

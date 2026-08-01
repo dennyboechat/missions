@@ -6,12 +6,17 @@ import { sql } from "@vercel/postgres";
 // Types
 import { PatientGeneralId } from "../../types/PatientGeneralTypes";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const deletePatientGeneral = async ({
   patientGeneralId,
 }: {
   patientGeneralId: PatientGeneralId;
 }) => {
   try {
+    await assertProjectAccess({ patientGeneralId });
+
     const query = `
       DELETE FROM 
         patient_general 

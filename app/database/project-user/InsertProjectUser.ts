@@ -7,6 +7,9 @@ import { sql } from "@vercel/postgres";
 import { ProjectUser } from "../../types/ProjectUserTypes";
 import { ProjectId } from "../../types/ProjectTypes";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const insertProjectUser = async ({
   projectId,
   userId,
@@ -15,6 +18,8 @@ export const insertProjectUser = async ({
   userId: string;
 }): Promise<ProjectUser[] | undefined> => {
   try {
+    await assertProjectAccess({ projectId }, { ownerOnly: true });
+
     const query = `
       INSERT INTO
         project_user (project_id, user_id, is_user_active) 

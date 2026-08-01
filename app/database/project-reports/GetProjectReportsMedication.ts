@@ -7,6 +7,9 @@ import { sql } from "@vercel/postgres";
 import { ProjectReportsMedicationTypes } from "../../types/ProjectReportsMedicationTypes";
 import { ProjectId } from "../../types/ProjectTypes";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const getProjectReportsMedication = async ({
   projectId,
   startDate,
@@ -16,9 +19,11 @@ export const getProjectReportsMedication = async ({
   startDate?: string;
   endDate?: string;
 }): Promise<ProjectReportsMedicationTypes[] | undefined> => {
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
   try {
+    await assertProjectAccess({ projectId });
+
+    // Same date window as the appointments report: the project's timezone,
+    // read from the joined project row.
     const query = `
       (
         SELECT 
@@ -35,7 +40,7 @@ export const getProjectReportsMedication = async ({
           patient_general_prescribed_medication ON patient_general_prescribed_medication.patient_general_id = patient_general.patient_general_id
         WHERE 
           project.project_id = $1 AND
-          (patient_general.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
+          (patient_general.appointment_date AT TIME ZONE project.project_timezone)::date BETWEEN $2::date AND $3::date
         ORDER BY
           patient_general_prescribed_medication.drug_name
       )
@@ -55,13 +60,13 @@ export const getProjectReportsMedication = async ({
           patient_dentistry_prescribed_medication ON patient_dentistry_prescribed_medication.patient_dentistry_id = patient_dentistry.patient_dentistry_id  
         WHERE 
           project.project_id = $1 AND
-          (patient_dentistry.appointment_date AT TIME ZONE $4)::date BETWEEN $2::date AND $3::date
+          (patient_dentistry.appointment_date AT TIME ZONE project.project_timezone)::date BETWEEN $2::date AND $3::date
         ORDER BY
           patient_dentistry_prescribed_medication.drug_name
       )
     `;
 
-    const response = await sql.query(query, [projectId, startDate, endDate, timeZone]);
+    const response = await sql.query(query, [projectId, startDate, endDate]);
 
     const projectReports: ProjectReportsMedicationTypes[] = response.rows.map((row) => ({
       drug: row.drug_name,

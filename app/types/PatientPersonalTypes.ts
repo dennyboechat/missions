@@ -10,7 +10,8 @@ export interface PatientPersonalTypes {
   projectId: ProjectId;
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
-  patientDateOfBirth: Date;
+  /** Plain calendar date, YYYY-MM-DD. */
+  patientDateOfBirth: string;
   patientPhoneNumber: string;
   filterOrder?: number;
 }
@@ -19,7 +20,8 @@ export interface NewPatientPersonal {
   projectId: ProjectId;
   patientFullName: PatientPersonalFullName;
   isPatientMale: boolean;
-  patientDateOfBirth: Date;
+  /** Plain calendar date, YYYY-MM-DD. */
+  patientDateOfBirth: string;
   patientPhoneNumber?: string;
 }
 

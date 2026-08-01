@@ -12,7 +12,7 @@ import { Space } from "../../ui/Space";
 
 // Hooks
 import { useProject } from "../../../lib/ProjectContext";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Styles
 import styles from "../../../styles/content.module.css";
@@ -22,11 +22,14 @@ import { isReportStartDateValid } from "../utils/isReportStartDateValid";
 import { isReportEndDateValid } from "../utils/isReportEndDateValid";
 import { getCurrentDateTime } from "../../../utils/getCurrentDateTime";
 import { subtractDaysToDate } from "../../../utils/subtractDaysToDate";
+import { subtractDaysFromIsoDate } from "../../../utils/subtractDaysFromIsoDate";
+import { getTodayInTimezone } from "../../../utils/getTodayInTimezone";
 import { getFormattedDate } from "../../../utils/getFormattedDate";
 
 // Database
 import { getProjectReportsMedication } from "../../../database/project-reports/GetProjectReportsMedication";
 import { getProjectReportsAppointment } from "../../../database/project-reports/GetProjectReportsAppointment";
+import { getProjectTimezone } from "../../../database/project/GetProjectTimezone";
 
 // Types
 import { ProjectReportsMedicationTypes } from "../../../types/ProjectReportsMedicationTypes";
@@ -57,6 +60,30 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     useState(false);
 
   const { id: projectId } = params;
+
+  // The browser's today is only a placeholder until the project's own today is
+  // known, so a report opened from another continent still defaults to the
+  // mission's last 14 days. The ref keeps a late-arriving timezone from
+  // overwriting dates the user has already picked.
+  const hasAppliedProjectDates = useRef(false);
+
+  useEffect(() => {
+    const applyProjectDates = async () => {
+      const timeZone = await getProjectTimezone({ projectId });
+
+      if (!timeZone || hasAppliedProjectDates.current) {
+        return;
+      }
+
+      hasAppliedProjectDates.current = true;
+
+      const today = getTodayInTimezone({ timeZone });
+      setEndDate(today);
+      setStartDate(subtractDaysFromIsoDate({ date: today, days: 14 }));
+    };
+
+    applyProjectDates();
+  }, [projectId]);
 
   const projectMenuItems = (
     <ProjectMenuItems projectId={projectId} activeMenuItem="project-reports" />
@@ -111,15 +138,11 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
         exportToCsv({
           data: allData.map((row) => ({
             ...row,
-            patientDateOfBirth: row.patientDateOfBirth
-              ? getFormattedDate({ date: new Date(row.patientDateOfBirth), format: "yyyy-MM-dd" })
-              : "",
-            generalAppointmentDate: row.generalAppointmentDate
-              ? getFormattedDate({ date: new Date(row.generalAppointmentDate), format: "yyyy-MM-dd" })
-              : "",
-            dentalAppointmentDate: row.dentalAppointmentDate
-              ? getFormattedDate({ date: new Date(row.dentalAppointmentDate), format: "yyyy-MM-dd" })
-              : "",
+            // A plain YYYY-MM-DD date already.
+            patientDateOfBirth: row.patientDateOfBirth ?? "",
+            // Already YYYY-MM-DD in the project's timezone.
+            generalAppointmentDate: row.generalAppointmentDate ?? "",
+            dentalAppointmentDate: row.dentalAppointmentDate ?? "",
           })),
           headers: [
             { key: "patientFullName", label: "Patient Name" },

@@ -6,11 +6,16 @@ import { sql } from "@vercel/postgres";
 // Types
 import { ProjectUser, UpdateProjectUser } from "../../types/ProjectUserTypes";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const updateProjectUser = async ({
   projectUserId,
   isUserActive,
 }: UpdateProjectUser): Promise<ProjectUser | undefined> => {
   try {
+    await assertProjectAccess({ projectUserId }, { ownerOnly: true });
+
     const query = `
       UPDATE 
         project_user 

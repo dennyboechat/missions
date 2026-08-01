@@ -7,7 +7,8 @@ import { PatientDentistryPrescribedMedicationId } from "./DentistryPrescribedMed
 
 export interface PatientDentalSummary {
   patientDentistryId: PatientDentistryId;
-  appointmentDate: Date;
+  /** Calendar day in the project's timezone, YYYY-MM-DD. */
+  appointmentDate: string;
   appointmentHasReferral: boolean;
   appointmentReferral: string;
   toothName: Tooth;

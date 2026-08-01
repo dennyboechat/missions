@@ -7,16 +7,24 @@ import { sql } from "@vercel/postgres";
 import { PatientPersonalId } from "../../types/PatientPersonalTypes";
 import { PatientGeneralSummary } from "../../types/PatientGeneralSummary";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 export const getPatientGeneralSummary = async ({
   patientPersonalId,
 }: {
   patientPersonalId: PatientPersonalId;
 }): Promise<PatientGeneralSummary[] | undefined> => {
   try {
+    await assertProjectAccess({ patientPersonalId });
+
     const query = `
       SELECT 
         patient_general.patient_general_id,
-        appointment_date,
+        TO_CHAR(
+          (patient_general.appointment_date AT TIME ZONE project.project_timezone)::date,
+          'YYYY-MM-DD'
+        ) AS appointment_date,
         patient_height,
         patient_weight,
         patient_temperature,
@@ -38,12 +46,16 @@ export const getPatientGeneralSummary = async ({
         instructions_usage
       FROM
         patient_general
-      LEFT JOIN 
+      INNER JOIN
+        patient_personal ON patient_personal.patient_personal_id = patient_general.patient_personal_id
+      INNER JOIN
+        project ON project.project_id = patient_personal.project_id
+      LEFT JOIN
         patient_general_prescribed_medication ON patient_general_prescribed_medication.patient_general_id = patient_general.patient_general_id
-      WHERE 
+      WHERE
         patient_general.patient_personal_id = $1
       ORDER BY
-        appointment_date DESC,
+        patient_general.appointment_date DESC,
         drug_name
     `;
 

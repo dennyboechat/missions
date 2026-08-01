@@ -3,6 +3,9 @@
 // Database
 import { sql } from "@vercel/postgres";
 
+// Auth
+import { assertProjectAccess } from "../auth/projectAccess";
+
 // Types
 import {
   PatientPersonalTypes,
@@ -17,13 +20,15 @@ export const insertPatientPersonal = async ({
   patientPhoneNumber,
 }: NewPatientPersonal): Promise<PatientPersonalTypes | undefined> => {
   try {
+    await assertProjectAccess({ projectId });
+
     const query = `
       INSERT INTO 
         patient_personal (project_id, patient_full_name, is_patient_male, patient_date_of_birth, patient_phone_number)
       VALUES 
         ($1, $2, $3, $4, $5)
       RETURNING 
-        patient_personal_id, project_id, patient_full_name, is_patient_male, patient_date_of_birth, patient_phone_number
+        patient_personal_id, project_id, patient_full_name, is_patient_male, TO_CHAR(patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth_text, patient_phone_number
     `;
 
     const response = await sql.query(query, [
@@ -40,7 +45,7 @@ export const insertPatientPersonal = async ({
         projectId: row.project_id,
         patientFullName: row.patient_full_name,
         isPatientMale: row.is_patient_male,
-        patientDateOfBirth: row.patient_date_of_birth,
+        patientDateOfBirth: row.patient_date_of_birth_text,
         patientPhoneNumber: row.patient_phone_number,
       })
     );
