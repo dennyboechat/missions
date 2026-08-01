@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.6",
@@ -26,7 +28,8 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.2.12",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   },
   "pnpm": {
     "//": "Security patches for transitive dependencies. Each override is pinned to the advisory's patched version within the major line already in use, so no dependent sees an API it was not built against. Remove an entry once the parent package ships the fix itself.",
