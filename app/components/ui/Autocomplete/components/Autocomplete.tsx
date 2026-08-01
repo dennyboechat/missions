@@ -1,16 +1,32 @@
 "use client";
 
 // Components
-import { ReactSearchAutocomplete } from "react-search-autocomplete";
+import { TextField } from "@radix-ui/themes";
+
+// Types
 import { AutocompleteProps } from "../types/AutocompleteProps";
 import { AutocompleteItem } from "../types/AutocompleteItem";
 
 // Hooks
-import { useRef, useEffect, useState } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 
-// Keys that end an interaction rather than asking to browse the list again.
-const LIST_CLOSING_KEYS = ["Enter", "Tab", "Escape"];
+// Styles
+import styles from "../styles/Autocomplete.module.css";
 
+// The country list is 247 entries; rendering all of them on an empty query is
+// pointless and slow to scroll.
+const MAX_RESULTS = 50;
+
+/**
+ * A combobox: type to filter, pick with the mouse or keyboard, or just type a
+ * value that is not in the list.
+ *
+ * Replaces react-search-autocomplete, which is unmaintained, declares a React
+ * 18 peer against React 19, and rebuilt its result list whenever its value
+ * prop changed -- so the list sprang open on any form that loaded with a value
+ * and reopened on the very click that selected an item. Both needed CSS
+ * workarounds. Here the list is open only when this component says it is.
+ */
 export const Autocomplete = ({
   items,
   value,
@@ -20,84 +36,124 @@ export const Autocomplete = ({
   placeholder,
   readOnly,
 }: AutocompleteProps) => {
-  const inputRef = useRef<HTMLDivElement>(null);
+  const [text, setText] = useState(value ?? "");
+  const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Choosing an item changes the value prop, and the library repopulates its
-  // result list whenever that prop changes -- so the list springs straight
-  // back open on the click that just closed it, and the input still has focus
-  // so :focus-within cannot hide it. Keep it shut until the user actually asks
-  // for the list again.
-  const [isListSuppressed, setIsListSuppressed] = useState(false);
+  // Follow the value the parent holds, e.g. when a country resolves from a
+  // saved timezone, or the field is cleared.
+  useEffect(() => {
+    setText(value ?? "");
+  }, [value]);
+
+  const matches = useMemo(() => {
+    const query = text.trim().toLowerCase();
+    const matching = query
+      ? items.filter((item) => item.name.toLowerCase().includes(query))
+      : items;
+
+    return matching.slice(0, MAX_RESULTS);
+  }, [items, text]);
 
   useEffect(() => {
-    const inputElement = inputRef.current?.querySelector("input");
-
-    if (!inputElement) {
-      return;
-    }
-
-    const handleBlur = (event: FocusEvent) => {
-      if (onBlur) {
-        onBlur(event as unknown as React.FocusEvent<HTMLInputElement>);
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
       }
     };
 
-    const showList = () => setIsListSuppressed(false);
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    return () => document.removeEventListener("mousedown", closeOnOutsideClick);
+  }, []);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!LIST_CLOSING_KEYS.includes(event.key)) {
-        showList();
-      }
-    };
-
-    inputElement.readOnly = readOnly || false;
-
-    inputElement.addEventListener("blur", handleBlur);
-    // Typing, clicking back into the field, or arrowing through it are all
-    // requests to see the options again.
-    inputElement.addEventListener("input", showList);
-    inputElement.addEventListener("mousedown", showList);
-    inputElement.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      inputElement.removeEventListener("blur", handleBlur);
-      inputElement.removeEventListener("input", showList);
-      inputElement.removeEventListener("mousedown", showList);
-      inputElement.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onBlur, readOnly]);
-
-  const handleSelect = (item: AutocompleteItem) => {
-    setIsListSuppressed(true);
+  const choose = (item: AutocompleteItem) => {
+    setText(item.name);
+    setIsOpen(false);
+    setHighlightedIndex(-1);
 
     if (onSelect) {
       onSelect(item);
     }
   };
 
-  const styling = {
-    borderRadius: "3.4px",
-    height: "33.18px",
-    backgroundColor: readOnly ? "#f5f5f5" : "#fff",
-    cursor: readOnly ? "not-allowed" : "text",
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (readOnly) return;
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setIsOpen(true);
+      setHighlightedIndex((index) => Math.min(index + 1, matches.length - 1));
+      return;
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setHighlightedIndex((index) => Math.max(index - 1, 0));
+      return;
+    }
+
+    if (event.key === "Enter" && isOpen && matches[highlightedIndex]) {
+      event.preventDefault();
+      choose(matches[highlightedIndex]);
+      return;
+    }
+
+    if (event.key === "Escape") {
+      setIsOpen(false);
+    }
   };
 
   return (
-    <div ref={inputRef}>
-      <ReactSearchAutocomplete
-        items={items}
-        showIcon={false}
-        showClear={false}
-        showNoResults={false}
-        onSelect={handleSelect}
-        onSearch={(keyword: string) => onSearch?.(keyword)}
+    <div
+      ref={containerRef}
+      className={`${styles.container}${readOnly ? ` ${styles.readonly}` : ""}`}
+    >
+      <TextField.Root
+        value={text}
         placeholder={placeholder}
-        className={`autocomplete${
-          isListSuppressed ? " autocomplete_list_closed" : ""
-        }${readOnly ? " autocomplete_readonly" : ""}`}
-        styling={styling}
-        inputSearchString={value}
+        readOnly={readOnly}
+        autoComplete="off"
+        role="combobox"
+        aria-expanded={isOpen}
+        onChange={(event) => {
+          setText(event.target.value);
+          setIsOpen(true);
+          setHighlightedIndex(-1);
+
+          if (onSearch) {
+            onSearch(event.target.value);
+          }
+        }}
+        onFocus={() => {
+          if (!readOnly) setIsOpen(true);
+        }}
+        onBlur={onBlur}
+        onKeyDown={onKeyDown}
       />
+      {isOpen && matches.length > 0 && (
+        <ul className={styles.list} role="listbox">
+          {matches.map((item, index) => (
+            <li
+              key={item.id}
+              role="option"
+              aria-selected={index === highlightedIndex}
+              className={`${styles.option}${
+                index === highlightedIndex ? ` ${styles.highlighted}` : ""
+              }`}
+              onMouseEnter={() => setHighlightedIndex(index)}
+              // mousedown rather than click: it runs before blur, so the input
+              // keeps focus and any onBlur handler sees the chosen value.
+              onMouseDown={(event) => {
+                event.preventDefault();
+                choose(item);
+              }}
+            >
+              {item.name}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
