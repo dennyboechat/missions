@@ -2,28 +2,28 @@
 
 // Components
 import { Container, Grid, Button } from "@radix-ui/themes";
-import { ProjectFields } from "../components/ProjectFields";
-import { ContentHeader } from "../components/ContentHeader";
+import { ProjectFields } from "../../components/ProjectFields";
+import { ContentHeader } from "../../components/ContentHeader";
 
 // Database
-import { insertProject } from "../database/project/InsertProject";
+import { insertProject } from "../../database/project/InsertProject";
 
 // Hooks
-import { useAppUser } from "../lib/AppUserContext";
+import { useAppUser } from "../../lib/AppUserContext";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useProject } from "../lib/ProjectContext";
+import { useProject } from "../../lib/ProjectContext";
 
 // Utils
-import { isValidProjectName } from "../utils/isValidProjectName";
-import { isValidTimezone } from "../utils/isValidTimezone";
-import { getUserTimezone } from "../utils/getUserTimezone";
+import { isValidProjectName } from "../../utils/isValidProjectName";
+import { isValidTimezone } from "../../utils/isValidTimezone";
+import { getUserTimezone } from "../../utils/getUserTimezone";
 
 // Styles
-import styles from "../styles/content.module.css";
+import styles from "../../styles/content.module.css";
 
 // Types
-import { actionData } from "../types/ActionResult";
+import { actionData } from "../../types/ActionResult";
 
 const ProjectNew = () => {
   const router = useRouter();
@@ -62,12 +62,14 @@ const ProjectNew = () => {
     if (isValidProject && isValidProjectTimezone) {
       const { userId } = appUser;
 
-      const insertedProject = actionData(await insertProject({
-        projectName: projectName,
-        projectDescription: projectDescription,
-        projectTimezone: projectTimezone,
-        ownerId: userId,
-      }));
+      const insertedProject = actionData(
+        await insertProject({
+          projectName: projectName,
+          projectDescription: projectDescription,
+          projectTimezone: projectTimezone,
+          ownerId: userId,
+        }),
+      );
 
       if (insertedProject) {
         setProject(insertedProject);

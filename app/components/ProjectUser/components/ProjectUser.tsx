@@ -2,8 +2,6 @@
 
 // Components
 import { Container, Button } from "@radix-ui/themes";
-import { SideMenuLayout } from "../../ui/SideMenuLayout";
-import { ProjectMenuItems } from "../../ProjectMenuItems";
 import { ContentHeader } from "../../ContentHeader";
 import { ProjectUserFields } from "../../ProjectUserFields";
 import { Space } from "../../ui/Space";
@@ -49,10 +47,6 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
       userEmail: "",
     });
 
-  const projectMenuItems = (
-    <ProjectMenuItems projectId={params.id} activeMenuItem="project-users" />
-  );
-
   const onConfirmButtonClick = async () => {
     setIsCreatingUser(true);
 
@@ -66,19 +60,23 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
     setIsProjectUserEmailInvalid(!isValidUserEmail);
 
     if (isValidUserName && isValidUserEmail) {
-      const newUser = actionData(await insertAppUser({
-        userName,
-        userEmail,
-      }));
+      const newUser = actionData(
+        await insertAppUser({
+          userName,
+          userEmail,
+        }),
+      );
 
       let newUserId;
       if (newUser) {
         newUserId = newUser.userId;
       } else {
-        const existingAppUser = actionData(await getAppUser({
-          field: "user_email",
-          value: userEmail,
-        }));
+        const existingAppUser = actionData(
+          await getAppUser({
+            field: "user_email",
+            value: userEmail,
+          }),
+        );
         newUserId = existingAppUser?.userId;
       }
 
@@ -87,40 +85,33 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
         return;
       }
 
-      const insertedProjectUser = await save(
-        () => insertProjectUser({ projectId: params.id, userId: newUserId, })
+      const insertedProjectUser = await save(() =>
+        insertProjectUser({ projectId: params.id, userId: newUserId }),
       );
 
-
-
-        router.push(`/project-users/${params.id}`);
+      router.push(`/project-users/${params.id}`);
     } else {
       setIsCreatingUser(false);
     }
   };
 
   return (
-    <SideMenuLayout
-      menuItems={projectMenuItems}
-      header={project?.projectName ?? ""}
-    >
-      <Container className={styles.content}>
-        <ContentHeader text="New user" />
-        <ProjectUserFields
-          projectUserFields={projectUserFields}
-          setProjectUserlFields={setProjectUserFields}
-          isProjectUserNameInvalid={isProjectUserNameInvalid}
-          isProjectUserEmailInvalid={isProjectUserEmailInvalid}
-        />
-        <Space />
-        <Button
-          onClick={onConfirmButtonClick}
-          disabled={isCreatingUser}
-          variant="outline"
-        >
-          {"Confirm"}
-        </Button>
-      </Container>
-    </SideMenuLayout>
+    <Container className={styles.content}>
+      <ContentHeader text="New user" />
+      <ProjectUserFields
+        projectUserFields={projectUserFields}
+        setProjectUserlFields={setProjectUserFields}
+        isProjectUserNameInvalid={isProjectUserNameInvalid}
+        isProjectUserEmailInvalid={isProjectUserEmailInvalid}
+      />
+      <Space />
+      <Button
+        onClick={onConfirmButtonClick}
+        disabled={isCreatingUser}
+        variant="outline"
+      >
+        {"Confirm"}
+      </Button>
+    </Container>
   );
 };

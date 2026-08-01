@@ -1,0 +1,122 @@
+"use client";
+
+// Components
+import { Container, Table, Link, Button } from "@radix-ui/themes";
+import NextLink from "next/link";
+import { ContentHeader } from "../../../components/ContentHeader";
+import { DataTable } from "../../../components/ui/DataTable";
+import { Space } from "../../../components/ui/Space";
+
+// Styles
+import styles from "../../../styles/content.module.css";
+
+// Hooks
+import { useState, useEffect, use } from "react";
+import { useRouter } from "next/navigation";
+import { useProject } from "../../../lib/ProjectContext";
+
+// Database
+import { getPatientPersonals } from "../../../database/patient-personal/GetPatientPersonals";
+
+// Types
+import { PatientPersonalTypes } from "../../../types/PatientPersonalTypes";
+
+// Utils
+import { getFilteredPatientPersonals } from "../../../utils/getFilteredPatientPersonals";
+import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
+import { getGenderLabel } from "../../../utils/getGenderLabel";
+import { getAge } from "../../../utils/getAge";
+
+// Types
+import { actionData } from "../../../types/ActionResult";
+
+const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id: projectId } = use(params);
+  const router = useRouter();
+  const { project } = useProject();
+  const [patientPersonals, setPatientPersonals] = useState<
+    PatientPersonalTypes[]
+  >([]);
+  const [searchText, setSearchText] = useState<string | undefined>();
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      if (project) {
+        const { projectId } = project;
+        const projectPersonalsData = actionData(
+          await getPatientPersonals({
+            projectId: projectId,
+          }),
+        );
+        setPatientPersonals(projectPersonalsData ?? []);
+      }
+    };
+
+    fetchProjects();
+  }, [project]);
+
+  const tableHeader = (
+    <Table.Row>
+      <Table.ColumnHeaderCell>{"Full name"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Date of birth"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Gender"}</Table.ColumnHeaderCell>
+      <Table.ColumnHeaderCell>{"Phone number"}</Table.ColumnHeaderCell>
+    </Table.Row>
+  );
+
+  const filteredPatientPersonals = getFilteredPatientPersonals({
+    patientPersonals,
+    filterText: searchText,
+  });
+
+  return (
+    <Container className={styles.content}>
+      <ContentHeader text="Patients" />
+      <Button
+        onClick={() => {
+          router.push(`/project-patient/${projectId}`);
+        }}
+      >
+        {"Add patient"}
+      </Button>
+      <Space />
+      <DataTable
+        tableHeader={tableHeader}
+        onSearchTextChange={(text) => setSearchText(text)}
+        isSearchAutoFocus
+        records={filteredPatientPersonals}
+      >
+        {filteredPatientPersonals.map(
+          ({
+            patientPersonalId,
+            patientFullName,
+            patientDateOfBirth,
+            isPatientMale,
+            patientPhoneNumber,
+          }) => (
+            <Table.Row key={patientPersonalId}>
+              <Table.RowHeaderCell>
+                <Link asChild>
+                  <NextLink href={`/patient-summary/${patientPersonalId}`}>
+                    {patientFullName}
+                  </NextLink>
+                </Link>
+              </Table.RowHeaderCell>
+              <Table.Cell>
+                {`${getLocaleFormattedDate({
+                  date: patientDateOfBirth,
+                })} (${getAge({
+                  date: patientDateOfBirth,
+                })}yo)`}
+              </Table.Cell>
+              <Table.Cell>{getGenderLabel({ isPatientMale })}</Table.Cell>
+              <Table.Cell>{patientPhoneNumber}</Table.Cell>
+            </Table.Row>
+          ),
+        )}
+      </DataTable>
+    </Container>
+  );
+};
+
+export default ProjectPatients;

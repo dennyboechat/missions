@@ -2,30 +2,27 @@
 
 // Components
 import { Container, Button } from "@radix-ui/themes";
-import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
-import { Space } from "../../components/ui/Space";
-import { ProjectMenuItems } from "../../components/ProjectMenuItems";
-import { ContentHeader } from "../../components/ContentHeader";
-import { PatientPersonalFields } from "../../components/PatientPersonalFields";
+import { Space } from "../../../components/ui/Space";
+import { ContentHeader } from "../../../components/ContentHeader";
+import { PatientPersonalFields } from "../../../components/PatientPersonalFields";
 
 // Hooks
 import { useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { useProject } from "../../lib/ProjectContext";
-import { useSaveField } from "../../lib/useSaveField";
+import { useProject } from "../../../lib/ProjectContext";
+import { useSaveField } from "../../../lib/useSaveField";
 
 // Styles
-import styles from "../../styles/content.module.css";
+import styles from "../../../styles/content.module.css";
 
 // Types
-import { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFields/types/PatientPersonalFieldsProps";
+import { PatientPersonalFieldsTypes } from "../../../components/PatientPersonalFields/types/PatientPersonalFieldsProps";
 
 // Database
-import { insertPatientPersonal } from "../../database/patient-personal/InsertPatientPersonal";
+import { insertPatientPersonal } from "../../../database/patient-personal/InsertPatientPersonal";
 
 // Utils
-import { isValidPatientFullName } from "../../utils/isValidPatientFullName";
-
+import { isValidPatientFullName } from "../../../utils/isValidPatientFullName";
 
 const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: projectId } = use(params);
@@ -47,15 +44,15 @@ const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
   const [isPatientDateOfBirthInvalid, setIsPatientDateOfBirthInvalid] =
     useState(false);
 
-  const projectMenuItems = (
-    <ProjectMenuItems projectId={projectId} activeMenuItem="project-patients" />
-  );
-
   const onConfirmButtonClick = async () => {
     setIsCreatingPatient(true);
 
-    const { patientFullName, isPatientMale, patientDateOfBirth, patientPhoneNumber } =
-      patientPersonalFields;
+    const {
+      patientFullName,
+      isPatientMale,
+      patientDateOfBirth,
+      patientPhoneNumber,
+    } = patientPersonalFields;
 
     const isValidFullName = isValidPatientFullName({ patientFullName });
     setIsPatientFullNameInvalid(!isValidFullName);
@@ -80,7 +77,7 @@ const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
           failureMessages: {
             error: "Error to save patient data. Please try again.",
           },
-        }
+        },
       );
 
       // Only leave the form once the patient is actually stored. This used to
@@ -97,29 +94,24 @@ const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
   };
 
   return (
-    <SideMenuLayout
-      menuItems={projectMenuItems}
-      header={project?.projectName ?? ""}
-    >
-      <Container className={styles.content}>
-        <ContentHeader text="New patient" />
-        <PatientPersonalFields
-          patientPersonalFields={patientPersonalFields}
-          setPatientPersonalFields={setPatientPersonalFields}
-          isPatientFullNameInvalid={isPatientFullNameInvalid}
-          isPatientGenderInvalid={isPatientGenderInvalid}
-          isPatientDateOfBirthInvalid={isPatientDateOfBirthInvalid}
-        />
-        <Space />
-        <Button
-          onClick={onConfirmButtonClick}
-          disabled={isCreatingPatient}
-          variant="outline"
-        >
-          {"Confirm"}
-        </Button>
-      </Container>
-    </SideMenuLayout>
+    <Container className={styles.content}>
+      <ContentHeader text="New patient" />
+      <PatientPersonalFields
+        patientPersonalFields={patientPersonalFields}
+        setPatientPersonalFields={setPatientPersonalFields}
+        isPatientFullNameInvalid={isPatientFullNameInvalid}
+        isPatientGenderInvalid={isPatientGenderInvalid}
+        isPatientDateOfBirthInvalid={isPatientDateOfBirthInvalid}
+      />
+      <Space />
+      <Button
+        onClick={onConfirmButtonClick}
+        disabled={isCreatingPatient}
+        variant="outline"
+      >
+        {"Confirm"}
+      </Button>
+    </Container>
   );
 };
 

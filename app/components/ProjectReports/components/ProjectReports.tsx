@@ -2,8 +2,6 @@
 
 // Components
 import { Container, Grid } from "@radix-ui/themes";
-import { SideMenuLayout } from "../../ui/SideMenuLayout";
-import { ProjectMenuItems } from "../../ProjectMenuItems";
 import { ContentHeader } from "../../ContentHeader";
 import { ProjectReportsFilter } from "../../ProjectReportsFilter";
 import { ProjectReportsAppointments } from "../../ProjectReportsAppointments";
@@ -45,10 +43,12 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const currentDate = getCurrentDateTime();
   const startDateFilter = getFormattedDate({
     date: subtractDaysToDate({ date: currentDate, days: 14 }),
-    format: 'yyyy-MM-dd'
+    format: "yyyy-MM-dd",
   });
   const [startDate, setStartDate] = useState<string>(startDateFilter);
-  const [endDate, setEndDate] = useState<string>(getFormattedDate({date: currentDate, format: 'yyyy-MM-dd'}));
+  const [endDate, setEndDate] = useState<string>(
+    getFormattedDate({ date: currentDate, format: "yyyy-MM-dd" }),
+  );
   const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
   const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
   const [isLoadingMedicationReport, setIsLoadingMedicationReport] =
@@ -88,10 +88,6 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     applyProjectDates();
   }, [projectId]);
 
-  const projectMenuItems = (
-    <ProjectMenuItems projectId={projectId} activeMenuItem="project-reports" />
-  );
-
   const onGenerateReports = async () => {
     setIsLoadingMedicationReport(true);
     setIsLoadingAppointmentReport(true);
@@ -102,19 +98,23 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     setIsEndDateInvalid(!isEndValid);
 
     if (isStartValid && isEndValid) {
-      const projectReportsMedication = actionData(await getProjectReportsMedication({
-        projectId,
-        startDate,
-        endDate,
-      }));
+      const projectReportsMedication = actionData(
+        await getProjectReportsMedication({
+          projectId,
+          startDate,
+          endDate,
+        }),
+      );
 
       setMedications(projectReportsMedication);
 
-      const projectReportsAppointment = actionData(await getProjectReportsAppointment({
-        projectId,
-        startDate,
-        endDate,
-      }));
+      const projectReportsAppointment = actionData(
+        await getProjectReportsAppointment({
+          projectId,
+          startDate,
+          endDate,
+        }),
+      );
 
       setAppointments(projectReportsAppointment);
     }
@@ -131,11 +131,13 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     setIsEndDateInvalid(!isEndValid);
 
     if (isStartValid && isEndValid) {
-      const allData = actionData(await getProjectReportsAllData({
-        projectId,
-        startDate,
-        endDate,
-      }));
+      const allData = actionData(
+        await getProjectReportsAllData({
+          projectId,
+          startDate,
+          endDate,
+        }),
+      );
 
       if (allData && allData.length > 0) {
         exportToCsv({
@@ -152,19 +154,31 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
             { key: "patientDateOfBirth", label: "Date of Birth" },
             { key: "patientPhoneNumber", label: "Phone Number" },
             { key: "gender", label: "Gender" },
-            { key: "generalAppointmentDate", label: "General Appointment Date" },
+            {
+              key: "generalAppointmentDate",
+              label: "General Appointment Date",
+            },
             { key: "generalNotes", label: "General Notes" },
-            { key: "generalPrescribedMedications", label: "General Prescribed Medications" },
+            {
+              key: "generalPrescribedMedications",
+              label: "General Prescribed Medications",
+            },
             { key: "patientHeight", label: "Height" },
             { key: "patientWeight", label: "Weight" },
             { key: "patientTemperature", label: "Temperature" },
             { key: "patientBloodGlucose", label: "Blood Glucose" },
             { key: "patientPulse", label: "Pulse" },
             { key: "patientOxygenSaturation", label: "Oxygen Saturation" },
-            { key: "patientBloodPressureDiastolic", label: "Blood Pressure Diastolic" },
+            {
+              key: "patientBloodPressureDiastolic",
+              label: "Blood Pressure Diastolic",
+            },
             { key: "dentalAppointmentDate", label: "Dental Appointment Date" },
             { key: "dentalNotes", label: "Dental Notes" },
-            { key: "dentalPrescribedMedications", label: "Dental Prescribed Medications" },
+            {
+              key: "dentalPrescribedMedications",
+              label: "Dental Prescribed Medications",
+            },
             { key: "teethNames", label: "Teeth Names" },
           ],
           filename: `report_${startDate}_${endDate}.csv`,
@@ -174,35 +188,30 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
   };
 
   return (
-    <SideMenuLayout
-      menuItems={projectMenuItems}
-      header={project?.projectName ?? ""}
-    >
-      <Container className={styles.content}>
-        <ContentHeader text="Reports" />
-        <Space />
-        <ProjectReportsFilter
-          startDate={startDate}
-          setStartDate={setStartDate}
-          isStartDateInvalid={isStartDateInvalid}
-          endDate={endDate}
-          setEndDate={setEndDate}
-          isEndDateInvalid={isEndDateInvalid}
-          onGenerateReports={onGenerateReports}
-          onDownloadAllData={onDownloadAllData}
+    <Container className={styles.content}>
+      <ContentHeader text="Reports" />
+      <Space />
+      <ProjectReportsFilter
+        startDate={startDate}
+        setStartDate={setStartDate}
+        isStartDateInvalid={isStartDateInvalid}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        isEndDateInvalid={isEndDateInvalid}
+        onGenerateReports={onGenerateReports}
+        onDownloadAllData={onDownloadAllData}
+      />
+      <Space height={30} />
+      <Grid gap="10px" columns={{ sm: "2" }}>
+        <ProjectReportsAppointments
+          appointments={appointments}
+          isLoadingReport={isLoadingAppointmentReport}
         />
-        <Space height={30} />
-        <Grid gap="10px" columns={{ sm: "2" }}>
-          <ProjectReportsAppointments
-            appointments={appointments}
-            isLoadingReport={isLoadingAppointmentReport}
-          />
-          <ProjectReportsMedication
-            medications={medications}
-            isLoadingReport={isLoadingMedicationReport}
-          />
-        </Grid>
-      </Container>
-    </SideMenuLayout>
+        <ProjectReportsMedication
+          medications={medications}
+          isLoadingReport={isLoadingMedicationReport}
+        />
+      </Grid>
+    </Container>
   );
 };

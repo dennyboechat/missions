@@ -10,33 +10,31 @@ import {
   Popover,
   Heading,
 } from "@radix-ui/themes";
-import { ProjectFields } from "../../components/ProjectFields";
-import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
-import { ProjectMenuItems } from "../../components/ProjectMenuItems";
-import { PopupConfirmation } from "../../components/ui/PopupConfirmation";
-import { ContentHeader } from "../../components/ContentHeader";
+import { ProjectFields } from "../../../components/ProjectFields";
+import { PopupConfirmation } from "../../../components/ui/PopupConfirmation";
+import { ContentHeader } from "../../../components/ContentHeader";
 
 // Types
 import {
   ProjectName,
   ProjectDescription,
   ProjectTimezone,
-} from "../../types/ProjectTypes";
+} from "../../../types/ProjectTypes";
 
 // Database
-import { getProject } from "../../database/project/GetProject";
-import { deleteProject } from "../../database/project/DeleteProject";
+import { getProject } from "../../../database/project/GetProject";
+import { deleteProject } from "../../../database/project/DeleteProject";
 
 // Hooks
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { useProject } from "../../lib/ProjectContext";
+import { useProject } from "../../../lib/ProjectContext";
 
 // Styles
-import styles from "../../styles/content.module.css";
+import styles from "../../../styles/content.module.css";
 
 // Types
-import { actionData } from "../../types/ActionResult";
+import { actionData } from "../../../types/ActionResult";
 
 const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: projectId } = use(params);
@@ -47,9 +45,6 @@ const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
     useState<ProjectDescription>("");
   const [projectTimezone, setProjectTimezone] = useState<ProjectTimezone>("");
   const [isDeletingProject, setIsDeletingProject] = useState(false);
-  const projectMenuItems = (
-    <ProjectMenuItems projectId={projectId} activeMenuItem="project" />
-  );
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -97,44 +92,39 @@ const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
   );
 
   return (
-    <SideMenuLayout
-      menuItems={projectMenuItems}
-      header={project?.projectName ?? ""}
-    >
-      <Container className={styles.content}>
-        <ContentHeader text="Project" />
-        <ProjectFields
-          projectName={projectName}
-          projectDescription={projectDescription}
-          projectTimezone={projectTimezone}
-          onProjectNameChange={(e) => setProjectName(e.target.value)}
-          onProjectDescriptionChange={(e) =>
-            setProjectDescription(e.target.value)
+    <Container className={styles.content}>
+      <ContentHeader text="Project" />
+      <ProjectFields
+        projectName={projectName}
+        projectDescription={projectDescription}
+        projectTimezone={projectTimezone}
+        onProjectNameChange={(e) => setProjectName(e.target.value)}
+        onProjectDescriptionChange={(e) =>
+          setProjectDescription(e.target.value)
+        }
+        onProjectTimezoneChange={setProjectTimezone}
+        projectId={projectId}
+      />
+      <Grid
+        gridRow="1fr 1fr auto"
+        gapY="10px"
+        className={styles.delete_section}
+      >
+        <Heading size="4">{"Delete Project"}</Heading>
+        <Text as="p">
+          {
+            "The project will be permanently deleted, including its data like patients. This action is irreversible and can not be undone."
           }
-          onProjectTimezoneChange={setProjectTimezone}
-          projectId={projectId}
-        />
-        <Grid
-          gridRow="1fr 1fr auto"
-          gapY="10px"
-          className={styles.delete_section}
-        >
-          <Heading size="4">{"Delete Project"}</Heading>
-          <Text as="p">
-            {
-              "The project will be permanently deleted, including its data like patients. This action is irreversible and can not be undone."
-            }
-          </Text>
-          <Grid width={{ initial: "auto", sm: "150px" }}>
-            <PopupConfirmation content={deleteProjectPopupConfirmation}>
-              <Button color="red" variant="outline">
-                {"Delete project"}
-              </Button>
-            </PopupConfirmation>
-          </Grid>
+        </Text>
+        <Grid width={{ initial: "auto", sm: "150px" }}>
+          <PopupConfirmation content={deleteProjectPopupConfirmation}>
+            <Button color="red" variant="outline">
+              {"Delete project"}
+            </Button>
+          </PopupConfirmation>
         </Grid>
-      </Container>
-    </SideMenuLayout>
+      </Grid>
+    </Container>
   );
 };
 
