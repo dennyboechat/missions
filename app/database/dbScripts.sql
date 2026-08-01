@@ -5,8 +5,14 @@ CREATE TABLE IF NOT EXISTS app_user (
     user_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_third_party_id VARCHAR(255),
     user_name VARCHAR(255) NOT NULL,
+    -- Always stored lowercased and trimmed, so an invitation to
+    -- Denny@idexx.com and a sign-in as denny@idexx.com are the same account.
+    -- Uniqueness is the index below, on LOWER(user_email).
     user_email VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_app_user_email_normalised
+      CHECK (user_email = LOWER(BTRIM(user_email)) AND user_email <> ''),
+    CONSTRAINT chk_app_user_name_present CHECK (BTRIM(user_name) <> '')
 );
 
 CREATE TABLE IF NOT EXISTS project (
@@ -42,7 +48,13 @@ CREATE TABLE IF NOT EXISTS patient_personal (
     patient_date_of_birth DATE,
     patient_phone_number VARCHAR(255),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE
+    CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE,
+    CONSTRAINT chk_patient_full_name_present CHECK (BTRIM(patient_full_name) <> ''),
+    -- A static floor only. "Not in the future" is enforced in the actions: a
+    -- CHECK may not call CURRENT_DATE, since it has to hold for a row being
+    -- read back and not only for the moment it was written.
+    CONSTRAINT chk_patient_date_of_birth_plausible
+      CHECK (patient_date_of_birth IS NULL OR patient_date_of_birth >= DATE '1900-01-01')
 );
 
 CREATE TABLE IF NOT EXISTS patient_dentistry (
@@ -238,11 +250,16 @@ CREATE TABLE IF NOT EXISTS patient_general_prescribed_medication (
 --   )  
 -- order by appointment_date
 -- Indexes (see app/database/migrations/003_indexes.sql for the rationale).
+--
+-- The three unique ones are also the guardrail: the actions insert with
+-- ON CONFLICT instead of checking first, so two interleaved requests can no
+-- longer both create the same user or the same membership. See
+-- migrations/005_unique_identities.sql.
 CREATE INDEX IF NOT EXISTS idx_project_owner_id ON project (owner_id);
-CREATE INDEX IF NOT EXISTS idx_project_user_project_user ON project_user (project_id, user_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_project_user_project_user_unique ON project_user (project_id, user_id);
 CREATE INDEX IF NOT EXISTS idx_project_user_user_id ON project_user (user_id);
-CREATE INDEX IF NOT EXISTS idx_app_user_third_party_id ON app_user (user_third_party_id);
-CREATE INDEX IF NOT EXISTS idx_app_user_email ON app_user (user_email);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_app_user_third_party_id_unique ON app_user (user_third_party_id) WHERE user_third_party_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_app_user_email_unique ON app_user (LOWER(user_email));
 CREATE INDEX IF NOT EXISTS idx_patient_personal_project_id ON patient_personal (project_id);
 CREATE INDEX IF NOT EXISTS idx_patient_general_patient_personal_id ON patient_general (patient_personal_id);
 CREATE INDEX IF NOT EXISTS idx_patient_dentistry_patient_personal_id ON patient_dentistry (patient_personal_id);

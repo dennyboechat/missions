@@ -23,6 +23,9 @@ import {
   AccessDeniedError,
 } from "../auth/projectAccess";
 
+// Validation
+import { assertPresentText } from "../validation/fieldGuards";
+
 // `field` is interpolated into the statement, so it has to come from a fixed set.
 const UPDATABLE_FIELDS = ["user_third_party_id", "user_name"];
 
@@ -54,18 +57,26 @@ export const updateAppUser = async ({
       throw new AccessDeniedError("Cannot link an account to another session");
     }
 
+    // Matched case-insensitively for the same reason the caller check above
+    // lowercases: the address arrives from a form, the stored one is
+    // normalised, and a miss here reads as "your account does not exist".
     const query = `
-      UPDATE 
+      UPDATE
         app_user
       SET
         ${field} = $1
       WHERE
-        user_email = $2
-      RETURNING 
+        LOWER(user_email) = LOWER(BTRIM($2))
+      RETURNING
         user_id, user_third_party_id, user_name, user_email
     `;
 
-    const response = await sql.query(query, [value, userEmail]);
+    const validatedValue =
+      field === "user_name"
+        ? assertPresentText(value as string, "user_name")
+        : value;
+
+    const response = await sql.query(query, [validatedValue, userEmail]);
 
     const users: User[] = response.rows.map((row) => ({
       userId: row.user_id,

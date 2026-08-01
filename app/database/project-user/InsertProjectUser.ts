@@ -30,14 +30,19 @@ export const insertProjectUser = async ({
   try {
     await assertProjectAccess({ projectId }, { ownerOnly: true });
 
+    // Needs migrations/005_unique_identities.sql: the conflict target below is
+    // the unique index it creates, and without it this query does not run.
+    //
+    // ON CONFLICT rather than "WHERE NOT EXISTS": the old form was a check
+    // followed by an insert, so two requests could both pass the check and add
+    // the same person twice. The unique index now decides.
     const query = `
       INSERT INTO
-        project_user (project_id, user_id, is_user_active) 
-      SELECT
-        $1::UUID, $2::UUID, $3
-      WHERE
-        NOT EXISTS (SELECT 1 FROM project_user WHERE project_id = $1 AND user_id = $2)
-      RETURNING 
+        project_user (project_id, user_id, is_user_active)
+      VALUES
+        ($1::UUID, $2::UUID, $3)
+      ON CONFLICT (project_id, user_id) DO NOTHING
+      RETURNING
         project_user_id, project_id, user_id, is_user_active
     `;
 
@@ -50,7 +55,12 @@ export const insertProjectUser = async ({
       isUserActive: row.is_user_active,
     }));
 
-    return actionOk(projectUsers);
+    // Inserting nothing used to be returned as success, so adding someone who
+    // was already on the project looked like it had worked. It is a refusal,
+    // and the caller says so.
+    return projectUsers.length > 0
+      ? actionOk(projectUsers)
+      : actionFailed("invalid", "User is already on this project");
   } catch (error) {
     return toActionFailure(error);
   }

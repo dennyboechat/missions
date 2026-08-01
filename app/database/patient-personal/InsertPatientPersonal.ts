@@ -22,6 +22,14 @@ import {
   NewPatientPersonal,
 } from "../../types/PatientPersonalTypes";
 
+// Validation
+import {
+  assertPresentText,
+  assertPastDate,
+  assertBoolean,
+  assertOptionalText,
+} from "../validation/fieldGuards";
+
 export const insertPatientPersonal = async ({
   projectId,
   patientFullName,
@@ -31,6 +39,25 @@ export const insertPatientPersonal = async ({
 }: NewPatientPersonal): Promise<ActionResult<PatientPersonalTypes>> => {
   try {
     await assertProjectAccess({ projectId });
+
+    // The form checks all of this, but the form is not what a hand-made
+    // request goes through.
+    const validatedFullName = assertPresentText(
+      patientFullName,
+      "patient_full_name"
+    );
+    const validatedDateOfBirth = assertPastDate(
+      patientDateOfBirth,
+      "patient_date_of_birth"
+    );
+    const validatedIsPatientMale = assertBoolean(
+      isPatientMale,
+      "is_patient_male"
+    );
+    const validatedPhoneNumber = assertOptionalText(
+      patientPhoneNumber,
+      "patient_phone_number"
+    );
 
     const query = `
       INSERT INTO 
@@ -43,10 +70,10 @@ export const insertPatientPersonal = async ({
 
     const response = await sql.query(query, [
       projectId,
-      patientFullName.trim(),
-      isPatientMale,
-      patientDateOfBirth,
-      patientPhoneNumber,
+      validatedFullName,
+      validatedIsPatientMale,
+      validatedDateOfBirth,
+      validatedPhoneNumber,
     ]);
 
     const patientPersonals: PatientPersonalTypes[] = response.rows.map(

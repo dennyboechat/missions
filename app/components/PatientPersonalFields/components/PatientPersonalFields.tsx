@@ -8,12 +8,14 @@ import { Grid, RadioGroup } from "@radix-ui/themes";
 import { InputTextField } from "../../ui/InputTextField";
 import { RadioField } from "../../ui/RadioField";
 import { DateTime } from "../../ui/DateTime";
+import { WarningContainer } from "../../ui/WarningContainer";
 
 // Types
 import { PatientPersonalFieldsProps } from "../types/PatientPersonalFieldsProps";
 
 // Hooks
 import { useSaveField } from "../../../lib/useSaveField";
+import { useDuplicatePatientWarning } from "../../../lib/useDuplicatePatientWarning";
 
 // Utils
 import { isValidFullName } from "../utils/isValidFullName";
@@ -42,10 +44,21 @@ export const PatientPersonalFields = ({
 
   const {
     patientPersonalId,
+    projectId,
     patientFullName,
     isPatientMale,
     patientPhoneNumber,
   } = patientPersonalFields;
+
+  // Renaming an existing patient onto a name the project already holds saves
+  // straight away, like every other field here, so the warning reports what
+  // just happened rather than gating it. The new patient form runs its own
+  // check before creating, and shows this one itself.
+  const { duplicateWarning } = useDuplicatePatientWarning({
+    projectId,
+    patientFullName: patientPersonalId ? patientFullName : undefined,
+    excludePatientPersonalId: patientPersonalId,
+  });
 
   const onFullNameChanged = async (e: FocusEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -161,6 +174,7 @@ export const PatientPersonalFields = ({
         onBlur={(e) => onFullNameChanged(e)}
         errorMessage={isFullNameInvalid ? "Required field" : ""}
       />
+      {duplicateWarning && <WarningContainer message={duplicateWarning} />}
       <RadioField
         name="gender"
         label="Gender"

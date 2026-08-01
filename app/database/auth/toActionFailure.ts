@@ -8,12 +8,15 @@ import {
 // Auth
 import { AccessDeniedError } from "./projectAccess";
 
+// Validation
+import { InvalidInputError } from "../validation/fieldGuards";
+
 /**
  * Turns whatever an action threw into a typed failure.
  *
  * Access denials become "denied" so the UI stops telling people to retry
- * something that will never succeed; rejected column names become "invalid";
- * everything else stays "error".
+ * something that will never succeed; rejected payloads and column names become
+ * "invalid"; everything else stays "error".
  */
 export const toActionFailure = <T>(error: unknown): ActionResult<T> => {
   console.error(error);
@@ -23,8 +26,9 @@ export const toActionFailure = <T>(error: unknown): ActionResult<T> => {
   if (error instanceof AccessDeniedError) {
     reason = "denied";
   } else if (
-    error instanceof Error &&
-    /not updatable|not searchable/i.test(error.message)
+    error instanceof InvalidInputError ||
+    (error instanceof Error &&
+      /not updatable|not searchable/i.test(error.message))
   ) {
     reason = "invalid";
   }

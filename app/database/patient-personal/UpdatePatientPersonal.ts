@@ -23,6 +23,14 @@ import {
 } from "../../types/PatientPersonalTypes";
 
 
+// Validation
+import {
+  assertPresentText,
+  assertPastDate,
+  assertBoolean,
+  assertOptionalText,
+} from "../validation/fieldGuards";
+
 // `field` is interpolated into the statement, so it has to come from a fixed set.
 const UPDATABLE_FIELDS = [
   "patient_full_name",
@@ -30,6 +38,21 @@ const UPDATABLE_FIELDS = [
   "patient_date_of_birth",
   "patient_phone_number",
 ];
+
+// The same rules the insert applies, per column: editing a patient must not be
+// a way to store what creating one rejects.
+const VALIDATE_FIELD: Record<
+  string,
+  (value: string | boolean) => string | boolean | undefined
+> = {
+  patient_full_name: (value) =>
+    assertPresentText(value as string, "patient_full_name"),
+  is_patient_male: (value) => assertBoolean(value, "is_patient_male"),
+  patient_date_of_birth: (value) =>
+    assertPastDate(value as string, "patient_date_of_birth"),
+  patient_phone_number: (value) =>
+    assertOptionalText(value as string, "patient_phone_number"),
+};
 
 export const updatePatientPersonal = async ({
   patientPersonalId,
@@ -54,7 +77,7 @@ export const updatePatientPersonal = async ({
         patient_personal_id, project_id, patient_full_name, is_patient_male, TO_CHAR(patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth, patient_phone_number
     `;
 
-    const validatedValue = typeof value === "string" ? value.trim() : value;
+    const validatedValue = VALIDATE_FIELD[field](value);
     const response = await sql.query(query, [
       validatedValue,
       patientPersonalId,

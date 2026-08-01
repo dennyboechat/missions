@@ -5,12 +5,14 @@ import { Container, Button } from "@radix-ui/themes";
 import { Space } from "../../../components/ui/Space";
 import { ContentHeader } from "../../../components/ContentHeader";
 import { PatientPersonalFields } from "../../../components/PatientPersonalFields";
+import { WarningContainer } from "../../../components/ui/WarningContainer";
 
 // Hooks
 import { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { useProject } from "../../../lib/ProjectContext";
 import { useSaveField } from "../../../lib/useSaveField";
+import { useDuplicatePatientWarning } from "../../../lib/useDuplicatePatientWarning";
 
 // Styles
 import styles from "../../../styles/content.module.css";
@@ -43,6 +45,13 @@ const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
   const [isPatientGenderInvalid, setIsPatientGenderInvalid] = useState(false);
   const [isPatientDateOfBirthInvalid, setIsPatientDateOfBirthInvalid] =
     useState(false);
+  // Warns as soon as the name is entered, rather than making the user reach
+  // the Confirm button to find out the name is already taken.
+  const { duplicateWarning, hasCheckedCurrentName, checkForDuplicates } =
+    useDuplicatePatientWarning({
+      projectId,
+      patientFullName: patientPersonalFields.patientFullName,
+    });
 
   const onConfirmButtonClick = async () => {
     setIsCreatingPatient(true);
@@ -64,13 +73,22 @@ const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
     setIsPatientDateOfBirthInvalid(!isValidDateOfBirth);
 
     if (isValidFullName && isValidPatientGender && isValidDateOfBirth) {
+      // The name may have been typed and confirmed faster than the lookup
+      // could answer. Creating a duplicate without the warning ever appearing
+      // is the case this guards against; once the warning is on screen the
+      // user has seen it and this click goes through.
+      if (!hasCheckedCurrentName && (await checkForDuplicates())) {
+        setIsCreatingPatient(false);
+        return;
+      }
+
       const insertedPatientPersonal = await save(
         () =>
           insertPatientPersonal({
             projectId,
             patientFullName: patientFullName ?? "",
             isPatientMale: isPatientMale ?? true,
-            patientDateOfBirth: patientDateOfBirth ?? new Date(),
+            patientDateOfBirth: patientDateOfBirth ?? "",
             patientPhoneNumber,
           }),
         {
@@ -103,13 +121,19 @@ const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
         isPatientGenderInvalid={isPatientGenderInvalid}
         isPatientDateOfBirthInvalid={isPatientDateOfBirthInvalid}
       />
+      {duplicateWarning && (
+        <>
+          <Space />
+          <WarningContainer message={duplicateWarning} />
+        </>
+      )}
       <Space />
       <Button
         onClick={onConfirmButtonClick}
         disabled={isCreatingPatient}
         variant="outline"
       >
-        {"Confirm"}
+        {duplicateWarning ? "Confirm anyway" : "Confirm"}
       </Button>
     </Container>
   );

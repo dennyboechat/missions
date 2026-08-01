@@ -19,10 +19,17 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
-// `field` is interpolated into the statement, so it has to come from a fixed
-// set. Lookup by email stays available because adding a collaborator to a
-// project needs it; it is gated on being signed in.
-const SEARCHABLE_FIELDS = ["user_third_party_id", "user_email"];
+// The comparison is interpolated into the statement, so it has to come from a
+// fixed set. Lookup by email stays available because adding a collaborator to
+// a project needs it; it is gated on being signed in.
+//
+// Email is matched case-insensitively and trimmed. Stored values are already
+// normalised, but callers pass whatever was typed into a form, and an address
+// that fails to match here silently becomes a second account.
+const SEARCHABLE_FIELDS: Record<string, string> = {
+  user_third_party_id: "user_third_party_id = $1",
+  user_email: "LOWER(user_email) = LOWER(BTRIM($1))",
+};
 
 export const getAppUser = async ({
   field,
@@ -32,7 +39,9 @@ export const getAppUser = async ({
   value: string | number | boolean;
 }): Promise<ActionResult<AppUser>> => {
   try {
-    if (!SEARCHABLE_FIELDS.includes(field)) {
+    const comparison = SEARCHABLE_FIELDS[field];
+
+    if (!comparison) {
       throw new AccessDeniedError(`Field not searchable: ${field}`);
     }
 
@@ -49,7 +58,7 @@ export const getAppUser = async ({
       FROM
         app_user
       WHERE
-        ${field} = $1
+        ${comparison}
     `;
 
     const response = await sql.query(query, [value]);
