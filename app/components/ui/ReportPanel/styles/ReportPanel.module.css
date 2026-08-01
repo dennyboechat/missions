@@ -1,0 +1,91 @@
+/* Every report panel claims the same height, so a report with two panels stays
+   aligned however long one of the lists runs. A long list scrolls inside its
+   own body instead of stretching the page and pushing its neighbour out of
+   line. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 420px;
+  padding: 20px;
+  background-color: #fbfbfb;
+}
+
+.panel_header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: solid 1px #ebebeb;
+}
+
+.panel_subtitle {
+  display: block;
+}
+
+.panel_body {
+  flex: 1;
+  /* Lets the body shrink inside the flex column, so the overflow scrolls here
+     instead of growing the panel past its fixed height. */
+  min-height: 0;
+  overflow-y: auto;
+  /* Margin rather than padding: a sticky group label sticks to the top of the
+     padding box, so top padding would leave a strip above the label where the
+     scrolling rows stay visible. */
+  margin-top: 10px;
+  /* Keeps the overlay scrollbar off the quantity column. */
+  padding-right: 8px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.section + .section {
+  margin-top: 16px;
+}
+
+.section_header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 6px;
+  /* Keeps the group label in view while its rows scroll, and matches the panel
+     background so rows pass under the label rather than through it. */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #fbfbfb;
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(2rem, auto);
+  align-items: center;
+  gap: 10px;
+  padding: 4px 6px;
+  background-color: #f0f0f0;
+}
+
+/* Each row's share of the largest row in the panel, so a long list can be
+   scanned by size instead of read line by line. */
+.row_fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background-color: var(--accent-a4);
+}
+
+.row_label,
+.row_detail,
+.row_quantity {
+  position: relative;
+}
+
+.row_quantity {
+  justify-self: end;
+  font-variant-numeric: tabular-nums;
+}

@@ -1,19 +1,18 @@
 "use client";
 
 // Components
-import { Skeleton, Text } from "@radix-ui/themes";
-import { Space } from "../../ui/Space";
+import {
+  ReportPanel,
+  ReportPanelRow,
+  ReportPanelSection,
+} from "../../ui/ReportPanel";
 
 // Types
 import { ProjectReportsAppointmentsProps } from "../types/ProjectReportsAppointmentsProps";
 import { ProjectReportsAppointmentTypes } from "../../../types/ProjectReportsAppointmentTypes";
 
-// Styles
-import styles from "../../ProjectReports/styles/ProjectReports.module.css";
-
 // Utils
 import { getFormattedIsoDate } from "../../../utils/getFormattedIsoDate";
-import { Fragment } from "react/jsx-runtime";
 
 export const ProjectReportsAppointments = ({
   appointments,
@@ -28,65 +27,65 @@ export const ProjectReportsAppointments = ({
   let appointmentsDentalQuantity = 0;
   const generalAppointments: ProjectReportsAppointmentTypes[] = [];
   const dentalAppointments: ProjectReportsAppointmentTypes[] = [];
+  // The busiest day sets the scale for both groups, so a general and a dental
+  // row of the same size read as the same number of appointments.
+  let highestQuantity = 0;
 
-  appointments?.map((appointment) => {
+  appointments?.forEach((appointment) => {
     const { appointmentType, quantity } = appointment;
+    const amount = Number(quantity);
 
     if (appointmentType === "general") {
       generalAppointments.push(appointment);
-      appointmentsGeneralQuantity += Number(quantity);
+      appointmentsGeneralQuantity += amount;
     } else {
       dentalAppointments.push(appointment);
-      appointmentsDentalQuantity += Number(quantity);
+      appointmentsDentalQuantity += amount;
     }
 
-    appointmentsTotalQuantity += Number(quantity);
+    appointmentsTotalQuantity += amount;
+    highestQuantity = Math.max(highestQuantity, amount);
   });
 
+  const appointmentDays = new Set(
+    appointments?.map(({ appointmentDate }) => appointmentDate),
+  ).size;
+
+  const renderRows = (rows: ProjectReportsAppointmentTypes[]) =>
+    rows.map(({ appointmentDate, quantity }) => (
+      <ReportPanelRow
+        key={appointmentDate}
+        label={getFormattedIsoDate({ date: appointmentDate })}
+        quantity={Number(quantity)}
+        share={highestQuantity ? Number(quantity) / highestQuantity : 0}
+      />
+    ));
+
   return (
-    <>
-      {isLoadingReport ? (
-        <Skeleton height="300px" />
-      ) : (
-        <div className={styles.container}>
-          <div className={styles.container_title}>
-            <Text size="5">{"Appointments"}</Text>
-            <Text size="7">{appointmentsTotalQuantity}</Text>
-          </div>
-          <Space />
-          <div className={styles.container_title}>
-            <Text size="4">{"General"}</Text>
-            <Text size="5">{appointmentsGeneralQuantity}</Text>
-          </div>
-          {generalAppointments.map(({ appointmentDate, quantity }, i) => (
-            <Fragment key={i}>
-              <div
-                className={`${styles.container_title} ${styles.table_item}`}
-              >
-                <Text>{getFormattedIsoDate({ date: appointmentDate })}</Text>
-                <Text>{quantity}</Text>
-              </div>
-              <Space />
-            </Fragment>
-          ))}
-          <Space />
-          <div className={styles.container_title}>
-            <Text size="4">{"Dental"}</Text>
-            <Text size="5">{appointmentsDentalQuantity}</Text>
-          </div>
-          {dentalAppointments.map(({ appointmentDate, quantity }, i) => (
-            <Fragment key={i}>
-              <div
-                className={`${styles.container_title} ${styles.table_item}`}
-              >
-                <Text>{getFormattedIsoDate({ date: appointmentDate })}</Text>
-                <Text>{quantity}</Text>
-              </div>
-              <Space />
-            </Fragment>
-          ))}
-        </div>
-      )}
-    </>
+    <ReportPanel
+      title="Appointments"
+      total={appointmentsTotalQuantity}
+      subtitle={`${appointmentDays} ${appointmentDays === 1 ? "day" : "days"}`}
+      isLoadingReport={isLoadingReport}
+      isEmpty={appointmentsTotalQuantity === 0}
+      emptyMessage="No appointments in this period."
+    >
+      <ReportPanelSection
+        title="General"
+        total={appointmentsGeneralQuantity}
+        isEmpty={generalAppointments.length === 0}
+        emptyMessage="No general appointments."
+      >
+        {renderRows(generalAppointments)}
+      </ReportPanelSection>
+      <ReportPanelSection
+        title="Dental"
+        total={appointmentsDentalQuantity}
+        isEmpty={dentalAppointments.length === 0}
+        emptyMessage="No dental appointments."
+      >
+        {renderRows(dentalAppointments)}
+      </ReportPanelSection>
+    </ReportPanel>
   );
 };

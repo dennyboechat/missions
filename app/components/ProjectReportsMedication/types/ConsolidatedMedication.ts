@@ -1,4 +1,5 @@
 export interface ConsolidatedMedication {
-  medication: string;
+  drug: string;
+  dose: string;
   quantity: number;
 }

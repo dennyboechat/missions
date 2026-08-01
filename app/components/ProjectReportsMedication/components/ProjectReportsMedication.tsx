@@ -1,16 +1,15 @@
 "use client";
 
 // Components
-import { Skeleton, Text } from "@radix-ui/themes";
-import { Space } from "../../ui/Space";
+import {
+  ReportPanel,
+  ReportPanelList,
+  ReportPanelRow,
+} from "../../ui/ReportPanel";
 
 // Types
 import { ProjectReportsMedicationProps } from "../types/ProjectReportsMedicationProps";
 import { ConsolidatedMedication } from "../types/ConsolidatedMedication";
-
-// Styles
-import styles from "../../ProjectReports/styles/ProjectReports.module.css";
-import { Fragment } from "react/jsx-runtime";
 
 export const ProjectReportsMedication = ({
   medications,
@@ -21,55 +20,62 @@ export const ProjectReportsMedication = ({
   }
 
   let medicationTotalQuantity = 0;
-  const consolidatedMedications: ConsolidatedMedication[] = [];
+  // Keyed by drug and dose: the same drug at two doses is dispensed separately,
+  // so the report keeps them as separate lines.
+  const consolidatedMedications = new Map<string, ConsolidatedMedication>();
 
-  medications?.map(({ drug, dose, quantity }) => {
-    if (drug) {
-      const medication = `${drug} ${dose ?? ""}`;
-
-      const existingMedication = consolidatedMedications.find(
-        (consolidatedMedication) =>
-          consolidatedMedication.medication === medication
-      );
-
-      if (existingMedication) {
-        existingMedication.quantity += quantity ?? 0;
-      } else {
-        consolidatedMedications.push({
-          medication: medication,
-          quantity: quantity ?? 0,
-        });
-      }
-
-      medicationTotalQuantity += quantity ?? 0;
+  medications?.forEach(({ drug, dose, quantity }) => {
+    if (!drug) {
+      return;
     }
+
+    const amount = Number(quantity ?? 0);
+    const key = `${drug} ${dose ?? ""}`;
+    const existingMedication = consolidatedMedications.get(key);
+
+    if (existingMedication) {
+      existingMedication.quantity += amount;
+    } else {
+      consolidatedMedications.set(key, {
+        drug,
+        dose: dose ?? "",
+        quantity: amount,
+      });
+    }
+
+    medicationTotalQuantity += amount;
   });
 
+  // Most dispensed first: with a long list, the lines that matter for restocking
+  // are then the ones on screen before any scrolling.
+  const sortedMedications = [...consolidatedMedications.values()].sort(
+    (a, b) => b.quantity - a.quantity || a.drug.localeCompare(b.drug),
+  );
+
+  const highestQuantity = sortedMedications[0]?.quantity ?? 0;
+
   return (
-    <>
-      {isLoadingReport ? (
-        <Skeleton height='300px' />
-      ) : (
-        <div className={styles.container}>
-          <div className={styles.container_title}>
-            <Text size="5">{"Prescribed medication"}</Text>
-            <Text size="7">{medicationTotalQuantity}</Text>
-          </div>
-          <Space />
-          {consolidatedMedications.map(({ medication, quantity }, i) => (
-            <Fragment key={i}>
-              <div
-                key={i}
-                className={`${styles.container_title} ${styles.table_item}`}
-              >
-                <Text>{medication}</Text>
-                <Text>{quantity}</Text>
-              </div>
-              <Space />
-            </Fragment>
-          ))}
-        </div>
-      )}
-    </>
+    <ReportPanel
+      title="Prescribed medication"
+      total={medicationTotalQuantity}
+      subtitle={`${sortedMedications.length} ${
+        sortedMedications.length === 1 ? "medication" : "medications"
+      }`}
+      isLoadingReport={isLoadingReport}
+      isEmpty={sortedMedications.length === 0}
+      emptyMessage="No medication prescribed in this period."
+    >
+      <ReportPanelList>
+        {sortedMedications.map(({ drug, dose, quantity }) => (
+          <ReportPanelRow
+            key={`${drug} ${dose}`}
+            label={drug}
+            detail={dose}
+            quantity={quantity}
+            share={highestQuantity ? quantity / highestQuantity : 0}
+          />
+        ))}
+      </ReportPanelList>
+    </ReportPanel>
   );
 };
