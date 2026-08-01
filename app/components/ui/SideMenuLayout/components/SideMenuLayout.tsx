@@ -12,7 +12,6 @@ import styles from "../styles/SideMenuLayout.module.css";
 
 // Hooks
 import { useEffect, useState } from "react";
-import { useMounted } from "@/app/lib/useMounted";
 
 export const SideMenuLayout = ({
   menuItems,
@@ -22,7 +21,12 @@ export const SideMenuLayout = ({
   isBoldHeader,
   children,
 }: SideMenuLayoutProps) => {
-  const mounted = useMounted();
+  // Starts false on the server and on the first client render, so the two
+  // agree; the effect below narrows it once the window width is known. This
+  // used to be gated behind a mounted flag that returned null instead, which
+  // blanked the whole layout on every navigation -- that blank was the
+  // "refresh", and clicking again while the menu reflowed landed on whichever
+  // item had moved under the cursor.
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
@@ -47,8 +51,6 @@ export const SideMenuLayout = ({
       }
     };
   }, []);
-
-  if (!mounted) return null;
 
   return (
     <Grid columns="auto 1fr" gapX="3">

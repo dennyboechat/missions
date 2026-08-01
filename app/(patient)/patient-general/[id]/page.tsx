@@ -4,7 +4,7 @@
 import { use } from "react";
 
 // Components
-import { PatientGeneral } from "../../components/PatientGeneral";
+import { PatientGeneral } from "../../../components/PatientGeneral";
 
 const PatientGeneralPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const resolvedParams = use(params);

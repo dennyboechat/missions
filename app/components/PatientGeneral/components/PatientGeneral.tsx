@@ -3,9 +3,7 @@
 // Components
 import { Container, Button } from "@radix-ui/themes";
 import { ContentHeader } from "../../ContentHeader";
-import { SideMenuLayout } from "../../ui/SideMenuLayout";
 import { Space } from "../..//ui/Space";
-import { PatientMenuItems } from "../../PatientMenuItems";
 import { GeneralAppointment } from "../../GeneralAppointment";
 
 // Styles
@@ -23,8 +21,6 @@ import { useSaveField } from "../../../lib/useSaveField";
 import { PatientGeneralTypes } from "../../../types/PatientGeneralTypes";
 
 // Utils
-import { getSideMenuSubHeader } from "../../../utils/getSideMenuSubHeader";
-import { getSideMenuSubHeaderFooter } from "../../../utils/getSideMenuSubHeaderFooter";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
@@ -40,9 +36,11 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchPatientGeneral = async () => {
       if (patientPersonalId) {
-        const patientGeneralData = actionData(await getPatientGeneral({
-          patientPersonalId: patientPersonalId,
-        }));
+        const patientGeneralData = actionData(
+          await getPatientGeneral({
+            patientPersonalId: patientPersonalId,
+          }),
+        );
         setPatientGeneral(patientGeneralData);
 
         if (patientGeneralData) {
@@ -58,25 +56,12 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
     return null;
   }
 
-  const patientMenuItems = (
-    <PatientMenuItems
-      patientPersonalId={patientPersonalId}
-      activeMenuItem="patient-general"
-    />
-  );
-
-  const subHeader = getSideMenuSubHeader({
-    patientDateOfBirth: lastestAppointment.patientDateOfBirth,
-  });
-
-  const subHeaderFooter = getSideMenuSubHeaderFooter({
-    isPatientMale: lastestAppointment.isPatientMale,
-  });
-
   const updateAppointments = async () => {
-    const patientDentistriesData = actionData(await getPatientGeneral({
-      patientPersonalId: patientPersonalId,
-    }));
+    const patientDentistriesData = actionData(
+      await getPatientGeneral({
+        patientPersonalId: patientPersonalId,
+      }),
+    );
 
     setPatientGeneral(patientDentistriesData);
 
@@ -84,21 +69,21 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
   };
 
   const onCreateAppointment = async () => {
-    const patientGeneralData = await save(
-      () => insertPatientGeneral({ patientPersonalId: patientPersonalId, })
+    const patientGeneralData = await save(() =>
+      insertPatientGeneral({ patientPersonalId: patientPersonalId }),
     );
 
     if (patientGeneralData) {
-        const newLastestAppointment = {
-          ...lastestAppointment,
-          patientGeneralId: patientGeneralData.patientGeneralId,
-          appointmentDate: patientGeneralData.appointmentDate,
-          appointmentNotes: patientGeneralData.appointmentNotes,
-        };
+      const newLastestAppointment = {
+        ...lastestAppointment,
+        patientGeneralId: patientGeneralData.patientGeneralId,
+        appointmentDate: patientGeneralData.appointmentDate,
+        appointmentNotes: patientGeneralData.appointmentNotes,
+      };
 
-        setLastestAppointment(newLastestAppointment);
+      setLastestAppointment(newLastestAppointment);
 
-        updateAppointments();
+      updateAppointments();
     }
   };
 
@@ -112,26 +97,18 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
   };
 
   return (
-    <SideMenuLayout
-      menuItems={patientMenuItems}
-      header={lastestAppointment.patientFullName}
-      subHeader={subHeader}
-      subHeaderFooter={subHeaderFooter}
-      isBoldHeader
-    >
-      <Container className={styles.content}>
-        <ContentHeader text="General" />
-        <Button onClick={onCreateAppointment}>{"Create appointment"}</Button>
-        <Space height={20} />
-        {lastestAppointment.patientGeneralId && (
-          <GeneralAppointment
-            patientGeneral={patientGeneral}
-            setPatientGeneral={setPatientGeneral}
-            defaultActiveTab={lastestAppointment.patientGeneralId}
-            afterDeleteAppointment={afterDeleteAppointment}
-          />
-        )}
-      </Container>
-    </SideMenuLayout>
+    <Container className={styles.content}>
+      <ContentHeader text="General" />
+      <Button onClick={onCreateAppointment}>{"Create appointment"}</Button>
+      <Space height={20} />
+      {lastestAppointment.patientGeneralId && (
+        <GeneralAppointment
+          patientGeneral={patientGeneral}
+          setPatientGeneral={setPatientGeneral}
+          defaultActiveTab={lastestAppointment.patientGeneralId}
+          afterDeleteAppointment={afterDeleteAppointment}
+        />
+      )}
+    </Container>
   );
 };
