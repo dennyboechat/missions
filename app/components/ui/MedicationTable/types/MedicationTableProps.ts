@@ -1,4 +1,6 @@
 // Types
+import { ActionResult } from "@/app/types/ActionResult";
+// Types
 import { Medication } from "../../../../types/Medication";
 import { DentistryPrescribedMedication } from "@/app/types/DentistryPrescribedMedication";
 import { Dispatch, SetStateAction } from "react";
@@ -16,7 +18,7 @@ export interface MedicationTableProps {
     field: "drug" | "dose" | "quantity" | "instructions_usage",
     value?: string | number
   ) => Promise<
-    DentistryPrescribedMedication | GeneralPrescribedMedication | undefined
+    ActionResult<DentistryPrescribedMedication | GeneralPrescribedMedication>
   >;
-  deleteMedication: (medicationUid: string) => {};
+  deleteMedication: (medicationUid: string) => Promise<ActionResult<unknown>>;
 }

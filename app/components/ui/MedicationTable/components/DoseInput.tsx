@@ -9,10 +9,9 @@ import { Medication } from "../../../../types/Medication";
 import { FocusEvent } from "react";
 
 // Hooks
-import { usePopupMessage } from "../../../../lib/PopupMessage";
+import { useSaveField } from "../../../../lib/useSaveField";
 
 // Utils
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 export const DoseInput = ({
   drug,
@@ -21,7 +20,7 @@ export const DoseInput = ({
   setMedications,
   updateMedication,
 }: DoseProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -38,29 +37,7 @@ export const DoseInput = ({
       )
     );
 
-    const codeToRun = async () => {
-      const updatedPatientMedication = await updateMedication(
-        medicationUid,
-        "dose",
-        value
-      );
-
-      if (setMessage && setMessageType) {
-        if (updatedPatientMedication) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
-        }
-      }
-    };
-
-    const runSuccess = await runWithRetries(codeToRun);
-    if (!runSuccess && setMessage && setMessageType) {
-      setMessage("Error to save. Please try again.");
-      setMessageType("error");
-    }
+    await save(() => updateMedication( medicationUid, "dose", value ));
   };
 
   return (

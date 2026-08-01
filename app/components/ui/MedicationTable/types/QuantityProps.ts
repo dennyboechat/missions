@@ -1,4 +1,6 @@
 // Types
+import { ActionResult } from "@/app/types/ActionResult";
+// Types
 import { Medication, MedicationUid, Drug } from "../../../../types/Medication";
 import { DentistryPrescribedMedication } from "@/app/types/DentistryPrescribedMedication";
 import { GeneralPrescribedMedication } from "@/app/types/GeneralPrescribedMedication";
@@ -13,6 +15,6 @@ export interface QuantityProps {
     field: "quantity",
     value?: number
   ) => Promise<
-    DentistryPrescribedMedication | GeneralPrescribedMedication | undefined
+    ActionResult<DentistryPrescribedMedication | GeneralPrescribedMedication>
   >;
 }

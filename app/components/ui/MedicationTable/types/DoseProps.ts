@@ -1,4 +1,6 @@
 // Types
+import { ActionResult } from "@/app/types/ActionResult";
+// Types
 import {
   Medication,
   MedicationUid,
@@ -18,6 +20,6 @@ export interface DoseProps {
     field: "dose",
     value?: string
   ) => Promise<
-    DentistryPrescribedMedication | GeneralPrescribedMedication | undefined
+    ActionResult<DentistryPrescribedMedication | GeneralPrescribedMedication>
   >;
 }

@@ -134,17 +134,17 @@ export const GeneralAppointmentMedicationPrescribed = ({
     field: "drug" | "dose" | "quantity" | "instructions_usage",
     value?: string | number
   ) => {
-    return actionData(await updatePatientGeneralMedication({
+    return await updatePatientGeneralMedication({
       patientGeneralPrescribedMedicationId: medicationUid,
       field,
       value,
-    }));
+    });
   };
 
   const deleteMedication = async (medicationUid: string) => {
-    return actionData(await deletePatientGeneralMedication({
+    return await deletePatientGeneralMedication({
       patientGeneralPrescribedMedicationId: medicationUid,
-    }));
+    });
   };
 
   return (

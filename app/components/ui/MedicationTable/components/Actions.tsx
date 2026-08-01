@@ -12,10 +12,9 @@ import { Medication } from "../../../../types/Medication";
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
 
 // Hooks
-import { usePopupMessage } from "../../../../lib/PopupMessage";
+import { useSaveField } from "../../../../lib/useSaveField";
 
 // Utils
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 export const Actions = ({
   medicationUid,
@@ -23,7 +22,7 @@ export const Actions = ({
   setMedications,
   deleteMedication,
 }: ActionsProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
 
   const onDeleteRow = async () => {
     if (!drug || !medicationUid) {
@@ -36,25 +35,7 @@ export const Actions = ({
       )
     );
 
-    const codeToRun = async () => {
-      const deletedMedication = await deleteMedication(medicationUid);
-
-      if (setMessage && setMessageType) {
-        if (deletedMedication) {
-          setMessage("Saved");
-          setMessageType("regular");
-        } else {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
-        }
-      }
-    };
-
-    const runSuccess = await runWithRetries(codeToRun);
-    if (!runSuccess && setMessage && setMessageType) {
-      setMessage("Error to save. Please try again.");
-      setMessageType("error");
-    }
+    await save(() => deleteMedication(medicationUid));
   };
 
   return (

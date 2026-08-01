@@ -133,17 +133,17 @@ export const DentalAppointmentMedicationPrescribed = ({
     field: "drug" | "dose" | "quantity" | "instructions_usage",
     value?: string | number
   ) => {
-    return actionData(await updatePatientDentistryMedication({
+    return await updatePatientDentistryMedication({
       patientDentistryPrescribedMedicationId: medicationUid,
       field,
       value,
-    }));
+    });
   };
 
   const deleteMedication = async (medicationUid: string) => {
-    return actionData(await deletePatientDentistryMedication({
+    return await deletePatientDentistryMedication({
       patientDentistryPrescribedMedicationId: medicationUid,
-    }));
+    });
   };
 
   return (
