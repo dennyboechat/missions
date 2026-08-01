@@ -10,6 +10,7 @@ import { GeneralPatientBloodPressureProps } from "../types/GeneralPatientBloodPr
 
 // Hooks
 import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 import { useState } from "react";
 
 // Database
@@ -18,7 +19,6 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { isPatientBloodPressureSystolicValid } from "../utils/isPatientBloodPressureSystolicValid";
 import { isPatientBloodPressureDiastolicValid } from "../utils/isPatientBloodPressureDiastolicValid";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../../../styles/fields.module.css";
@@ -32,6 +32,7 @@ export const GeneralPatientBloodPressure = ({
   patientBloodPressureDiastolic,
 }: GeneralPatientBloodPressureProps) => {
   const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [isBloodPressureSystolicInvalid, setIsBloodPressureSystolicInvalid] =
     useState(false);
   const [isBloodPressureDiastolicInvalid, setIsBloodPressureDiastolicInvalid] =
@@ -55,29 +56,7 @@ export const GeneralPatientBloodPressure = ({
     setIsBloodPressureSystolicInvalid(!isSystolicValid);
 
     if (isSystolicValid) {
-      const codeToRun = async () => {
-        const updatedPatientGeneral = actionData(await updatePatientGeneral({
-          patientGeneralId,
-          field: "patient_blood_pressure_systolic",
-          value,
-        }));
-
-        if (setMessage && setMessageType) {
-          if (updatedPatientGeneral) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
+      await save(() => updatePatientGeneral({ patientGeneralId, field: "patient_blood_pressure_systolic", value, }));
     }
   };
 

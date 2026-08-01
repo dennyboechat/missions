@@ -9,7 +9,7 @@ import { FocusEvent } from "react";
 import { GeneralPatientVisionLeftProps } from "../types/GeneralPatientVisionLeftProps";
 
 // Hooks
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 import { useState } from "react";
 
 // Database
@@ -18,20 +18,17 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { isPatientVisionLeftNormalDistanceValid } from "../utils/isPatientVisionLeftNormalDistanceValid";
 import { isPatientVisionLeftTestedDistanceValid } from "../utils/isPatientVisionLeftTestedDistanceValid";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../../../styles/fields.module.css";
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const GeneralPatientVisionLeft = ({
   patientGeneralId,
   patientVisionLeftNormalDistance,
   patientVisionLeftTestedDistance,
 }: GeneralPatientVisionLeftProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [
     isVisionLeftNormalDistanceInvalid,
     setIsVisionLeftNormalDistanceInvalid,
@@ -59,29 +56,7 @@ export const GeneralPatientVisionLeft = ({
     setIsVisionLeftNormalDistanceInvalid(!isNormalDistanceValid);
 
     if (isNormalDistanceValid) {
-      const codeToRun = async () => {
-        const updatedPatientGeneral = actionData(await updatePatientGeneral({
-          patientGeneralId,
-          field: "patient_vision_left_normal_distance",
-          value,
-        }));
-
-        if (setMessage && setMessageType) {
-          if (updatedPatientGeneral) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
+      await save(() => updatePatientGeneral({ patientGeneralId, field: "patient_vision_left_normal_distance", value, }));
     }
   };
 
@@ -103,29 +78,7 @@ export const GeneralPatientVisionLeft = ({
     setIsVisionLeftTestedDistanceInvalid(!isTestedDistanceValid);
 
     if (isTestedDistanceValid) {
-      const codeToRun = async () => {
-        const updatedPatientGeneral = actionData(await updatePatientGeneral({
-          patientGeneralId,
-          field: "patient_vision_left_tested_distance",
-          value,
-        }));
-
-        if (setMessage && setMessageType) {
-          if (updatedPatientGeneral) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
+      await save(() => updatePatientGeneral({ patientGeneralId, field: "patient_vision_left_tested_distance", value, }));
     }
   };
 

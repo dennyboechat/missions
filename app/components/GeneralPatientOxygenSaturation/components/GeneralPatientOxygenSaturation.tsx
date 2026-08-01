@@ -8,7 +8,7 @@ import { FocusEvent } from "react";
 import { GeneralPatientOxygenSaturationProps } from "../types/GeneralPatientOxygenSaturationProps";
 
 // Hooks
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 import { useState } from "react";
 
 // Database
@@ -16,19 +16,16 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 
 // Utils
 import { isPatientOxygenSaturationValid } from "../utils/isPatientOxygenSaturationValid";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../../../styles/fields.module.css";
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const GeneralPatientOxygenSaturation = ({
   patientGeneralId,
   patientOxygenSaturation,
 }: GeneralPatientOxygenSaturationProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [isOxygenSaturationInvalid, setIsOxygenSaturationInvalid] =
     useState(false);
 
@@ -48,29 +45,7 @@ export const GeneralPatientOxygenSaturation = ({
     setIsOxygenSaturationInvalid(!isOxygenSaturationValid);
 
     if (isOxygenSaturationValid) {
-      const codeToRun = async () => {
-        const updatedPatientGeneral = actionData(await updatePatientGeneral({
-          patientGeneralId,
-          field: "patient_oxygen_saturation",
-          value,
-        }));
-
-        if (setMessage && setMessageType) {
-          if (updatedPatientGeneral) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
+      await save(() => updatePatientGeneral({ patientGeneralId, field: "patient_oxygen_saturation", value, }));
     }
   };
 

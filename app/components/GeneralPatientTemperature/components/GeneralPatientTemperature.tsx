@@ -8,7 +8,7 @@ import { FocusEvent } from "react";
 import { GeneralPatientTemperatureProps } from "../types/GeneralPatientTemperatureProps";
 
 // Hooks
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 import { useState } from "react";
 
 // Database
@@ -16,19 +16,16 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 
 // Utils
 import { isPatientTemperatureValid } from "../utils/isPatientTemperatureValid";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../../../styles/fields.module.css";
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const GeneralPatientTemperature = ({
   patientGeneralId,
   patientTemperature,
 }: GeneralPatientTemperatureProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [isTemperatureInvalid, setIsTemperatureInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
@@ -46,29 +43,7 @@ export const GeneralPatientTemperature = ({
     setIsTemperatureInvalid(!isTemperatureValid);
 
     if (isTemperatureValid) {
-      const codeToRun = async () => {
-        const updatedPatientGeneral = actionData(await updatePatientGeneral({
-          patientGeneralId,
-          field: "patient_temperature",
-          value,
-        }));
-
-        if (setMessage && setMessageType) {
-          if (updatedPatientGeneral) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
+      await save(() => updatePatientGeneral({ patientGeneralId, field: "patient_temperature", value, }));
     }
   };
 

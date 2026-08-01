@@ -14,6 +14,7 @@ import { updatePatientTooth } from "../../../database/patient-tooth/UpdatePatien
 // Hooks
 import { useEffect, useRef } from "react";
 import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 
 // Utils
 import { runWithRetries } from "@/app/utils/runWithRetries";
@@ -29,6 +30,7 @@ export const DentalAppointmentToothNotes = ({
   setToothDetails,
 }: DentalAppointmentToothNotesProps) => {
   const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const previousRef = useRef<DentalAppointmentToothNotesPreviousState>({
     patientDentistryToothId: undefined,
     selectedTooth: undefined,
@@ -45,29 +47,7 @@ export const DentalAppointmentToothNotes = ({
       previousRef.current = { patientDentistryToothId, selectedTooth, notes };
 
       if (patientDentistryToothId) {
-        const codeToRun = async () => {
-          const updatedPatientTooth = actionData(await updatePatientTooth({
-            patientDentistryToothId,
-            field: "tooth_notes",
-            value: notes,
-          }));
-
-          if (setMessage && setMessageType) {
-            if (updatedPatientTooth) {
-              setMessage("Saved");
-              setMessageType("regular");
-            } else {
-              setMessage("Error to save. Please try again.");
-              setMessageType("error");
-            }
-          }
-        };
-
-        const runSuccess = await runWithRetries(codeToRun);
-        if (!runSuccess && setMessage && setMessageType) {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
-        }
+        await save(() => updatePatientTooth({ patientDentistryToothId, field: "tooth_notes", value: notes, }));
       } else {
         const codeToRun = async () => {
           const insertedPatientTooth = actionData(await insertPatientTooth({

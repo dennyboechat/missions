@@ -13,7 +13,7 @@ import styles from "../../styles/content.module.css";
 // Hooks
 import { useProject } from "../../lib/ProjectContext";
 import { useState, useEffect, use } from "react";
-import { usePopupMessage } from "../../lib/PopupMessage";
+import { useSaveField } from "../../lib/useSaveField";
 import { useRouter } from "next/navigation";
 
 // Database
@@ -26,7 +26,6 @@ import { ProjectUserId } from "../../types/ProjectUserTypes";
 
 // Utils
 import { getFilteredProjectUsers } from "../../utils/getFilteredProjectUsers";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Types
 import { actionData } from "../../types/ActionResult";
@@ -35,7 +34,7 @@ const ProjectUsers = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: projectId } = use(params);
   const router = useRouter();
   const { project } = useProject();
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [projectUsers, setProjectUsers] = useState<ProjectUser[]>([]);
   const [searchText, setSearchText] = useState<string | undefined>();
   const projectMenuItems = (
@@ -63,28 +62,7 @@ const ProjectUsers = ({ params }: { params: Promise<{ id: string }> }) => {
     isUserActive: boolean;
   }) => {
     if (project) {
-      const codeToRun = async () => {
-        const updatedProjectUser = actionData(await updateProjectUser({
-          projectUserId,
-          isUserActive: isUserActive,
-        }));
-
-        if (setMessage && setMessageType) {
-          if (updatedProjectUser) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
+      await save(() => updateProjectUser({ projectUserId, isUserActive: isUserActive, }));
     }
   };
 

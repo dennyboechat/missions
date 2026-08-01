@@ -9,7 +9,7 @@ import { GeneralPatientWeightProps } from "../types/GeneralPatientWeightProps";
 import { PatientGeneralTypes } from "@/app/types/PatientGeneralTypes";
 
 // Hooks
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 import { useState } from "react";
 
 // Database
@@ -17,20 +17,17 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 
 // Utils
 import { isPatientWeightValid } from "../utils/isPatientWeightValid";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../../../styles/fields.module.css";
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const GeneralPatientWeight = ({
   patientGeneralId,
   patientWeight,
   setPatientGeneral,
 }: GeneralPatientWeightProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [isWeightInvalid, setIsWeightInvalid] = useState(false);
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
@@ -54,29 +51,7 @@ export const GeneralPatientWeight = ({
         )
       );
 
-      const codeToRun = async () => {
-        const updatedPatientGeneral = actionData(await updatePatientGeneral({
-          patientGeneralId,
-          field: "patient_weight",
-          value,
-        }));
-
-        if (setMessage && setMessageType) {
-          if (updatedPatientGeneral) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
+      await save(() => updatePatientGeneral({ patientGeneralId, field: "patient_weight", value, }));
     }
   };
 
