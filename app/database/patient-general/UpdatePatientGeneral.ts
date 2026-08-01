@@ -12,6 +12,26 @@ import {
   UpdatePatientGeneral,
 } from "../../types/PatientGeneralTypes";
 
+
+// `field` is interpolated into the statement, so it has to come from a fixed set.
+const UPDATABLE_FIELDS = [
+  "appointment_notes",
+  "appointment_referral",
+  "appointment_has_referral",
+  "patient_height",
+  "patient_weight",
+  "patient_temperature",
+  "patient_blood_glucose",
+  "patient_pulse",
+  "patient_oxygen_saturation",
+  "patient_blood_pressure_systolic",
+  "patient_blood_pressure_diastolic",
+  "patient_vision_left_tested_distance",
+  "patient_vision_left_normal_distance",
+  "patient_vision_right_tested_distance",
+  "patient_vision_right_normal_distance",
+];
+
 export const updatePatientGeneral = async ({
   patientGeneralId,
   field,
@@ -19,6 +39,10 @@ export const updatePatientGeneral = async ({
 }: UpdatePatientGeneral): Promise<PatientGeneral | undefined> => {
   try {
     await assertProjectAccess({ patientGeneralId });
+
+    if (!UPDATABLE_FIELDS.includes(field)) {
+      throw new Error(`Field not updatable: ${field}`);
+    }
 
     // Wrapped in a CTE so the returned appointment date can be resolved
     // against the project's timezone, matching how it is read everywhere else.

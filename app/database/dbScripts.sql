@@ -237,3 +237,17 @@ CREATE TABLE IF NOT EXISTS patient_general_prescribed_medication (
 -- 	patient_dentistry.appointment_referral
 --   )  
 -- order by appointment_date
+-- Indexes (see app/database/migrations/003_indexes.sql for the rationale).
+CREATE INDEX IF NOT EXISTS idx_project_owner_id ON project (owner_id);
+CREATE INDEX IF NOT EXISTS idx_project_user_project_user ON project_user (project_id, user_id);
+CREATE INDEX IF NOT EXISTS idx_project_user_user_id ON project_user (user_id);
+CREATE INDEX IF NOT EXISTS idx_app_user_third_party_id ON app_user (user_third_party_id);
+CREATE INDEX IF NOT EXISTS idx_app_user_email ON app_user (user_email);
+CREATE INDEX IF NOT EXISTS idx_patient_personal_project_id ON patient_personal (project_id);
+CREATE INDEX IF NOT EXISTS idx_patient_general_patient_personal_id ON patient_general (patient_personal_id);
+CREATE INDEX IF NOT EXISTS idx_patient_dentistry_patient_personal_id ON patient_dentistry (patient_personal_id);
+CREATE INDEX IF NOT EXISTS idx_patient_general_med_general_id ON patient_general_prescribed_medication (patient_general_id);
+CREATE INDEX IF NOT EXISTS idx_patient_dentistry_med_dentistry_id ON patient_dentistry_prescribed_medication (patient_dentistry_id);
+CREATE INDEX IF NOT EXISTS idx_patient_dentistry_tooth_dentistry_id ON patient_dentistry_tooth (patient_dentistry_id);
+CREATE INDEX IF NOT EXISTS idx_patient_general_appointment_date ON patient_general (appointment_date);
+CREATE INDEX IF NOT EXISTS idx_patient_dentistry_appointment_date ON patient_dentistry (appointment_date);

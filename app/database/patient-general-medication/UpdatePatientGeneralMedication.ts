@@ -10,6 +10,15 @@ import { UpdatePatientGeneralMedication } from "../../types/GeneralPrescribedMed
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+
+// `field` is interpolated into the statement, so it has to come from a fixed set.
+const UPDATABLE_FIELDS = [
+  "drug_name",
+  "dose",
+  "quantity",
+  "instructions_usage",
+];
+
 export const updatePatientGeneralMedication = async ({
   patientGeneralPrescribedMedicationId,
   field,
@@ -19,6 +28,10 @@ export const updatePatientGeneralMedication = async ({
 > => {
   try {
     await assertProjectAccess({ patientGeneralPrescribedMedicationId });
+
+    if (!UPDATABLE_FIELDS.includes(field)) {
+      throw new Error(`Field not updatable: ${field}`);
+    }
 
     const query = `
       UPDATE

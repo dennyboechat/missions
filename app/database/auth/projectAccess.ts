@@ -48,12 +48,23 @@ export const getClerkPrimaryEmail = async (): Promise<string> => {
   return email;
 };
 
-/** The caller's app_user.user_id, or a throw if there is no valid session. */
-export const getAuthenticatedUserId = async (): Promise<string> => {
+/**
+ * Every app_user row belonging to the caller, oldest first.
+ *
+ * Normally one, but the sign-up path has produced duplicate rows for the same
+ * Clerk id -- typically one created by a project invitation and another on
+ * first sign-in with a different email. When that happens the rows do not
+ * share memberships, so resolving to a single arbitrary row would deny a user
+ * access to their own project. Access is therefore checked against all of
+ * them.
+ */
+export const getAuthenticatedUserIds = async (): Promise<string[]> => {
   const clerkUserId = await getClerkUserId();
 
   const response = await sql.query(
-    `SELECT user_id FROM app_user WHERE user_third_party_id = $1`,
+    `SELECT user_id FROM app_user
+     WHERE user_third_party_id = $1
+     ORDER BY created_at`,
     [clerkUserId]
   );
 
@@ -61,8 +72,16 @@ export const getAuthenticatedUserId = async (): Promise<string> => {
     throw new AccessDeniedError("No application user for this session");
   }
 
-  return response.rows[0].user_id;
+  return response.rows.map((row) => row.user_id);
 };
+
+/**
+ * The caller's primary app_user.user_id -- the oldest row, so the answer is
+ * stable across sessions. Use for assigning ownership; use
+ * getAuthenticatedUserIds for anything that reads existing access.
+ */
+export const getAuthenticatedUserId = async (): Promise<string> =>
+  (await getAuthenticatedUserIds())[0];
 
 // Each scope is an id the actions already receive, resolved back to the
 // project that ultimately owns it.
@@ -142,25 +161,25 @@ export const assertProjectAccess = async (
   }
 
   const [key, value] = entries[0] as [keyof ProjectScope, string];
-  const userId = await getAuthenticatedUserId();
+  const userIds = await getAuthenticatedUserIds();
 
   const response = await sql.query(
     `
       WITH scoped AS (${PROJECT_ID_QUERY[key]})
       SELECT
         project.project_id,
-        project.owner_id = $2::uuid AS is_owner,
+        project.owner_id = ANY($2::uuid[]) AS is_owner,
         EXISTS (
           SELECT 1
           FROM project_user
           WHERE project_user.project_id = project.project_id
-            AND project_user.user_id = $2::uuid
+            AND project_user.user_id = ANY($2::uuid[])
             AND project_user.is_user_active = TRUE
         ) AS is_member
       FROM project
       JOIN scoped ON scoped.project_id = project.project_id
     `,
-    [value, userId]
+    [value, userIds]
   );
 
   if (response.rows.length === 0) {
@@ -172,7 +191,7 @@ export const assertProjectAccess = async (
 
   if (ownerOnly ? !isOwner : !isOwner && !isMember) {
     throw new AccessDeniedError(
-      `User ${userId} may not access project ${projectId}${
+      `User ${userIds.join("/")} may not access project ${projectId}${
         ownerOnly ? " as owner" : ""
       }`
     );
