@@ -10,13 +10,12 @@ import { PatientDentistryTypes } from "@/app/types/PatientDentistryTypes";
 
 // Hooks
 import { useState, useEffect } from "react";
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 
 // Database
 import { updatePatientDentistry } from "../../../database/patient-dentistry/UpdatePatientDentistry";
 
 // Utils
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../styles/DentalAppointmentReferral.module.css";
@@ -28,7 +27,7 @@ export const DentalAppointmentReferral = ({
   patientDentistry,
   setPatientDentistries,
 }: DentalAppointmentReferralProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [hasReferral, setHasReferral] = useState(patientDentistry.appointmentHasReferral);
   const [referral, setReferral] = useState(
     patientDentistry.appointmentReferral
@@ -38,14 +37,12 @@ export const DentalAppointmentReferral = ({
   useEffect(() => {
     const onChangeAppointmentReferral = async () => {
       if (appointmentReferral !== referral) {
-        const codeToRun = async () => {
-          const updatedPatientDentistry = actionData(await updatePatientDentistry({
-            patientDentistryId,
-            field: "appointment_referral",
-            value: referral,
-          }));
+        const updatedPatientDentistry = await save(
+          () => updatePatientDentistry({ patientDentistryId, field: "appointment_referral", value: referral, }),
+          { failureMessages: { error: "Error to save referral. Please try again." } }
+        );
 
-          if (updatedPatientDentistry) {
+        if (updatedPatientDentistry) {
             setPatientDentistries(
               (prevState: PatientDentistryTypes[] | undefined) =>
                 prevState?.map((existingPatientDentistry) =>
@@ -58,39 +55,16 @@ export const DentalAppointmentReferral = ({
                     : existingPatientDentistry
                 )
             );
-
-            if (setMessage && setMessageType) {
-              setMessage("Saved");
-              setMessageType("regular");
-            }
-          } else {
-            if (setMessage && setMessageType) {
-              setMessage("Error to save referral. Please try again.");
-              setMessageType("error");
-            }
-
-            console.error(
-              `Could not update appointment referral by id ${patientDentistryId}`
-            );
-          }
-        };
-
-        const runSuccess = await runWithRetries(codeToRun);
-        if (!runSuccess && setMessage && setMessageType) {
-          setMessage("Error to save referral. Please try again.");
-          setMessageType("error");
         }
       }
 
       if (appointmentHasReferral !== hasReferral) {
-        const codeToRun = async () => {
-          const updatedPatientDentistry = actionData(await updatePatientDentistry({
-            patientDentistryId,
-            field: "appointment_has_referral",
-            value: hasReferral,
-          }));
+        const updatedPatientDentistry = await save(
+          () => updatePatientDentistry({ patientDentistryId, field: "appointment_has_referral", value: hasReferral, }),
+          { failureMessages: { error: "Error to save has referral. Please try again." } }
+        );
 
-          if (updatedPatientDentistry) {
+        if (updatedPatientDentistry) {
             setPatientDentistries(
               (prevState: PatientDentistryTypes[] | undefined) =>
                 prevState?.map((existingPatientDentistry) =>
@@ -103,27 +77,6 @@ export const DentalAppointmentReferral = ({
                     : existingPatientDentistry
                 )
             );
-
-            if (setMessage && setMessageType) {
-              setMessage("Saved");
-              setMessageType("regular");
-            }
-          } else {
-            if (setMessage && setMessageType) {
-              setMessage("Error to save has referral. Please try again.");
-              setMessageType("error");
-            }
-
-            console.error(
-              `Could not update appointment has referral by id ${patientDentistryId}`
-            );
-          }
-        };
-
-        const runSuccess = await runWithRetries(codeToRun);
-        if (!runSuccess && setMessage && setMessageType) {
-          setMessage("Error to save referral. Please try again.");
-          setMessageType("error");
         }
       }
     };
@@ -140,8 +93,7 @@ export const DentalAppointmentReferral = ({
     appointmentHasReferral,
     patientDentistryId,
     setPatientDentistries,
-    setMessage,
-    setMessageType,
+    save,
   ]);
 
   return (

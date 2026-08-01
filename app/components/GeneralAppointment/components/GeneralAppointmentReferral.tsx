@@ -10,13 +10,12 @@ import { PatientGeneralTypes } from "@/app/types/PatientGeneralTypes";
 
 // Hooks
 import { useState, useEffect } from "react";
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 
 // Database
 import { updatePatientGeneral } from "../../../database/patient-general/UpdatePatientGeneral";
 
 // Utils
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Styles
 import styles from "../styles/GeneralAppointmentReferral.module.css";
@@ -28,7 +27,7 @@ export const GeneralAppointmentReferral = ({
   patientGeneral,
   setPatientGeneral,
 }: GeneralAppointmentReferralProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [hasReferral, setHasReferral] = useState(patientGeneral.appointmentHasReferral);
   const [referral, setReferral] = useState(patientGeneral.appointmentReferral);
   const { patientGeneralId, appointmentReferral, appointmentHasReferral } = patientGeneral;
@@ -36,14 +35,12 @@ export const GeneralAppointmentReferral = ({
   useEffect(() => {
     const onChangeAppointmentReferral = async () => {
       if (appointmentReferral !== referral) {
-        const codeToRun = async () => {
-          const updatedPatientGeneral = actionData(await updatePatientGeneral({
-            patientGeneralId,
-            field: "appointment_referral",
-            value: referral,
-          }));
+        const updatedPatientGeneral = await save(
+          () => updatePatientGeneral({ patientGeneralId, field: "appointment_referral", value: referral, }),
+          { failureMessages: { error: "Error to save referral. Please try again." } }
+        );
 
-          if (updatedPatientGeneral) {
+        if (updatedPatientGeneral) {
             setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>
               prevState?.map((existingPatientGeneral) =>
                 existingPatientGeneral.patientGeneralId === patientGeneralId
@@ -54,39 +51,16 @@ export const GeneralAppointmentReferral = ({
                   : existingPatientGeneral
               )
             );
-
-            if (setMessage && setMessageType) {
-              setMessage("Saved");
-              setMessageType("regular");
-            }
-          } else {
-            if (setMessage && setMessageType) {
-              setMessage("Error to save referral. Please try again.");
-              setMessageType("error");
-            }
-
-            console.error(
-              `Could not update appointment referral by id ${patientGeneralId}`
-            );
-          }
-        };
-
-        const runSuccess = await runWithRetries(codeToRun);
-        if (!runSuccess && setMessage && setMessageType) {
-          setMessage("Error to save referral. Please try again.");
-          setMessageType("error");
         }
       }
 
       if (appointmentHasReferral !== hasReferral) {
-        const codeToRun = async () => {
-          const updatedPatientGeneral = actionData(await updatePatientGeneral({
-            patientGeneralId,
-            field: "appointment_has_referral",
-            value: hasReferral,
-          }));
+        const updatedPatientGeneral = await save(
+          () => updatePatientGeneral({ patientGeneralId, field: "appointment_has_referral", value: hasReferral, }),
+          { failureMessages: { error: "Error to save has referral. Please try again." } }
+        );
 
-          if (updatedPatientGeneral) {
+        if (updatedPatientGeneral) {
             setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>
               prevState?.map((existingPatientGeneral) =>
                 existingPatientGeneral.patientGeneralId === patientGeneralId
@@ -97,27 +71,6 @@ export const GeneralAppointmentReferral = ({
                   : existingPatientGeneral
               )
             );
-
-            if (setMessage && setMessageType) {
-              setMessage("Saved");
-              setMessageType("regular");
-            }
-          } else {
-            if (setMessage && setMessageType) {
-              setMessage("Error to save has referral. Please try again.");
-              setMessageType("error");
-            }
-
-            console.error(
-              `Could not update appointment has referral by id ${patientGeneralId}`
-            );
-          }
-        };
-
-        const runSuccess = await runWithRetries(codeToRun);
-        if (!runSuccess && setMessage && setMessageType) {
-          setMessage("Error to save referral. Please try again.");
-          setMessageType("error");
         }
       }
     };
@@ -134,8 +87,7 @@ export const GeneralAppointmentReferral = ({
     appointmentHasReferral,
     patientGeneralId,
     setPatientGeneral,
-    setMessage,
-    setMessageType,
+    save,
   ]);
 
   return (

@@ -17,7 +17,7 @@ import { insertPatientGeneral } from "../../../database/patient-general/InsertPa
 
 // Hooks
 import { useState, useEffect } from "react";
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 
 // Types
 import { PatientGeneralTypes } from "../../../types/PatientGeneralTypes";
@@ -25,13 +25,12 @@ import { PatientGeneralTypes } from "../../../types/PatientGeneralTypes";
 // Utils
 import { getSideMenuSubHeader } from "../../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../../utils/getSideMenuSubHeaderFooter";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
 
 export const PatientGeneral = ({ params }: { params: { id: string } }) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [patientGeneral, setPatientGeneral] = useState<PatientGeneralTypes[]>();
   const [lastestAppointment, setLastestAppointment] =
     useState<PatientGeneralTypes>();
@@ -85,12 +84,11 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
   };
 
   const onCreateAppointment = async () => {
-    const codeToRun = async () => {
-      const patientGeneralData = actionData(await insertPatientGeneral({
-        patientPersonalId: patientPersonalId,
-      }));
+    const patientGeneralData = await save(
+      () => insertPatientGeneral({ patientPersonalId: patientPersonalId, })
+    );
 
-      if (patientGeneralData) {
+    if (patientGeneralData) {
         const newLastestAppointment = {
           ...lastestAppointment,
           patientGeneralId: patientGeneralData.patientGeneralId,
@@ -100,24 +98,7 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
 
         setLastestAppointment(newLastestAppointment);
 
-        if (setMessage && setMessageType) {
-          setMessage("Saved");
-          setMessageType("regular");
-        }
-
         updateAppointments();
-      } else {
-        if (setMessage && setMessageType) {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
-        }
-      }
-    };
-
-    const runSuccess = await runWithRetries(codeToRun);
-    if (!runSuccess && setMessage && setMessageType) {
-      setMessage("Error to save. Please try again.");
-      setMessageType("error");
     }
   };
 

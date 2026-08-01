@@ -1,6 +1,7 @@
 "use client";
 
 // Hooks
+import { useCallback } from "react";
 import { usePopupMessage } from "./PopupMessage";
 
 // Types
@@ -50,14 +51,20 @@ export interface SaveOptions {
 export const useSaveField = () => {
   const { setMessage, setMessageType } = usePopupMessage();
 
-  const report = (message: string, type: "regular" | "error") => {
-    if (setMessage && setMessageType) {
-      setMessage(message);
-      setMessageType(type);
-    }
-  };
+  const report = useCallback(
+    (message: string, type: "regular" | "error") => {
+      if (setMessage && setMessageType) {
+        setMessage(message);
+        setMessageType(type);
+      }
+    },
+    [setMessage, setMessageType]
+  );
 
-  const save = async <T>(
+  // Memoised because several callers debounce inside a useEffect and list save
+  // as a dependency; an unstable identity would re-run those effects on every
+  // render.
+  const save = useCallback(async <T,>(
     run: () => Promise<ActionResult<T>>,
     options?: SaveOptions
   ): Promise<T | undefined> => {
@@ -87,7 +94,7 @@ export const useSaveField = () => {
     );
 
     return undefined;
-  };
+  }, [report]);
 
   return { save };
 };

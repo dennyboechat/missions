@@ -9,13 +9,12 @@ import { PatientGeneralTypes } from "@/app/types/PatientGeneralTypes";
 
 // Hooks
 import { useState, useEffect } from "react";
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 
 // Database
 import { updatePatientGeneral } from "../../../database/patient-general/UpdatePatientGeneral";
 
 // Utils
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
@@ -24,21 +23,18 @@ export const GeneralAppointmentClinicalNotes = ({
   patientGeneral,
   setPatientGeneral,
 }: GeneralAppointmentClinicalNotesProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [notes, setNotes] = useState(patientGeneral.appointmentNotes);
   const { patientGeneralId, appointmentNotes } = patientGeneral;
 
   useEffect(() => {
     const onChangeAppointmentNotes = async () => {
       if (appointmentNotes !== notes) {
-        const codeToRun = async () => {
-          const updatedPatientGeneral = actionData(await updatePatientGeneral({
-            patientGeneralId,
-            field: "appointment_notes",
-            value: notes,
-          }));
+        const updatedPatientGeneral = await save(
+          () => updatePatientGeneral({ patientGeneralId, field: "appointment_notes", value: notes, })
+        );
 
-          if (updatedPatientGeneral) {
+        if (updatedPatientGeneral) {
             setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>
               prevState?.map((existingPatientGeneral) =>
                 existingPatientGeneral.patientGeneralId === patientGeneralId
@@ -46,27 +42,6 @@ export const GeneralAppointmentClinicalNotes = ({
                   : existingPatientGeneral
               )
             );
-
-            if (setMessage && setMessageType) {
-              setMessage("Saved");
-              setMessageType("regular");
-            }
-          } else {
-            if (setMessage && setMessageType) {
-              setMessage("Error to save. Please try again.");
-              setMessageType("error");
-            }
-
-            console.error(
-              `Could not update appointment by id ${patientGeneralId}`
-            );
-          }
-        };
-
-        const runSuccess = await runWithRetries(codeToRun);
-        if (!runSuccess && setMessage && setMessageType) {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
         }
       }
     };
@@ -81,8 +56,7 @@ export const GeneralAppointmentClinicalNotes = ({
     appointmentNotes,
     patientGeneralId,
     setPatientGeneral,
-    setMessage,
-    setMessageType,
+    save,
   ]);
 
   return (

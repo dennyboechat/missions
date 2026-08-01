@@ -9,13 +9,12 @@ import { PatientDentistryTypes } from "@/app/types/PatientDentistryTypes";
 
 // Hooks
 import { useState, useEffect } from "react";
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 
 // Database
 import { updatePatientDentistry } from "../../../database/patient-dentistry/UpdatePatientDentistry";
 
 // Utils
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
@@ -24,21 +23,18 @@ export const DentalAppointmentClinicalNotes = ({
   patientDentistry,
   setPatientDentistries,
 }: DentalAppointmentClinicalNotesProps) => {
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [notes, setNotes] = useState(patientDentistry.appointmentNotes);
   const { patientDentistryId, appointmentNotes } = patientDentistry;
 
   useEffect(() => {
     const onChangeAppointmentNotes = async () => {
       if (appointmentNotes !== notes) {
-        const codeToRun = async () => {
-          const updatedPatientDentistry = actionData(await updatePatientDentistry({
-            patientDentistryId,
-            field: "appointment_notes",
-            value: notes,
-          }));
+        const updatedPatientDentistry = await save(
+          () => updatePatientDentistry({ patientDentistryId, field: "appointment_notes", value: notes, })
+        );
 
-          if (updatedPatientDentistry) {
+        if (updatedPatientDentistry) {
             setPatientDentistries(
               (prevState: PatientDentistryTypes[] | undefined) =>
                 prevState?.map((existingPatientDentistry) =>
@@ -48,27 +44,6 @@ export const DentalAppointmentClinicalNotes = ({
                     : existingPatientDentistry
                 )
             );
-
-            if (setMessage && setMessageType) {
-              setMessage("Saved");
-              setMessageType("regular");
-            }
-          } else {
-            if (setMessage && setMessageType) {
-              setMessage("Error to save. Please try again.");
-              setMessageType("error");
-            }
-
-            console.error(
-              `Could not update appointment by id ${patientDentistryId}`
-            );
-          }
-        };
-
-        const runSuccess = await runWithRetries(codeToRun);
-        if (!runSuccess && setMessage && setMessageType) {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
         }
       }
     };
@@ -83,8 +58,7 @@ export const DentalAppointmentClinicalNotes = ({
     appointmentNotes,
     patientDentistryId,
     setPatientDentistries,
-    setMessage,
-    setMessageType,
+    save,
   ]);
 
   return (
