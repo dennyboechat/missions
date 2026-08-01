@@ -10,12 +10,14 @@ import { PopupConfirmation } from "../../../components/ui/PopupConfirmation";
 import styles from "../../../styles/content.module.css";
 
 // Database
-import { getPatientPersonal } from "../../../database/patient-personal/GetPatientPersonal";
 import { deletePatientPersonal } from "../../../database/patient-personal/DeletePatientPersonal";
 
 // Hooks
-import { useState, useEffect, use } from "react";
+import { useState, use } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/navigation";
+import { usePatient } from "../../../lib/PatientContext";
+import { PatientPersonalSummary } from "../../../types/PatientPersonalSummary";
 
 // Types
 import { PatientPersonalFieldsTypes } from "../../../components/PatientPersonalFields/types/PatientPersonalFieldsProps";
@@ -28,37 +30,31 @@ import { actionData } from "../../../types/ActionResult";
 const PatientPersonal = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: patientPersonalId } = use(params);
   const router = useRouter();
-  const [patientPersonalFields, setPatientPersonalFields] =
-    useState<PatientPersonalFieldsTypes>({
-      patientPersonalId: "",
-      projectId: "",
-      patientFullName: "",
-      isPatientMale: undefined,
-      patientDateOfBirth: undefined,
-    });
+  const { patient, setPatient } = usePatient();
   const [isDeletingPatient, setIsDeletingPatient] = useState(false);
 
-  useEffect(() => {
-    const fetchPatientPersonal = async () => {
-      if (patientPersonalId) {
-        const patientPersonalData = actionData(
-          await getPatientPersonal({
-            patientPersonalId: patientPersonalId,
-          }),
-        );
+  // The layout already loaded this patient for the sidebar, so this page reads
+  // and writes that same value rather than keeping a second copy. One source
+  // of truth: no extra round trip for a row already in memory, the sidebar
+  // updates as fields are edited, and there are no two effects syncing to each
+  // other -- which is what caused a render loop.
+  const patientPersonalFields: PatientPersonalFieldsTypes = patient ?? {
+    patientPersonalId: "",
+    projectId: "",
+    patientFullName: "",
+    isPatientMale: undefined,
+    patientDateOfBirth: undefined,
+  };
 
-        if (patientPersonalData) {
-          setPatientPersonalFields(patientPersonalData);
-        } else {
-          console.error(
-            `Could not find patient personal with id ${patientPersonalData}`,
-          );
-        }
-      }
-    };
+  const setPatientPersonalFields: Dispatch<
+    SetStateAction<PatientPersonalFieldsTypes>
+  > = (update) => {
+    const next =
+      typeof update === "function" ? update(patientPersonalFields) : update;
 
-    fetchPatientPersonal();
-  }, [patientPersonalId]);
+    setPatient(next as PatientPersonalSummary);
+  };
+
 
   if (!patientPersonalFields.patientPersonalId) {
     return null;

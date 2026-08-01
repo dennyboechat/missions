@@ -22,8 +22,12 @@ import { PatientPersonalSummary } from "../../../types/PatientPersonalSummary";
 export const PersonalSummary = ({
   patientPersonalSummary,
 }: {
-  patientPersonalSummary: PatientPersonalSummary;
+  patientPersonalSummary?: PatientPersonalSummary;
 }) => {
+  if (!patientPersonalSummary) {
+    return null;
+  }
+
   const {
     patientFullName,
     patientDateOfBirth,

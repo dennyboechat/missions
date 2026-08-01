@@ -8,6 +8,9 @@ import { usePathname } from "next/navigation";
 import { SideMenuLayout } from "../components/ui/SideMenuLayout";
 import { PatientMenuItems } from "../components/PatientMenuItems";
 
+// Hooks
+import { PatientProvider } from "../lib/PatientContext";
+
 // Database
 import { getPatientSummary } from "../database/patient-summary/GetPatientSummary";
 
@@ -93,7 +96,9 @@ export default function PatientLayout({
       })}
       isBoldHeader
     >
-      {children}
+      <PatientProvider value={{ patient, setPatient }}>
+        {children}
+      </PatientProvider>
     </SideMenuLayout>
   );
 }
