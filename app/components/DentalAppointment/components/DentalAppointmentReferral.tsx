@@ -20,8 +20,6 @@ import { updatePatientDentistry } from "../../../database/patient-dentistry/Upda
 // Styles
 import styles from "../styles/DentalAppointmentReferral.module.css";
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const DentalAppointmentReferral = ({
   patientDentistry,

@@ -20,8 +20,6 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Styles
 import styles from "../styles/GeneralAppointmentReferral.module.css";
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const GeneralAppointmentReferral = ({
   patientGeneral,

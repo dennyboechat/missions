@@ -18,7 +18,7 @@ import { ProjectUserFieldsTypes } from "../../../types/ProjectUserTypes";
 import { useProject } from "../../../lib/ProjectContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 
 // Database
 import { insertAppUser } from "../../../database/app-user/InsertAppUser";
@@ -28,7 +28,6 @@ import { insertProjectUser } from "../../../database/project-user/InsertProjectU
 // Utils
 import { isValidEmail } from "../../../utils/isValidEmail";
 import { isValidProjectUserName } from "../utils/isValidProjectUserName";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
@@ -36,7 +35,7 @@ import { actionData } from "../../../types/ActionResult";
 export const ProjectUser = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const { project } = useProject();
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [isCreatingUser, setIsCreatingUser] = useState(false);
 
   const [isProjectUserNameInvalid, setIsProjectUserNameInvalid] =
@@ -88,30 +87,13 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
         return;
       }
 
-      const codeToRun = async () => {
-        const insertedProjectUser = actionData(await insertProjectUser({
-          projectId: params.id,
-          userId: newUserId,
-        }));
+      const insertedProjectUser = await save(
+        () => insertProjectUser({ projectId: params.id, userId: newUserId, })
+      );
 
-        if (setMessage && setMessageType) {
-          if (insertedProjectUser) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
+
 
         router.push(`/project-users/${params.id}`);
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
     } else {
       setIsCreatingUser(false);
     }

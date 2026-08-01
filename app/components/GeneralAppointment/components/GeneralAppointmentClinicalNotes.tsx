@@ -16,8 +16,6 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 
 // Utils
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const GeneralAppointmentClinicalNotes = ({
   patientGeneral,

@@ -13,12 +13,10 @@ import { updatePatientTooth } from "../../../database/patient-tooth/UpdatePatien
 
 // Hooks
 import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 
 // Utils
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const DentalAppointmentToothStatus = ({
   patientDentistryId,
@@ -27,6 +25,7 @@ export const DentalAppointmentToothStatus = ({
   setToothDetails,
 }: DentalAppointmentToothStatusProps) => {
   const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
 
   const onSelectStatus = async (status: ToothStatus) => {
     const newStatus =
@@ -38,22 +37,11 @@ export const DentalAppointmentToothStatus = ({
       toothDetails?.[selectedTooth]?.patientDentistryToothId;
 
     if (patientDentistryToothId) {
-      const codeToRun = async () => {
-        const updatedPatientTooth = actionData(await updatePatientTooth({
-          patientDentistryToothId,
-          field: "tooth_status",
-          value: newStatus,
-        }));
+      const updatedPatientTooth = await save(
+        () => updatePatientTooth({ patientDentistryToothId, field: "tooth_status", value: newStatus, })
+      );
 
-        if (setMessage && setMessageType) {
-          if (updatedPatientTooth) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
+
 
         setToothDetails((prevToothDetails: any) => ({
           ...prevToothDetails,
@@ -63,20 +51,11 @@ export const DentalAppointmentToothStatus = ({
             patientDentistryToothId,
           },
         }));
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
     } else {
-      const codeToRun = async () => {
-        const insertedPatientTooth = actionData(await insertPatientTooth({
-          patientDentistryId,
-          toothName: selectedTooth,
-          toothStatus: status,
-        }));
+      const insertedPatientTooth = await save(
+        () => insertPatientTooth({ patientDentistryId, toothName: selectedTooth, toothStatus: status, })
+      );
+
 
         if (insertedPatientTooth) {
           patientDentistryToothId =
@@ -94,13 +73,6 @@ export const DentalAppointmentToothStatus = ({
             patientDentistryToothId,
           },
         }));
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
     }
 
     setToothDetails((prevToothDetails: any) => ({

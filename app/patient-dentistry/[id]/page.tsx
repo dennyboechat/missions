@@ -19,6 +19,7 @@ import { insertPatientDentistry } from "../../database/patient-dentistry/InsertP
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { usePopupMessage } from "../../lib/PopupMessage";
+import { useSaveField } from "../../lib/useSaveField";
 
 // Types
 import { PatientDentistryTypes } from "../../types/PatientDentistryTypes";
@@ -26,7 +27,6 @@ import { PatientDentistryTypes } from "../../types/PatientDentistryTypes";
 // Utils
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../utils/getSideMenuSubHeaderFooter";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Types
 import { actionData } from "../../types/ActionResult";
@@ -35,6 +35,7 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: patientPersonalId } = use(params);
   const router = useRouter();
   const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [patientDentistries, setPatientDentistries] =
     useState<PatientDentistryTypes[]>();
   const [lastestAppointment, setLastestAppointment] =
@@ -87,10 +88,10 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
   };
 
   const onCreateAppointment = async () => {
-    const codeToRun = async () => {
-      const patientDentistryData = actionData(await insertPatientDentistry({
-        patientPersonalId: patientPersonalId,
-      }));
+    const patientDentistryData = await save(
+      () => insertPatientDentistry({ patientPersonalId: patientPersonalId, })
+    );
+
 
       if (patientDentistryData) {
         const newLastestAppointment = {
@@ -112,13 +113,6 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
         setMessage("Error to save. Please try again.");
         setMessageType("error");
       }
-    };
-
-    const runSuccess = await runWithRetries(codeToRun);
-    if (!runSuccess && setMessage && setMessageType) {
-      setMessage("Error to save. Please try again.");
-      setMessageType("error");
-    }
   };
 
   const afterDeleteAppointment = async () => {

@@ -12,7 +12,7 @@ import { PatientPersonalFields } from "../../components/PatientPersonalFields";
 import { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { useProject } from "../../lib/ProjectContext";
-import { usePopupMessage } from "../../lib/PopupMessage";
+import { useSaveField } from "../../lib/useSaveField";
 
 // Styles
 import styles from "../../styles/content.module.css";
@@ -25,16 +25,13 @@ import { insertPatientPersonal } from "../../database/patient-personal/InsertPat
 
 // Utils
 import { isValidPatientFullName } from "../../utils/isValidPatientFullName";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
-// Types
-import { actionData } from "../../types/ActionResult";
 
 const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: projectId } = use(params);
   const router = useRouter();
   const { project } = useProject();
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [isCreatingPatient, setIsCreatingPatient] = useState(false);
   const [patientPersonalFields, setPatientPersonalFields] =
     useState<PatientPersonalFieldsTypes>({
@@ -70,32 +67,29 @@ const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
     setIsPatientDateOfBirthInvalid(!isValidDateOfBirth);
 
     if (isValidFullName && isValidPatientGender && isValidDateOfBirth) {
-      const codeToRun = async () => {
-        const insertedPatientPersonal = actionData(await insertPatientPersonal({
-          projectId,
-          patientFullName: patientFullName ?? "",
-          isPatientMale: isPatientMale ?? true,
-          patientDateOfBirth: patientDateOfBirth ?? new Date(),
-          patientPhoneNumber,
-        }));
-
-        if (setMessage && setMessageType) {
-          if (insertedPatientPersonal) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save patient data. Please try again.");
-            setMessageType("error");
-          }
+      const insertedPatientPersonal = await save(
+        () =>
+          insertPatientPersonal({
+            projectId,
+            patientFullName: patientFullName ?? "",
+            isPatientMale: isPatientMale ?? true,
+            patientDateOfBirth: patientDateOfBirth ?? new Date(),
+            patientPhoneNumber,
+          }),
+        {
+          failureMessages: {
+            error: "Error to save patient data. Please try again.",
+          },
         }
+      );
 
+      // Only leave the form once the patient is actually stored. This used to
+      // navigate away regardless, so a failed save silently discarded the
+      // entry and left the message behind on a page the user had left.
+      if (insertedPatientPersonal) {
         router.push(`/project-patients/${projectId}`);
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save patient data. Please try again.");
-        setMessageType("error");
+      } else {
+        setIsCreatingPatient(false);
       }
     } else {
       setIsCreatingPatient(false);

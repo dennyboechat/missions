@@ -16,8 +16,6 @@ import { updatePatientDentistry } from "../../../database/patient-dentistry/Upda
 
 // Utils
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const DentalAppointmentClinicalNotes = ({
   patientDentistry,

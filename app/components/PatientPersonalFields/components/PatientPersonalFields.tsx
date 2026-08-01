@@ -23,8 +23,6 @@ import { isValidDate } from "../../../utils/isValidDate";
 // Database
 import { updatePatientPersonal } from "../../../database/patient-personal/UpdatePatientPersonal";
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const PatientPersonalFields = ({
   patientPersonalFields,

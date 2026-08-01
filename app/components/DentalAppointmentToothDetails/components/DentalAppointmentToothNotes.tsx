@@ -17,10 +17,7 @@ import { usePopupMessage } from "../../../lib/PopupMessage";
 import { useSaveField } from "../../../lib/useSaveField";
 
 // Utils
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
-// Types
-import { actionData } from "../../../types/ActionResult";
 
 export const DentalAppointmentToothNotes = ({
   patientDentistryId,
@@ -49,22 +46,11 @@ export const DentalAppointmentToothNotes = ({
       if (patientDentistryToothId) {
         await save(() => updatePatientTooth({ patientDentistryToothId, field: "tooth_notes", value: notes, }));
       } else {
-        const codeToRun = async () => {
-          const insertedPatientTooth = actionData(await insertPatientTooth({
-            patientDentistryId,
-            toothName: selectedTooth,
-            toothNotes: notes,
-          }));
+        const insertedPatientTooth = await save(
+          () => insertPatientTooth({ patientDentistryId, toothName: selectedTooth, toothNotes: notes, })
+        );
 
-          if (setMessage && setMessageType) {
-            if (insertedPatientTooth) {
-              setMessage("Saved");
-              setMessageType("regular");
-            } else {
-              setMessage("Error to save. Please try again.");
-              setMessageType("error");
-            }
-          }
+
 
           setToothDetails((prevToothDetails: any) => ({
             ...prevToothDetails,
@@ -74,13 +60,6 @@ export const DentalAppointmentToothNotes = ({
                 insertedPatientTooth?.patientDentistryToothId,
             },
           }));
-        };
-
-        const runSuccess = await runWithRetries(codeToRun);
-        if (!runSuccess && setMessage && setMessageType) {
-          setMessage("Error to save. Please try again.");
-          setMessageType("error");
-        }
       }
     };
 
