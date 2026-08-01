@@ -9,10 +9,20 @@ import { AppUser, InsertAppUser } from "../../types/AppUser";
 // Auth
 import { getAuthenticatedUserId } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const insertAppUser = async ({
   userName,
   userEmail,
-}: InsertAppUser): Promise<AppUser | undefined> => {
+}: InsertAppUser): Promise<ActionResult<AppUser>> => {
   try {
     // Pre-creates a row for someone being invited to a project, so the caller
     // must at least be an established user themselves.
@@ -37,9 +47,10 @@ export const insertAppUser = async ({
       userEmail: row.user_email,
     }));
 
-    return users?.length > 0 ? users[0] : undefined;
+    return users.length > 0
+      ? actionOk(users[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

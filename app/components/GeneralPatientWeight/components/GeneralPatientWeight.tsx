@@ -22,6 +22,9 @@ import { runWithRetries } from "@/app/utils/runWithRetries";
 // Styles
 import styles from "../../../styles/fields.module.css";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const GeneralPatientWeight = ({
   patientGeneralId,
   patientWeight,
@@ -52,11 +55,11 @@ export const GeneralPatientWeight = ({
       );
 
       const codeToRun = async () => {
-        const updatedPatientGeneral = await updatePatientGeneral({
+        const updatedPatientGeneral = actionData(await updatePatientGeneral({
           patientGeneralId,
           field: "patient_weight",
           value,
-        });
+        }));
 
         if (setMessage && setMessageType) {
           if (updatedPatientGeneral) {

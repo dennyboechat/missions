@@ -18,6 +18,9 @@ import { useState } from "react";
 // Database
 import { deletePatientDentistry } from "../../../database/patient-dentistry/DeletePatientDentistry";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const DentalAppointmentContent = ({
   patientDentistry,
   setPatientDentistries,
@@ -29,7 +32,7 @@ export const DentalAppointmentContent = ({
   const onDeleteAppointment = async () => {
     setIsDeletingAppointment(true);
 
-    await deletePatientDentistry({ patientDentistryId });
+    actionData(await deletePatientDentistry({ patientDentistryId }));
 
     if (afterDeleteAppointment) {
       afterDeleteAppointment();

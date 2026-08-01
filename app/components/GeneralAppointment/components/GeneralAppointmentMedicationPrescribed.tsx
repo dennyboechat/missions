@@ -24,6 +24,9 @@ import { insertPatientGeneralMedication } from "../../../database/patient-genera
 import { updatePatientGeneralMedication } from "../../../database/patient-general-medication/UpdatePatientGeneralMedication";
 import { deletePatientGeneralMedication } from "../../../database/patient-general-medication/DeletePatientGeneralMedication";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const GeneralAppointmentMedicationPrescribed = ({
   patientGeneralId,
 }: {
@@ -35,9 +38,9 @@ export const GeneralAppointmentMedicationPrescribed = ({
   useEffect(() => {
     const updatePatientMedications = async () => {
       if (patientGeneralId) {
-        const generalMedications = await getPatientGeneralMedications({
+        const generalMedications = actionData(await getPatientGeneralMedications({
           patientGeneralId,
-        });
+        }));
 
         if (generalMedications) {
           const retrievedMedications: Medication[] = [];
@@ -85,12 +88,12 @@ export const GeneralAppointmentMedicationPrescribed = ({
       isOnline = navigator.onLine;
 
       if (isOnline) {
-        const insertedMedication = await insertPatientGeneralMedication({
+        const insertedMedication = actionData(await insertPatientGeneralMedication({
           patientGeneralId,
           medication: {
             drug,
           },
-        });
+        }));
 
         if (insertedMedication) {
           const lastIndex = updatedMedications.length - 1;
@@ -131,17 +134,17 @@ export const GeneralAppointmentMedicationPrescribed = ({
     field: "drug" | "dose" | "quantity" | "instructions_usage",
     value?: string | number
   ) => {
-    return await updatePatientGeneralMedication({
+    return actionData(await updatePatientGeneralMedication({
       patientGeneralPrescribedMedicationId: medicationUid,
       field,
       value,
-    });
+    }));
   };
 
   const deleteMedication = async (medicationUid: string) => {
-    return await deletePatientGeneralMedication({
+    return actionData(await deletePatientGeneralMedication({
       patientGeneralPrescribedMedicationId: medicationUid,
-    });
+    }));
   };
 
   return (

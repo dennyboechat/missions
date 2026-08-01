@@ -19,6 +19,9 @@ import { getAppUser } from "../database/app-user/GetAppUser";
 // Hook
 import { useUser } from "@clerk/nextjs";
 
+// Types
+import { actionData } from "../types/ActionResult";
+
 const defaultContextValue: AppUserContextType = {
   appUser: undefined,
   setAppUser: (appUser?: AppUser) => {},
@@ -34,10 +37,10 @@ export const AppUserProvider = ({ children }: { children: ReactNode }) => {
     const fetchUserData = async () => {
       if (user) {
         const { id: userId } = user;
-        const loggedUser = await getAppUser({
+        const loggedUser = actionData(await getAppUser({
           field: "user_third_party_id",
           value: userId,
-        });
+        }));
 
         if (loggedUser) {
           setAppUser(loggedUser);

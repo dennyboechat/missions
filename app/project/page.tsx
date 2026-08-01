@@ -22,6 +22,9 @@ import { getUserTimezone } from "../utils/getUserTimezone";
 // Styles
 import styles from "../styles/content.module.css";
 
+// Types
+import { actionData } from "../types/ActionResult";
+
 const ProjectNew = () => {
   const router = useRouter();
   const { appUser } = useAppUser();
@@ -59,15 +62,19 @@ const ProjectNew = () => {
     if (isValidProject && isValidProjectTimezone) {
       const { userId } = appUser;
 
-      const insertedProject = await insertProject({
+      const insertedProject = actionData(await insertProject({
         projectName: projectName,
         projectDescription: projectDescription,
         projectTimezone: projectTimezone,
         ownerId: userId,
-      });
+      }));
 
-      setProject(insertedProject);
-      router.push(`/project-patients/${insertedProject?.projectId}`);
+      if (insertedProject) {
+        setProject(insertedProject);
+        router.push(`/project-patients/${insertedProject.projectId}`);
+      } else {
+        setIsCreatingProject(false);
+      }
     } else {
       setIsCreatingProject(false);
     }

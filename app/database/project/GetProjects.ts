@@ -9,7 +9,17 @@ import { Project } from "../../types/ProjectTypes";
 // Auth
 import { getAuthenticatedUserIds } from "../auth/projectAccess";
 
-export const getProjects = async (): Promise<Project[] | undefined> => {
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
+export const getProjects = async (): Promise<ActionResult<Project[]>> => {
   try {
     // Always the caller's own projects; passing an id in would let anyone
     // enumerate another user's projects. Matched against every app_user row
@@ -48,9 +58,8 @@ export const getProjects = async (): Promise<Project[] | undefined> => {
       ownerId: row.owner_id,
     }));
 
-    return projects;
+    return actionOk(projects);
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

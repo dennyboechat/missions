@@ -17,6 +17,9 @@ import { updatePatientGeneral } from "../../../database/patient-general/UpdatePa
 // Utils
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const GeneralAppointmentClinicalNotes = ({
   patientGeneral,
   setPatientGeneral,
@@ -29,11 +32,11 @@ export const GeneralAppointmentClinicalNotes = ({
     const onChangeAppointmentNotes = async () => {
       if (appointmentNotes !== notes) {
         const codeToRun = async () => {
-          const updatedPatientGeneral = await updatePatientGeneral({
+          const updatedPatientGeneral = actionData(await updatePatientGeneral({
             patientGeneralId,
             field: "appointment_notes",
             value: notes,
-          });
+          }));
 
           if (updatedPatientGeneral) {
             setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>

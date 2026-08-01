@@ -17,6 +17,9 @@ import { DentalAppointmentMapProps } from "../types/DentalAppointmentMapProps";
 import { getPatientToothMap } from "../../../database/patient-tooth/GetPatientToothMap";
 import { ChildDentalMap } from "../../ui/DentalMap/components/ChildDentalMap";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const DentalAppointmentMap = ({
   patientDentistryId,
 }: DentalAppointmentMapProps) => {
@@ -27,7 +30,7 @@ export const DentalAppointmentMap = ({
   useEffect(() => {
     const fetchToothMap = async () => {
       if (patientDentistryId) {
-        const toothMap = await getPatientToothMap({ patientDentistryId });
+        const toothMap = actionData(await getPatientToothMap({ patientDentistryId }));
 
         if (toothMap) {
           const details: Record<Tooth, ToothDetails> = toothMap.reduce(

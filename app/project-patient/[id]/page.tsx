@@ -27,6 +27,9 @@ import { insertPatientPersonal } from "../../database/patient-personal/InsertPat
 import { isValidPatientFullName } from "../../utils/isValidPatientFullName";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
+// Types
+import { actionData } from "../../types/ActionResult";
+
 const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: projectId } = use(params);
   const router = useRouter();
@@ -68,13 +71,13 @@ const ProjectPatientNew = ({ params }: { params: Promise<{ id: string }> }) => {
 
     if (isValidFullName && isValidPatientGender && isValidDateOfBirth) {
       const codeToRun = async () => {
-        const insertedPatientPersonal = await insertPatientPersonal({
+        const insertedPatientPersonal = actionData(await insertPatientPersonal({
           projectId,
           patientFullName: patientFullName ?? "",
           isPatientMale: isPatientMale ?? true,
           patientDateOfBirth: patientDateOfBirth ?? new Date(),
           patientPhoneNumber,
-        });
+        }));
 
         if (setMessage && setMessageType) {
           if (insertedPatientPersonal) {

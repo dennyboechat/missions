@@ -23,6 +23,9 @@ import { insertAppUserWithThirdPartyId } from "../database/app-user/InsertAppUse
 import { updateAppUser } from "../database/app-user/UpdateAppUser";
 import { getAppUser } from "../database/app-user/GetAppUser";
 
+// Types
+import { actionData } from "../types/ActionResult";
+
 const DashboardPage = () => {
   const { user } = useUser();
   const [projects, setProjects] = useState<Project[]>([]);
@@ -31,14 +34,14 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchProjects = async (loggedUser?: AppUser) => {
       if (!loggedUser && user) {
-        loggedUser = await getAppUser({
+        loggedUser = actionData(await getAppUser({
           field: "user_third_party_id",
           value: user.id,
-        });
+        }));
       }
 
       if (loggedUser) {
-        const projectsData = await getProjects();
+        const projectsData = actionData(await getProjects());
         setProjects(projectsData ?? []);
       }
     };
@@ -63,18 +66,18 @@ const DashboardPage = () => {
 
         if (timeDifference < fiveMinutesInMilli) {
           try {
-            const addedUser = await insertAppUserWithThirdPartyId({
+            const addedUser = actionData(await insertAppUserWithThirdPartyId({
               userName: fullName ?? "",
-            });
+            }));
 
             loggedUser = addedUser;
 
             if (!addedUser) {
-              const changedUser = await updateAppUser({
+              const changedUser = actionData(await updateAppUser({
                 userEmail: emailAddress,
                 field: "user_third_party_id",
                 value: userThirdPartyId,
-              });
+              }));
 
               loggedUser = changedUser;
             }

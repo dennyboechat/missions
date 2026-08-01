@@ -17,6 +17,9 @@ import { updatePatientDentistry } from "../../../database/patient-dentistry/Upda
 // Utils
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const DentalAppointmentClinicalNotes = ({
   patientDentistry,
   setPatientDentistries,
@@ -29,11 +32,11 @@ export const DentalAppointmentClinicalNotes = ({
     const onChangeAppointmentNotes = async () => {
       if (appointmentNotes !== notes) {
         const codeToRun = async () => {
-          const updatedPatientDentistry = await updatePatientDentistry({
+          const updatedPatientDentistry = actionData(await updatePatientDentistry({
             patientDentistryId,
             field: "appointment_notes",
             value: notes,
-          });
+          }));
 
           if (updatedPatientDentistry) {
             setPatientDentistries(

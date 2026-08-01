@@ -6,6 +6,16 @@ import { sql } from "@vercel/postgres";
 // Types
 import { User } from "../../types/UserTypes";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 // Auth
 import {
   getClerkUserId,
@@ -16,7 +26,7 @@ export const insertAppUserWithThirdPartyId = async ({
   userName,
 }: {
   userName: string;
-}): Promise<User | undefined> => {
+}): Promise<ActionResult<User>> => {
   try {
     // Identity comes from the session, not the request, so a caller cannot
     // register a row under someone else's Clerk id or email address.
@@ -47,9 +57,10 @@ export const insertAppUserWithThirdPartyId = async ({
       userEmail: row.user_email,
     }));
 
-    return users?.length > 0 ? users[0] : undefined;
+    return users.length > 0
+      ? actionOk(users[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

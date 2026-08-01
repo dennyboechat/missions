@@ -30,6 +30,9 @@ import { isValidEmail } from "../../../utils/isValidEmail";
 import { isValidProjectUserName } from "../utils/isValidProjectUserName";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const ProjectUser = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const { project } = useProject();
@@ -64,19 +67,19 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
     setIsProjectUserEmailInvalid(!isValidUserEmail);
 
     if (isValidUserName && isValidUserEmail) {
-      const newUser = await insertAppUser({
+      const newUser = actionData(await insertAppUser({
         userName,
         userEmail,
-      });
+      }));
 
       let newUserId;
       if (newUser) {
         newUserId = newUser.userId;
       } else {
-        const existingAppUser = await getAppUser({
+        const existingAppUser = actionData(await getAppUser({
           field: "user_email",
           value: userEmail,
-        });
+        }));
         newUserId = existingAppUser?.userId;
       }
 
@@ -86,10 +89,10 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
       }
 
       const codeToRun = async () => {
-        const insertedProjectUser = await insertProjectUser({
+        const insertedProjectUser = actionData(await insertProjectUser({
           projectId: params.id,
           userId: newUserId,
-        });
+        }));
 
         if (setMessage && setMessageType) {
           if (insertedProjectUser) {

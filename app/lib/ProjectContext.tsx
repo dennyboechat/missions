@@ -10,6 +10,9 @@ import { ProjectContextType } from "./types/ProjectContextType";
 // Database
 import { getProject } from "../database/project/GetProject";
 
+// Types
+import { actionData } from "../types/ActionResult";
+
 const STORAGE_KEY = "projectId";
 
 const ProjectContext = createContext<ProjectContextType>({
@@ -44,7 +47,7 @@ export const ProjectProvider = ({
         return;
       }
 
-      const loadedProject = await getProject({ projectId });
+      const loadedProject = actionData(await getProject({ projectId }));
 
       // A late response for a project the user has since navigated away from
       // must not overwrite the current one.

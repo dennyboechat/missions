@@ -10,11 +10,21 @@ import { PatientPersonalSummary } from "../../types/PatientPersonalSummary";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const getPatientSummary = async ({
   patientPersonalId,
 }: {
   patientPersonalId: PatientPersonalId;
-}): Promise<PatientPersonalSummary | undefined> => {
+}): Promise<ActionResult<PatientPersonalSummary>> => {
   try {
     await assertProjectAccess({ patientPersonalId });
 
@@ -45,11 +55,10 @@ export const getPatientSummary = async ({
       })
     );
 
-    return patientPersonalSummary && patientPersonalSummary.length > 0
-      ? patientPersonalSummary[0]
-      : undefined;
+    return patientPersonalSummary.length > 0
+      ? actionOk(patientPersonalSummary[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

@@ -28,6 +28,9 @@ import { faTooth } from "@fortawesome/free-solid-svg-icons";
 import { getDentalAppointmentsSummary } from "../utils/getDentalAppointmentsSummary";
 import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const DentistrySummary = ({
   patientPersonalId,
 }: {
@@ -39,9 +42,9 @@ export const DentistrySummary = ({
   useEffect(() => {
     const fetchProject = async () => {
       if (patientPersonalId) {
-        const patientDentalSummaryData = await getPatientDentalSummary({
+        const patientDentalSummaryData = actionData(await getPatientDentalSummary({
           patientPersonalId,
-        });
+        }));
 
         setPatientDentalSummary(patientDentalSummaryData);
       }

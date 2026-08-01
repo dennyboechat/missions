@@ -21,6 +21,9 @@ import { runWithRetries } from "@/app/utils/runWithRetries";
 // Styles
 import styles from "../styles/GeneralAppointmentReferral.module.css";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const GeneralAppointmentReferral = ({
   patientGeneral,
   setPatientGeneral,
@@ -34,11 +37,11 @@ export const GeneralAppointmentReferral = ({
     const onChangeAppointmentReferral = async () => {
       if (appointmentReferral !== referral) {
         const codeToRun = async () => {
-          const updatedPatientGeneral = await updatePatientGeneral({
+          const updatedPatientGeneral = actionData(await updatePatientGeneral({
             patientGeneralId,
             field: "appointment_referral",
             value: referral,
-          });
+          }));
 
           if (updatedPatientGeneral) {
             setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>
@@ -77,11 +80,11 @@ export const GeneralAppointmentReferral = ({
 
       if (appointmentHasReferral !== hasReferral) {
         const codeToRun = async () => {
-          const updatedPatientGeneral = await updatePatientGeneral({
+          const updatedPatientGeneral = actionData(await updatePatientGeneral({
             patientGeneralId,
             field: "appointment_has_referral",
             value: hasReferral,
-          });
+          }));
 
           if (updatedPatientGeneral) {
             setPatientGeneral((prevState: PatientGeneralTypes[] | undefined) =>

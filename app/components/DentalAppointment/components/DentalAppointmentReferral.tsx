@@ -21,6 +21,9 @@ import { runWithRetries } from "@/app/utils/runWithRetries";
 // Styles
 import styles from "../styles/DentalAppointmentReferral.module.css";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const DentalAppointmentReferral = ({
   patientDentistry,
   setPatientDentistries,
@@ -36,11 +39,11 @@ export const DentalAppointmentReferral = ({
     const onChangeAppointmentReferral = async () => {
       if (appointmentReferral !== referral) {
         const codeToRun = async () => {
-          const updatedPatientDentistry = await updatePatientDentistry({
+          const updatedPatientDentistry = actionData(await updatePatientDentistry({
             patientDentistryId,
             field: "appointment_referral",
             value: referral,
-          });
+          }));
 
           if (updatedPatientDentistry) {
             setPatientDentistries(
@@ -81,11 +84,11 @@ export const DentalAppointmentReferral = ({
 
       if (appointmentHasReferral !== hasReferral) {
         const codeToRun = async () => {
-          const updatedPatientDentistry = await updatePatientDentistry({
+          const updatedPatientDentistry = actionData(await updatePatientDentistry({
             patientDentistryId,
             field: "appointment_has_referral",
             value: hasReferral,
-          });
+          }));
 
           if (updatedPatientDentistry) {
             setPatientDentistries(

@@ -35,6 +35,9 @@ import { useProject } from "../../lib/ProjectContext";
 // Styles
 import styles from "../../styles/content.module.css";
 
+// Types
+import { actionData } from "../../types/ActionResult";
+
 const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: projectId } = use(params);
   const router = useRouter();
@@ -51,7 +54,7 @@ const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
   useEffect(() => {
     const fetchProject = async () => {
       if (projectId) {
-        const projectData = await getProject({ projectId });
+        const projectData = actionData(await getProject({ projectId }));
         setProjectName(projectData?.projectName ?? "");
         setProjectDescription(projectData?.projectDescription ?? "");
         setProjectTimezone(projectData?.projectTimezone ?? "UTC");
@@ -63,7 +66,7 @@ const ProjectId = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const onDeleteProject = async () => {
     setIsDeletingProject(true);
-    await deleteProject({ projectId });
+    actionData(await deleteProject({ projectId }));
     router.push("/dashboard");
   };
 

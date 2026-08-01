@@ -28,6 +28,9 @@ import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../utils/getSideMenuSubHeaderFooter";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
+// Types
+import { actionData } from "../../types/ActionResult";
+
 const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: patientPersonalId } = use(params);
   const router = useRouter();
@@ -40,9 +43,9 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
   useEffect(() => {
     const fetchPatientDentistry = async () => {
       if (patientPersonalId) {
-        const patientDentistryData = await getPatientDentistries({
+        const patientDentistryData = actionData(await getPatientDentistries({
           patientPersonalId: patientPersonalId,
-        });
+        }));
         setPatientDentistries(patientDentistryData);
 
         if (patientDentistryData) {
@@ -74,9 +77,9 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
   });
 
   const updateAppointments = async () => {
-    const patientDentistriesData = await getPatientDentistries({
+    const patientDentistriesData = actionData(await getPatientDentistries({
       patientPersonalId: patientPersonalId,
-    });
+    }));
 
     setPatientDentistries(patientDentistriesData);
 
@@ -85,9 +88,9 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const onCreateAppointment = async () => {
     const codeToRun = async () => {
-      const patientDentistryData = await insertPatientDentistry({
+      const patientDentistryData = actionData(await insertPatientDentistry({
         patientPersonalId: patientPersonalId,
-      });
+      }));
 
       if (patientDentistryData) {
         const newLastestAppointment = {

@@ -37,6 +37,9 @@ import { ProjectReportsAppointmentTypes } from "../../../types/ProjectReportsApp
 import { getProjectReportsAllData } from "@/app/database/project-reports/GetProjectReportsAllData";
 import { exportToCsv } from "../../../utils/exportToCsv";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
   const currentDate = getCurrentDateTime();
@@ -69,7 +72,7 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     const applyProjectDates = async () => {
-      const timeZone = await getProjectTimezone({ projectId });
+      const timeZone = actionData(await getProjectTimezone({ projectId }));
 
       if (!timeZone || hasAppliedProjectDates.current) {
         return;
@@ -99,19 +102,19 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     setIsEndDateInvalid(!isEndValid);
 
     if (isStartValid && isEndValid) {
-      const projectReportsMedication = await getProjectReportsMedication({
+      const projectReportsMedication = actionData(await getProjectReportsMedication({
         projectId,
         startDate,
         endDate,
-      });
+      }));
 
       setMedications(projectReportsMedication);
 
-      const projectReportsAppointment = await getProjectReportsAppointment({
+      const projectReportsAppointment = actionData(await getProjectReportsAppointment({
         projectId,
         startDate,
         endDate,
-      });
+      }));
 
       setAppointments(projectReportsAppointment);
     }
@@ -128,11 +131,11 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     setIsEndDateInvalid(!isEndValid);
 
     if (isStartValid && isEndValid) {
-      const allData = await getProjectReportsAllData({
+      const allData = actionData(await getProjectReportsAllData({
         projectId,
         startDate,
         endDate,
-      });
+      }));
 
       if (allData && allData.length > 0) {
         exportToCsv({

@@ -9,10 +9,20 @@ import { ProjectUser, UpdateProjectUser } from "../../types/ProjectUserTypes";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const updateProjectUser = async ({
   projectUserId,
   isUserActive,
-}: UpdateProjectUser): Promise<ProjectUser | undefined> => {
+}: UpdateProjectUser): Promise<ActionResult<ProjectUser>> => {
   try {
     await assertProjectAccess({ projectUserId }, { ownerOnly: true });
 
@@ -38,9 +48,10 @@ export const updateProjectUser = async ({
       isUserActive: row.is_user_active,
     }));
 
-    return projectUsers?.length > 0 ? projectUsers[0] : undefined;
+    return projectUsers.length > 0
+      ? actionOk(projectUsers[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

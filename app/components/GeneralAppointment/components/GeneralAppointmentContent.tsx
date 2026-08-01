@@ -30,6 +30,9 @@ import { deletePatientGeneral } from "../../../database/patient-general/DeletePa
 // Styles
 import styles from "../styles/GeneralAppointment.module.css";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const GeneralAppointmentContent = ({
   patientGeneral,
   setPatientGeneral,
@@ -55,7 +58,7 @@ export const GeneralAppointmentContent = ({
   const onDeleteAppointment = async () => {
     setIsDeletingAppointment(true);
 
-    await deletePatientGeneral({ patientGeneralId });
+    actionData(await deletePatientGeneral({ patientGeneralId }));
 
     if (afterDeleteAppointment) {
       afterDeleteAppointment();

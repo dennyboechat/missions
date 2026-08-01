@@ -26,11 +26,10 @@ import {
   getCountryTimezoneOptions,
   findTimezoneOption,
 } from "../../../utils/getCountryTimezoneOptions";
-import { runWithRetries } from "@/app/utils/runWithRetries";
 
 // Hooks
 import { useState, useMemo, useEffect } from "react";
-import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useSaveField } from "../../../lib/useSaveField";
 import { useProject } from "../../../lib/ProjectContext";
 
 export const ProjectFields = ({
@@ -46,7 +45,7 @@ export const ProjectFields = ({
   isProjectTimezoneInvalid,
 }: ProjectFieldsProps) => {
   const { setProject } = useProject();
-  const { setMessage, setMessageType } = usePopupMessage();
+  const { save } = useSaveField();
   const [isNameInvalid, setIsNameInvalid] = useState(isProjectNameInvalid);
 
   const countries = useMemo(() => getCountries(), []);
@@ -107,32 +106,12 @@ export const ProjectFields = ({
     setIsNameInvalid(!isValidName);
 
     if (isValidName && projectId && projectName !== newValue) {
-      const codeToRun = async () => {
-        const updatedProject = await updateProject({
-          projectId,
-          field: "project_name",
-          value: newValue,
-        });
+      const updatedProject = await save(() =>
+        updateProject({ projectId, field: "project_name", value: newValue })
+      );
 
-        if (setProject) {
-          setProject(updatedProject);
-        }
-
-        if (setMessage && setMessageType) {
-          if (updatedProject) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
+      if (updatedProject && setProject) {
+        setProject(updatedProject);
       }
     }
   };
@@ -145,29 +124,13 @@ export const ProjectFields = ({
     }
 
     if (projectId && projectDescription !== e.target.value) {
-      const codeToRun = async () => {
-        const updatedProject = await updateProject({
+      await save(() =>
+        updateProject({
           projectId,
           field: "project_description",
           value: e.target.value,
-        });
-
-        if (setMessage && setMessageType) {
-          if (updatedProject) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
-      }
+        })
+      );
     }
   };
 
@@ -179,32 +142,16 @@ export const ProjectFields = ({
     onProjectTimezoneChange(newValue);
 
     if (projectId && projectTimezone !== newValue) {
-      const codeToRun = async () => {
-        const updatedProject = await updateProject({
+      const updatedProject = await save(() =>
+        updateProject({
           projectId,
           field: "project_timezone",
           value: newValue,
-        });
+        })
+      );
 
-        if (setProject) {
-          setProject(updatedProject);
-        }
-
-        if (setMessage && setMessageType) {
-          if (updatedProject) {
-            setMessage("Saved");
-            setMessageType("regular");
-          } else {
-            setMessage("Error to save. Please try again.");
-            setMessageType("error");
-          }
-        }
-      };
-
-      const runSuccess = await runWithRetries(codeToRun);
-      if (!runSuccess && setMessage && setMessageType) {
-        setMessage("Error to save. Please try again.");
-        setMessageType("error");
+      if (updatedProject && setProject) {
+        setProject(updatedProject);
       }
     }
   };

@@ -13,11 +13,21 @@ import { getCurrentDateTime } from "@/app/utils/getCurrentDateTime";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const insertPatientDentistry = async ({
   patientPersonalId,
 }: {
   patientPersonalId: PatientPersonalId;
-}): Promise<PatientDental | undefined> => {
+}): Promise<ActionResult<PatientDental>> => {
   try {
     await assertProjectAccess({ patientPersonalId });
 
@@ -67,11 +77,10 @@ export const insertPatientDentistry = async ({
       appointmentDate: row.appointment_date,
     }));
 
-    return patientDentistries && patientDentistries.length > 0
-      ? patientDentistries[0]
-      : undefined;
+    return patientDentistries.length > 0
+      ? actionOk(patientDentistries[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

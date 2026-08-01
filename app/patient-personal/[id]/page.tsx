@@ -26,6 +26,9 @@ import { PatientPersonalFieldsTypes } from "../../components/PatientPersonalFiel
 import { getSideMenuSubHeader } from "../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../utils/getSideMenuSubHeaderFooter";
 
+// Types
+import { actionData } from "../../types/ActionResult";
+
 const PatientPersonal = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: patientPersonalId } = use(params);
   const router = useRouter();
@@ -42,9 +45,9 @@ const PatientPersonal = ({ params }: { params: Promise<{ id: string }> }) => {
   useEffect(() => {
     const fetchPatientPersonal = async () => {
       if (patientPersonalId) {
-        const patientPersonalData = await getPatientPersonal({
+        const patientPersonalData = actionData(await getPatientPersonal({
           patientPersonalId: patientPersonalId,
-        });
+        }));
 
         if (patientPersonalData) {
           setPatientPersonalFields(patientPersonalData);
@@ -80,7 +83,7 @@ const PatientPersonal = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const onDeletePatient = async () => {
     setIsDeletingPatient(true);
-    await deletePatientPersonal({ patientPersonalId });
+    actionData(await deletePatientPersonal({ patientPersonalId }));
     router.push(`/project-patients/${patientPersonalFields.projectId}`);
   };
 

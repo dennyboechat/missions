@@ -10,6 +10,16 @@ import { UpdatePatientDentistryMedication } from "../../types/DentistryPrescribe
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 
 // `field` is interpolated into the statement, so it has to come from a fixed set.
 const UPDATABLE_FIELDS = [
@@ -23,9 +33,7 @@ export const updatePatientDentistryMedication = async ({
   patientDentistryPrescribedMedicationId,
   field,
   value,
-}: UpdatePatientDentistryMedication): Promise<
-  DentistryPrescribedMedication | undefined
-> => {
+}: UpdatePatientDentistryMedication): Promise<ActionResult<DentistryPrescribedMedication>> => {
   try {
     await assertProjectAccess({ patientDentistryPrescribedMedicationId });
 
@@ -62,12 +70,10 @@ export const updatePatientDentistryMedication = async ({
         instructions: row.instructions_usage,
       }));
 
-    return dentistryPrescribedMedications &&
-      dentistryPrescribedMedications.length > 0
-      ? dentistryPrescribedMedications[0]
-      : undefined;
+    return dentistryPrescribedMedications.length > 0
+      ? actionOk(dentistryPrescribedMedications[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

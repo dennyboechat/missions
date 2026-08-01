@@ -28,6 +28,9 @@ import { getLocaleFormattedDate } from "../../utils/getLocaleFormattedDate";
 import { getGenderLabel } from "../../utils/getGenderLabel";
 import { getAge } from "../../utils/getAge";
 
+// Types
+import { actionData } from "../../types/ActionResult";
+
 const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: projectId } = use(params);
   const router = useRouter();
@@ -41,9 +44,9 @@ const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
     const fetchProjects = async () => {
       if (project) {
         const { projectId } = project;
-        const projectPersonalsData = await getPatientPersonals({
+        const projectPersonalsData = actionData(await getPatientPersonals({
           projectId: projectId,
-        });
+        }));
         setPatientPersonals(projectPersonalsData ?? []);
       }
     };

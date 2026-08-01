@@ -10,6 +10,16 @@ import { ProjectId } from "../../types/ProjectTypes";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const getProjectReportsMedication = async ({
   projectId,
   startDate,
@@ -18,7 +28,7 @@ export const getProjectReportsMedication = async ({
   projectId: ProjectId;
   startDate?: string;
   endDate?: string;
-}): Promise<ProjectReportsMedicationTypes[] | undefined> => {
+}): Promise<ActionResult<ProjectReportsMedicationTypes[]>> => {
   try {
     await assertProjectAccess({ projectId });
 
@@ -74,9 +84,8 @@ export const getProjectReportsMedication = async ({
       quantity: row.quantity,
     }));
 
-    return projectReports;
+    return actionOk(projectReports);
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

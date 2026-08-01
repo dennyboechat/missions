@@ -18,6 +18,9 @@ import { usePopupMessage } from "../../../lib/PopupMessage";
 // Utils
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const DentalAppointmentToothNotes = ({
   patientDentistryId,
   selectedTooth,
@@ -43,11 +46,11 @@ export const DentalAppointmentToothNotes = ({
 
       if (patientDentistryToothId) {
         const codeToRun = async () => {
-          const updatedPatientTooth = await updatePatientTooth({
+          const updatedPatientTooth = actionData(await updatePatientTooth({
             patientDentistryToothId,
             field: "tooth_notes",
             value: notes,
-          });
+          }));
 
           if (setMessage && setMessageType) {
             if (updatedPatientTooth) {
@@ -67,11 +70,11 @@ export const DentalAppointmentToothNotes = ({
         }
       } else {
         const codeToRun = async () => {
-          const insertedPatientTooth = await insertPatientTooth({
+          const insertedPatientTooth = actionData(await insertPatientTooth({
             patientDentistryId,
             toothName: selectedTooth,
             toothNotes: notes,
-          });
+          }));
 
           if (setMessage && setMessageType) {
             if (insertedPatientTooth) {

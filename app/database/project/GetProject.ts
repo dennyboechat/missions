@@ -9,11 +9,21 @@ import { Project, ProjectId } from "../../types/ProjectTypes";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const getProject = async ({
   projectId,
 }: {
   projectId: ProjectId;
-}): Promise<Project | undefined> => {
+}): Promise<ActionResult<Project>> => {
   try {
     await assertProjectAccess({ projectId });
 
@@ -40,9 +50,10 @@ export const getProject = async ({
       ownerId: row.owner_id,
     }));
 
-    return projects && projects.length > 0 ? projects[0] : undefined;
+    return projects.length > 0
+      ? actionOk(projects[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

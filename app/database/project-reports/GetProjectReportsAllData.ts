@@ -10,6 +10,16 @@ import { ProjectReportsAllData } from "@/app/types/ProjectReportsAllData";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const getProjectReportsAllData = async ({
   projectId,
   startDate,
@@ -18,7 +28,7 @@ export const getProjectReportsAllData = async ({
   projectId: ProjectId;
   startDate?: string;
   endDate?: string;
-}): Promise<ProjectReportsAllData[] | undefined> => {
+}): Promise<ActionResult<ProjectReportsAllData[]>> => {
   try {
     await assertProjectAccess({ projectId });
 
@@ -150,9 +160,8 @@ ORDER BY
       })
     );
 
-    return allData;
+    return actionOk(allData);
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

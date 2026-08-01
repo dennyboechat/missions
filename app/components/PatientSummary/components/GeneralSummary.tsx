@@ -27,6 +27,9 @@ import { faNotesMedical } from "@fortawesome/free-solid-svg-icons";
 import { getGeneralAppointmentsSummary } from "../utils/getGeneralAppointmentsSummary";
 import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const GeneralSummary = ({
   patientPersonalId,
 }: {
@@ -38,9 +41,9 @@ export const GeneralSummary = ({
   useEffect(() => {
     const fetchProject = async () => {
       if (patientPersonalId) {
-        const patientGeneralSummaryData = await getPatientGeneralSummary({
+        const patientGeneralSummaryData = actionData(await getPatientGeneralSummary({
           patientPersonalId,
-        });
+        }));
 
         setPatientGeneralSummary(patientGeneralSummaryData);
       }

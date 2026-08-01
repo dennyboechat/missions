@@ -6,6 +6,16 @@ import { sql } from "@vercel/postgres";
 // Types
 import { User } from "../../types/UserTypes";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 // Auth
 import {
   getClerkPrimaryEmail,
@@ -24,7 +34,7 @@ export const updateAppUser = async ({
   userEmail: string;
   field: string;
   value: string | number | boolean;
-}): Promise<User | undefined> => {
+}): Promise<ActionResult<User>> => {
   try {
     if (!UPDATABLE_FIELDS.includes(field)) {
       throw new AccessDeniedError(`Field not updatable: ${field}`);
@@ -64,9 +74,10 @@ export const updateAppUser = async ({
       userEmail: row.user_email,
     }));
 
-    return users?.length > 0 ? users[0] : undefined;
+    return users.length > 0
+      ? actionOk(users[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

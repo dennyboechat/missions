@@ -26,6 +26,9 @@ import { PatientPersonalSummary } from "../../../types/PatientPersonalSummary";
 import { getSideMenuSubHeader } from "../../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../../utils/getSideMenuSubHeaderFooter";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const PatientSummary = ({ params }: { params: { id: string } }) => {
   const [patientPersonalSummary, setPatientPersonalSummary] =
     useState<PatientPersonalSummary>();
@@ -35,9 +38,9 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchPatientSummary = async () => {
       if (patientPersonalId) {
-        const patientPersonalSummaryData = await getPatientSummary({
+        const patientPersonalSummaryData = actionData(await getPatientSummary({
           patientPersonalId,
-        });
+        }));
 
         setPatientPersonalSummary(patientPersonalSummaryData);
       }

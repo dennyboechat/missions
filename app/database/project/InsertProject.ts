@@ -12,11 +12,21 @@ import { isValidTimezone } from "../../utils/isValidTimezone";
 // Auth
 import { getAuthenticatedUserId } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const insertProject = async ({
   projectName,
   projectDescription,
   projectTimezone,
-}: NewProject): Promise<Project | undefined> => {
+}: NewProject): Promise<ActionResult<Project>> => {
   try {
     // The owner is taken from the session, never from the request: a caller
     // could otherwise create a project owned by somebody else.
@@ -46,9 +56,10 @@ export const insertProject = async ({
       ownerId: row.owner_id,
     }));
 
-    return projects?.length > 0 ? projects[0] : undefined;
+    return projects.length > 0
+      ? actionOk(projects[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

@@ -23,6 +23,9 @@ import { runWithRetries } from "@/app/utils/runWithRetries";
 // Styles
 import styles from "../../../styles/fields.module.css";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const GeneralPatientBloodPressure = ({
   patientGeneralId,
   patientBloodPressureSystolic,
@@ -53,11 +56,11 @@ export const GeneralPatientBloodPressure = ({
 
     if (isSystolicValid) {
       const codeToRun = async () => {
-        const updatedPatientGeneral = await updatePatientGeneral({
+        const updatedPatientGeneral = actionData(await updatePatientGeneral({
           patientGeneralId,
           field: "patient_blood_pressure_systolic",
           value,
-        });
+        }));
 
         if (setMessage && setMessageType) {
           if (updatedPatientGeneral) {
@@ -96,11 +99,11 @@ export const GeneralPatientBloodPressure = ({
     setIsBloodPressureDiastolicInvalid(!isDiastolicValid);
 
     if (isDiastolicValid) {
-      const updatedPatientGeneral = await updatePatientGeneral({
+      const updatedPatientGeneral = actionData(await updatePatientGeneral({
         patientGeneralId,
         field: "patient_blood_pressure_diastolic",
         value,
-      });
+      }));
 
       if (setMessage && setMessageType) {
         if (updatedPatientGeneral) {

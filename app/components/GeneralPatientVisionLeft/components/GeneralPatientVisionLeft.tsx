@@ -23,6 +23,9 @@ import { runWithRetries } from "@/app/utils/runWithRetries";
 // Styles
 import styles from "../../../styles/fields.module.css";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const GeneralPatientVisionLeft = ({
   patientGeneralId,
   patientVisionLeftNormalDistance,
@@ -57,11 +60,11 @@ export const GeneralPatientVisionLeft = ({
 
     if (isNormalDistanceValid) {
       const codeToRun = async () => {
-        const updatedPatientGeneral = await updatePatientGeneral({
+        const updatedPatientGeneral = actionData(await updatePatientGeneral({
           patientGeneralId,
           field: "patient_vision_left_normal_distance",
           value,
-        });
+        }));
 
         if (setMessage && setMessageType) {
           if (updatedPatientGeneral) {
@@ -101,11 +104,11 @@ export const GeneralPatientVisionLeft = ({
 
     if (isTestedDistanceValid) {
       const codeToRun = async () => {
-        const updatedPatientGeneral = await updatePatientGeneral({
+        const updatedPatientGeneral = actionData(await updatePatientGeneral({
           patientGeneralId,
           field: "patient_vision_left_tested_distance",
           value,
-        });
+        }));
 
         if (setMessage && setMessageType) {
           if (updatedPatientGeneral) {

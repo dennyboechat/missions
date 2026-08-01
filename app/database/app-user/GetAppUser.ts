@@ -9,6 +9,16 @@ import { AppUser } from "../../types/AppUser";
 // Auth
 import { getClerkUserId, AccessDeniedError } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 // `field` is interpolated into the statement, so it has to come from a fixed
 // set. Lookup by email stays available because adding a collaborator to a
 // project needs it; it is gated on being signed in.
@@ -20,7 +30,7 @@ export const getAppUser = async ({
 }: {
   field: string;
   value: string | number | boolean;
-}): Promise<AppUser | undefined> => {
+}): Promise<ActionResult<AppUser>> => {
   try {
     if (!SEARCHABLE_FIELDS.includes(field)) {
       throw new AccessDeniedError(`Field not searchable: ${field}`);
@@ -51,9 +61,10 @@ export const getAppUser = async ({
       userEmail: row.user_email,
     }));
 
-    return users?.length > 0 ? users[0] : undefined;
+    return users.length > 0
+      ? actionOk(users[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

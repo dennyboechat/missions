@@ -28,6 +28,9 @@ import { ProjectUserId } from "../../types/ProjectUserTypes";
 import { getFilteredProjectUsers } from "../../utils/getFilteredProjectUsers";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
+// Types
+import { actionData } from "../../types/ActionResult";
+
 const ProjectUsers = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: projectId } = use(params);
   const router = useRouter();
@@ -42,9 +45,9 @@ const ProjectUsers = ({ params }: { params: Promise<{ id: string }> }) => {
   useEffect(() => {
     const fetchProjects = async () => {
       if (project) {
-        const projectUsersData = await getProjectUsers({
+        const projectUsersData = actionData(await getProjectUsers({
           projectId: project.projectId,
-        });
+        }));
         setProjectUsers(projectUsersData ?? []);
       }
     };
@@ -61,10 +64,10 @@ const ProjectUsers = ({ params }: { params: Promise<{ id: string }> }) => {
   }) => {
     if (project) {
       const codeToRun = async () => {
-        const updatedProjectUser = await updateProjectUser({
+        const updatedProjectUser = actionData(await updateProjectUser({
           projectUserId,
           isUserActive: isUserActive,
-        });
+        }));
 
         if (setMessage && setMessageType) {
           if (updatedProjectUser) {

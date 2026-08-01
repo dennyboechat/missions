@@ -9,6 +9,16 @@ import { PatientGeneralPrescribedMedicationId } from "../../types/GeneralPrescri
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const deletePatientGeneralMedication = async ({
   patientGeneralPrescribedMedicationId,
 }: {
@@ -26,9 +36,8 @@ export const deletePatientGeneralMedication = async ({
 
     await sql.query(query, [patientGeneralPrescribedMedicationId]);
 
-    return 'deleted';
+    return actionOk('deleted');
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

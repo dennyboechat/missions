@@ -13,13 +13,23 @@ import { PatientDentistryId } from "../../types/PatientDentistryTypes";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const insertPatientDentistryMedication = async ({
   patientDentistryId,
   medication,
 }: {
   patientDentistryId: PatientDentistryId;
   medication: InsertPatientDentistryMedication;
-}): Promise<DentistryPrescribedMedication | undefined> => {
+}): Promise<ActionResult<DentistryPrescribedMedication>> => {
   try {
     await assertProjectAccess({ patientDentistryId });
 
@@ -53,12 +63,10 @@ export const insertPatientDentistryMedication = async ({
         instructions: row.instructions_usage,
       }));
 
-    return dentistryPrescribedMedications &&
-      dentistryPrescribedMedications.length > 0
-      ? dentistryPrescribedMedications[0]
-      : undefined;
+    return dentistryPrescribedMedications.length > 0
+      ? actionOk(dentistryPrescribedMedications[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

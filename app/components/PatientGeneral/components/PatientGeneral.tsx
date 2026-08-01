@@ -27,6 +27,9 @@ import { getSideMenuSubHeader } from "../../../utils/getSideMenuSubHeader";
 import { getSideMenuSubHeaderFooter } from "../../../utils/getSideMenuSubHeaderFooter";
 import { runWithRetries } from "@/app/utils/runWithRetries";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const PatientGeneral = ({ params }: { params: { id: string } }) => {
   const { setMessage, setMessageType } = usePopupMessage();
   const [patientGeneral, setPatientGeneral] = useState<PatientGeneralTypes[]>();
@@ -38,9 +41,9 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchPatientGeneral = async () => {
       if (patientPersonalId) {
-        const patientGeneralData = await getPatientGeneral({
+        const patientGeneralData = actionData(await getPatientGeneral({
           patientPersonalId: patientPersonalId,
-        });
+        }));
         setPatientGeneral(patientGeneralData);
 
         if (patientGeneralData) {
@@ -72,9 +75,9 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
   });
 
   const updateAppointments = async () => {
-    const patientDentistriesData = await getPatientGeneral({
+    const patientDentistriesData = actionData(await getPatientGeneral({
       patientPersonalId: patientPersonalId,
-    });
+    }));
 
     setPatientGeneral(patientDentistriesData);
 
@@ -83,9 +86,9 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
 
   const onCreateAppointment = async () => {
     const codeToRun = async () => {
-      const patientGeneralData = await insertPatientGeneral({
+      const patientGeneralData = actionData(await insertPatientGeneral({
         patientPersonalId: patientPersonalId,
-      });
+      }));
 
       if (patientGeneralData) {
         const newLastestAppointment = {

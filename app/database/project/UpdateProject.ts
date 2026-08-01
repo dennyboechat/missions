@@ -12,6 +12,16 @@ import { isValidTimezone } from "../../utils/isValidTimezone";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 // `field` is interpolated into the statement, so it has to come from a fixed set.
 const UPDATABLE_FIELDS = [
   "project_name",
@@ -23,7 +33,7 @@ export const updateProject = async ({
   projectId,
   field,
   value,
-}: UpdateProject): Promise<Project | undefined> => {
+}: UpdateProject): Promise<ActionResult<Project>> => {
   try {
     await assertProjectAccess({ projectId }, { ownerOnly: true });
 
@@ -62,9 +72,10 @@ export const updateProject = async ({
       ownerId: row.owner_id,
     }));
 
-    return projects?.length > 0 ? projects[0] : undefined;
+    return projects.length > 0
+      ? actionOk(projects[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

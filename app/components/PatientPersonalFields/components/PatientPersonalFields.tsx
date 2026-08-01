@@ -24,6 +24,9 @@ import { runWithRetries } from "@/app/utils/runWithRetries";
 // Database
 import { updatePatientPersonal } from "../../../database/patient-personal/UpdatePatientPersonal";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const PatientPersonalFields = ({
   patientPersonalFields,
   setPatientPersonalFields,
@@ -56,11 +59,11 @@ export const PatientPersonalFields = ({
     if (isValidName) {
       if (patientPersonalId && patientFullName !== newValue) {
         const codeToRun = async () => {
-          const updatedPatientPerson = await updatePatientPersonal({
+          const updatedPatientPerson = actionData(await updatePatientPersonal({
             patientPersonalId,
             field: "patient_full_name",
             value: newValue,
-          });
+          }));
 
           if (updatedPatientPerson) {
             setPatientPersonalFields(updatedPatientPerson);
@@ -112,11 +115,11 @@ export const PatientPersonalFields = ({
 
     if (patientPersonalId) {
       const codeToRun = async () => {
-        const updatedPatientPerson = await updatePatientPersonal({
+        const updatedPatientPerson = actionData(await updatePatientPersonal({
           patientPersonalId,
           field: "is_patient_male",
           value: isMale,
-        });
+        }));
 
         if (updatedPatientPerson) {
           setPatientPersonalFields(updatedPatientPerson);
@@ -161,11 +164,11 @@ export const PatientPersonalFields = ({
 
     if (patientPersonalId) {
       const codeToRun = async () => {
-        const updatedPatientPerson = await updatePatientPersonal({
+        const updatedPatientPerson = actionData(await updatePatientPersonal({
           patientPersonalId,
           field: "patient_date_of_birth",
           value: dateOfBirth,
-        });
+        }));
 
         if (updatedPatientPerson) {
           setPatientPersonalFields(updatedPatientPerson);
@@ -206,11 +209,11 @@ export const PatientPersonalFields = ({
 
     if (patientPersonalId && patientPhoneNumber !== newValue) {
       const codeToRun = async () => {
-        const updatedPatientPerson = await updatePatientPersonal({
+        const updatedPatientPerson = actionData(await updatePatientPersonal({
           patientPersonalId,
           field: "patient_phone_number",
           value: newValue,
-        });
+        }));
 
         if (updatedPatientPerson) {
           setPatientPersonalFields(updatedPatientPerson);

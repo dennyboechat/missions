@@ -24,6 +24,9 @@ import { insertPatientDentistryMedication } from "../../../database/patient-dent
 import { updatePatientDentistryMedication } from "../../../database/patient-dentistry-medication/UpdatePatientDentistryMedication";
 import { deletePatientDentistryMedication } from "../../../database/patient-dentistry-medication/DeletePatientDentistryMedication";
 
+// Types
+import { actionData } from "../../../types/ActionResult";
+
 export const DentalAppointmentMedicationPrescribed = ({
   patientDentistryId,
 }: {
@@ -35,9 +38,9 @@ export const DentalAppointmentMedicationPrescribed = ({
   useEffect(() => {
     const updatePatientMedications = async () => {
       if (patientDentistryId) {
-        const dentistryMedications = await getPatientDentistryMedications({
+        const dentistryMedications = actionData(await getPatientDentistryMedications({
           patientDentistryId,
-        });
+        }));
 
         if (dentistryMedications) {
           const retrievedMedications: Medication[] = [];
@@ -85,12 +88,12 @@ export const DentalAppointmentMedicationPrescribed = ({
       isOnline = navigator.onLine;
 
       if (isOnline) {
-        const insertedMedication = await insertPatientDentistryMedication({
+        const insertedMedication = actionData(await insertPatientDentistryMedication({
           patientDentistryId,
           medication: {
             drug,
           },
-        });
+        }));
         if (insertedMedication) {
           const lastIndex = updatedMedications.length - 1;
           updatedMedications[lastIndex] = {
@@ -130,17 +133,17 @@ export const DentalAppointmentMedicationPrescribed = ({
     field: "drug" | "dose" | "quantity" | "instructions_usage",
     value?: string | number
   ) => {
-    return await updatePatientDentistryMedication({
+    return actionData(await updatePatientDentistryMedication({
       patientDentistryPrescribedMedicationId: medicationUid,
       field,
       value,
-    });
+    }));
   };
 
   const deleteMedication = async (medicationUid: string) => {
-    return await deletePatientDentistryMedication({
+    return actionData(await deletePatientDentistryMedication({
       patientDentistryPrescribedMedicationId: medicationUid,
-    });
+    }));
   };
 
   return (

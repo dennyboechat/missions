@@ -10,6 +10,16 @@ import { ProjectId } from "../../types/ProjectTypes";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const getProjectReportsAppointment = async ({
   projectId,
   startDate,
@@ -18,7 +28,7 @@ export const getProjectReportsAppointment = async ({
   projectId: ProjectId;
   startDate?: string;
   endDate?: string;
-}): Promise<ProjectReportsAppointmentTypes[] | undefined> => {
+}): Promise<ActionResult<ProjectReportsAppointmentTypes[]>> => {
   try {
     await assertProjectAccess({ projectId });
 
@@ -84,9 +94,8 @@ export const getProjectReportsAppointment = async ({
       })
     );
 
-    return projectReports;
+    return actionOk(projectReports);
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

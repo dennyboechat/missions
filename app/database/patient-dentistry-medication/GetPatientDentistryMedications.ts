@@ -10,11 +10,21 @@ import { PatientDentistryId } from "../../types/PatientDentistryTypes";
 // Auth
 import { assertProjectAccess } from "../auth/projectAccess";
 
+// Types
+import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
 export const getPatientDentistryMedications = async ({
   patientDentistryId,
 }: {
   patientDentistryId: PatientDentistryId;
-}): Promise<DentistryPrescribedMedication[] | undefined> => {
+}): Promise<ActionResult<DentistryPrescribedMedication[]>> => {
   try {
     await assertProjectAccess({ patientDentistryId });
 
@@ -45,9 +55,8 @@ export const getPatientDentistryMedications = async ({
         instructions: row.instructions_usage,
       }));
 
-    return dentistryPrescribedMedications;
+    return actionOk(dentistryPrescribedMedications);
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };

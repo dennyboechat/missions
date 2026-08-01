@@ -8,6 +8,16 @@ import { assertProjectAccess } from "../auth/projectAccess";
 
 // Types
 import {
+  ActionResult,
+  actionOk,
+  actionFailed,
+} from "../../types/ActionResult";
+
+// Auth
+import { toActionFailure } from "../auth/toActionFailure";
+
+// Types
+import {
   PatientPersonalTypes,
   UpdatePatientPersonal,
 } from "../../types/PatientPersonalTypes";
@@ -25,7 +35,7 @@ export const updatePatientPersonal = async ({
   patientPersonalId,
   field,
   value,
-}: UpdatePatientPersonal): Promise<PatientPersonalTypes | undefined> => {
+}: UpdatePatientPersonal): Promise<ActionResult<PatientPersonalTypes>> => {
   try {
     await assertProjectAccess({ patientPersonalId });
 
@@ -61,9 +71,10 @@ export const updatePatientPersonal = async ({
       })
     );
 
-    return patientPersonals?.length > 0 ? patientPersonals[0] : undefined;
+    return patientPersonals.length > 0
+      ? actionOk(patientPersonals[0])
+      : actionFailed("not_found");
   } catch (error) {
-    console.error(error);
-    return undefined;
+    return toActionFailure(error);
   }
 };
