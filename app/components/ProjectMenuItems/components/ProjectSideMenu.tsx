@@ -2,6 +2,7 @@
 
 // Components
 import { MenuItem } from "react-pro-sidebar";
+import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // Types
@@ -41,14 +42,14 @@ export const ProjectMenuItems = ({
     <>
       <MenuItem
         icon={projectPatientsIcon}
-        href={`/project-patients/${projectId}`}
+        component={<Link href={`/project-patients/${projectId}`} />}
         active={activeMenuItem === "project-patients"}
       >
         {"Patients"}
       </MenuItem>
       <MenuItem
         icon={projectReportsIcon}
-        href={`/project-reports/${projectId}`}
+        component={<Link href={`/project-reports/${projectId}`} />}
         active={activeMenuItem === "project-reports"}
       >
         {"Reports"}
@@ -56,7 +57,7 @@ export const ProjectMenuItems = ({
       {isProjectEditable && (
         <MenuItem
           icon={projectUsersIcon}
-          href={`/project-users/${projectId}`}
+          component={<Link href={`/project-users/${projectId}`} />}
           active={activeMenuItem === "project-users"}
         >
           {"Users"}
@@ -65,7 +66,7 @@ export const ProjectMenuItems = ({
       {isProjectEditable && (
         <MenuItem
           icon={projectIcon}
-          href={`/project/${projectId}`}
+          component={<Link href={`/project/${projectId}`} />}
           active={activeMenuItem === "project"}
         >
           {"Settings"}

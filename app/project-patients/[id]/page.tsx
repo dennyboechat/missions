@@ -2,6 +2,7 @@
 
 // Components
 import { Container, Table, Link, Button } from "@radix-ui/themes";
+import NextLink from "next/link";
 import { SideMenuLayout } from "../../components/ui/SideMenuLayout";
 import { ProjectMenuItems } from "../../components/ProjectMenuItems";
 import { ContentHeader } from "../../components/ContentHeader";
@@ -103,8 +104,10 @@ const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
             }) => (
               <Table.Row key={patientPersonalId}>
                 <Table.RowHeaderCell>
-                  <Link href={`/patient-summary/${patientPersonalId}`}>
-                    {patientFullName}
+                  <Link asChild>
+                    <NextLink href={`/patient-summary/${patientPersonalId}`}>
+                      {patientFullName}
+                    </NextLink>
                   </Link>
                 </Table.RowHeaderCell>
                 <Table.Cell>

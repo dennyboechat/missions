@@ -2,6 +2,7 @@
 
 // Components
 import { MenuItem } from "react-pro-sidebar";
+import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // Types
@@ -28,28 +29,28 @@ export const PatientMenuItems = ({
     <>
       <MenuItem
         icon={summaryIcon}
-        href={`/patient-summary/${patientPersonalId}`}
+        component={<Link href={`/patient-summary/${patientPersonalId}`} />}
         active={activeMenuItem === "patient-summary"}
       >
         {"Summary"}
       </MenuItem>
       <MenuItem
         icon={generalIcon}
-        href={`/patient-general/${patientPersonalId}`}
+        component={<Link href={`/patient-general/${patientPersonalId}`} />}
         active={activeMenuItem === "patient-general"}
       >
         {"General"}
       </MenuItem>
       <MenuItem
         icon={dentistryIcon}
-        href={`/patient-dentistry/${patientPersonalId}`}
+        component={<Link href={`/patient-dentistry/${patientPersonalId}`} />}
         active={activeMenuItem === "patient-dentistry"}
       >
         {"Dental"}
       </MenuItem>
       <MenuItem
         icon={personalIcon}
-        href={`/patient-personal/${patientPersonalId}`}
+        component={<Link href={`/patient-personal/${patientPersonalId}`} />}
         active={activeMenuItem === "patient-personal"}
       >
         {"Personal"}

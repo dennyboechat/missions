@@ -1,7 +1,8 @@
 "use client";
 
 // Components
-import { Grid, Box, Link, Button } from "@radix-ui/themes";
+import { Grid, Box, Button } from "@radix-ui/themes";
+import Link from "next/link";
 import { SignUpDialog } from "../../../auth/signUp";
 import { SignInDialog } from "../../../auth/signIn";
 import { SignButtons } from "../../signButtons";

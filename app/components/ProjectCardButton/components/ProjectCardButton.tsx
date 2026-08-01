@@ -1,7 +1,8 @@
 "use client";
 
 // Components
-import { Grid, Card, Text, Link, Skeleton } from "@radix-ui/themes";
+import { Grid, Card, Text, Skeleton } from "@radix-ui/themes";
+import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // Styles
