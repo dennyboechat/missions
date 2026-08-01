@@ -3,7 +3,8 @@
 // Components
 import { Grid, Text } from "@radix-ui/themes";
 import { DrugSelector } from "./DrugSelector";
-import { DoseInput } from "./DoseInput";
+import { DoseAmountInput } from "./DoseAmountInput";
+import { DoseUnitSelect } from "./DoseUnitSelect";
 import { QuantityInput } from "./QuantityInput";
 import { InstructionsInput } from "./InstructionsInput";
 import { Actions } from "./Actions";
@@ -19,9 +20,10 @@ export const MedicationTable = ({
   updateMedication,
   deleteMedication,
 }: MedicationTableProps) => (
-  <Grid columns="30fr 10fr 10fr 45fr 5fr" gap="3">
+  <Grid columns="28fr 9fr 9fr 9fr 40fr 5fr" gap="3">
     <Text weight="medium">{"Drug"}</Text>
-    <Text weight="medium">{"Dose"}</Text>
+    <Text weight="medium">{"Amount"}</Text>
+    <Text weight="medium">{"Unit"}</Text>
     <Text weight="medium">{"Quantity"}</Text>
     <Text weight="medium">{"Instructions"}</Text>
     <Text>{""}</Text>
@@ -29,12 +31,21 @@ export const MedicationTable = ({
       ({ rowId, medicationUid, drug, dose, quantity, instructions }) => (
         <Fragment key={rowId}>
           <DrugSelector
+            rowId={rowId}
             drug={drug}
             medications={medications}
             setMedications={setMedications}
             insertMedication={insertMedication}
           />
-          <DoseInput
+          <DoseAmountInput
+            rowId={rowId}
+            drug={drug}
+            dose={dose}
+            medicationUid={medicationUid}
+            setMedications={setMedications}
+            updateMedication={updateMedication}
+          />
+          <DoseUnitSelect
             drug={drug}
             dose={dose}
             medicationUid={medicationUid}

@@ -10,6 +10,12 @@ import { AutocompleteItem } from "../types/AutocompleteItem";
 // Hooks
 import { useState, useEffect, useRef, useMemo } from "react";
 
+// Types
+import { FocusEvent } from "react";
+
+// Utils
+import { getNearestMatches } from "../../../../utils/getNearestMatches";
+
 // Styles
 import styles from "../styles/Autocomplete.module.css";
 
@@ -33,8 +39,10 @@ export const Autocomplete = ({
   onSelect,
   onSearch,
   onBlur,
+  onConfirm,
   placeholder,
   readOnly,
+  suppressOptions,
 }: AutocompleteProps) => {
   const [text, setText] = useState(value ?? "");
   const [isOpen, setIsOpen] = useState(false);
@@ -49,11 +57,21 @@ export const Autocomplete = ({
 
   const matches = useMemo(() => {
     const query = text.trim().toLowerCase();
-    const matching = query
-      ? items.filter((item) => item.name.toLowerCase().includes(query))
-      : items;
 
-    return matching.slice(0, MAX_RESULTS);
+    if (!query) {
+      return items.slice(0, MAX_RESULTS);
+    }
+
+    const matching = items.filter((item) =>
+      item.name.toLowerCase().includes(query)
+    );
+
+    // A typo matches no substring at all, and an empty list reads as "there is
+    // no such entry" when the entry is sitting one keystroke away.
+    const results =
+      matching.length > 0 ? matching : getNearestMatches({ query, items });
+
+    return results.slice(0, MAX_RESULTS);
   }, [items, text]);
 
   useEffect(() => {
@@ -67,6 +85,18 @@ export const Autocomplete = ({
     return () => document.removeEventListener("mousedown", closeOnOutsideClick);
   }, []);
 
+  // Leaving the field closes the list. Picking an option does not go through
+  // here: the options answer to mousedown and cancel it, so the input keeps
+  // focus and the list is closed by choose() instead.
+  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    setIsOpen(false);
+    setHighlightedIndex(-1);
+
+    if (onBlur) {
+      onBlur(event);
+    }
+  };
+
   const choose = (item: AutocompleteItem) => {
     setText(item.name);
     setIsOpen(false);
@@ -75,10 +105,18 @@ export const Autocomplete = ({
     if (onSelect) {
       onSelect(item);
     }
+
+    // Picking an option is a deliberate finish, the same as Enter.
+    if (onConfirm) {
+      onConfirm(item.name);
+    }
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (readOnly) return;
+
+    // Nothing to walk through or pick while the list is held shut.
+    const isListUsable = isOpen && !suppressOptions;
 
     if (event.key === "ArrowDown") {
       event.preventDefault();
@@ -93,9 +131,30 @@ export const Autocomplete = ({
       return;
     }
 
-    if (event.key === "Enter" && isOpen && matches[highlightedIndex]) {
+    if (event.key === "Enter") {
       event.preventDefault();
-      choose(matches[highlightedIndex]);
+
+      const highlighted = isListUsable ? matches[highlightedIndex] : undefined;
+
+      // choose() confirms on its own, so this only has to cover typed text.
+      if (highlighted) {
+        choose(highlighted);
+      } else if (onConfirm) {
+        setIsOpen(false);
+        onConfirm(text);
+      }
+
+      if (onConfirm) {
+        return;
+      }
+
+      // Nobody is listening for the confirmation, so fall back to leaving the
+      // field: that is what runs a blur-driven commit, and it beats Enter
+      // quietly doing nothing. The blur reads the input directly and React has
+      // not re-rendered yet, so the chosen name goes to the DOM by hand.
+      setIsOpen(false);
+      event.currentTarget.value = highlighted?.name ?? text;
+      event.currentTarget.blur();
       return;
     }
 
@@ -128,10 +187,10 @@ export const Autocomplete = ({
         onFocus={() => {
           if (!readOnly) setIsOpen(true);
         }}
-        onBlur={onBlur}
+        onBlur={handleBlur}
         onKeyDown={onKeyDown}
       />
-      {isOpen && matches.length > 0 && (
+      {isOpen && !suppressOptions && matches.length > 0 && (
         <ul className={styles.list} role="listbox">
           {matches.map((item, index) => (
             <li

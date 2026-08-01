@@ -1,5 +1,7 @@
-export const getMostCommonDentalDrugs = () =>
-  [
+// Built once rather than per call: the list is the same on every render, and a
+// fresh array each time would invalidate the memo that decides which drugs the
+// autocomplete shows, so the near-match search would rerun on every keystroke.
+const mostCommonDentalDrugs = [
     "Abacavir",
     "Abatacept",
     "Abciximab",
@@ -444,4 +446,6 @@ export const getMostCommonDentalDrugs = () =>
     "Zolmitriptan",
     "Zolpidem",
     "Zoledronic Acid",
-  ].map((drug) => ({ id: drug, name: drug }));
+].map((drug) => ({ id: drug, name: drug }));
+
+export const getMostCommonDentalDrugs = () => mostCommonDentalDrugs;
