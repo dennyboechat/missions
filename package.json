@@ -11,13 +11,13 @@
   "dependencies": {
     "@ai-sdk/openai": "^2.0.86",
     "@ai-sdk/react": "^2.0.115",
-    "@clerk/nextjs": "^6.36.2",
+    "@clerk/nextjs": "^6.39.6",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.1",
     "@radix-ui/themes": "^3.2.1",
     "@vercel/postgres": "^0.10.0",
     "ai": "^5.0.113",
-    "next": "16.0.10",
+    "next": "16.2.12",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-pro-sidebar": "^1.1.0",
@@ -28,7 +28,27 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.2",
-    "eslint-config-next": "16.0.10",
+    "eslint-config-next": "16.2.12",
     "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "//": "Security patches for transitive dependencies. Each override is pinned to the advisory's patched version within the major line already in use, so no dependent sees an API it was not built against. Remove an entry once the parent package ships the fix itself.",
+    "overrides": {
+      "minimatch@3": "^3.1.5",
+      "minimatch@9": "^9.0.9",
+      "brace-expansion@1": "^1.1.18",
+      "brace-expansion@2": "^2.1.4",
+      "picomatch@2": "^2.3.2",
+      "picomatch@4": "^4.0.5",
+      "js-yaml@4": "^4.3.1",
+      "flatted": "^3.4.4",
+      "ajv@6": "^6.15.0",
+      "yaml@1": "^1.10.3",
+      "lodash": "^4.18.1",
+      "postcss": "^8.5.25",
+      "ws@8": "^8.21.1",
+      "sharp": "^0.35.3",
+      "@babel/core": "^7.29.7"
+    }
   }
 }
