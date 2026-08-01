@@ -10,6 +10,7 @@ import { Space } from "../../ui/Space";
 
 // Hooks
 import { useProject } from "../../../lib/ProjectContext";
+import { usePopupMessage } from "../../../lib/PopupMessage";
 import { useState, useEffect, useRef } from "react";
 
 // Styles
@@ -37,9 +38,11 @@ import { exportToCsv } from "../../../utils/exportToCsv";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
+import { PopupMessageType } from "../../../lib/types/PopupMessageContextType";
 
 export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
+  const { setMessage, setMessageType } = usePopupMessage();
   const currentDate = getCurrentDateTime();
   const startDateFilter = getFormattedDate({
     date: subtractDaysToDate({ date: currentDate, days: 14 }),
@@ -123,6 +126,13 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     setIsLoadingAppointmentReport(false);
   };
 
+  const showMessage = (message: string, type: PopupMessageType) => {
+    if (setMessage && setMessageType) {
+      setMessage(message);
+      setMessageType(type);
+    }
+  };
+
   const onDownloadAllData = async () => {
     const isStartValid = isReportStartDateValid(startDate);
     setIsStartDateInvalid(!isStartValid);
@@ -139,51 +149,65 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
         }),
       );
 
-      if (allData && allData.length > 0) {
-        exportToCsv({
-          data: allData.map((row) => ({
-            ...row,
-            // A plain YYYY-MM-DD date already.
-            patientDateOfBirth: row.patientDateOfBirth ?? "",
-            // Already YYYY-MM-DD in the project's timezone.
-            generalAppointmentDate: row.generalAppointmentDate ?? "",
-            dentalAppointmentDate: row.dentalAppointmentDate ?? "",
-          })),
-          headers: [
-            { key: "patientFullName", label: "Patient Name" },
-            { key: "patientDateOfBirth", label: "Date of Birth" },
-            { key: "patientPhoneNumber", label: "Phone Number" },
-            { key: "gender", label: "Gender" },
-            {
-              key: "generalAppointmentDate",
-              label: "General Appointment Date",
-            },
-            { key: "generalNotes", label: "General Notes" },
-            {
-              key: "generalPrescribedMedications",
-              label: "General Prescribed Medications",
-            },
-            { key: "patientHeight", label: "Height" },
-            { key: "patientWeight", label: "Weight" },
-            { key: "patientTemperature", label: "Temperature" },
-            { key: "patientBloodGlucose", label: "Blood Glucose" },
-            { key: "patientPulse", label: "Pulse" },
-            { key: "patientOxygenSaturation", label: "Oxygen Saturation" },
-            {
-              key: "patientBloodPressureDiastolic",
-              label: "Blood Pressure Diastolic",
-            },
-            { key: "dentalAppointmentDate", label: "Dental Appointment Date" },
-            { key: "dentalNotes", label: "Dental Notes" },
-            {
-              key: "dentalPrescribedMedications",
-              label: "Dental Prescribed Medications",
-            },
-            { key: "teethNames", label: "Teeth Names" },
-          ],
-          filename: `report_${startDate}_${endDate}.csv`,
-        });
+      // Nothing came back at all: the query itself did not get through.
+      if (!allData) {
+        showMessage("Error to download the data. Please try again.", "error");
+        return;
       }
+
+      // A download that produces no file looks broken, so the empty period is
+      // spelled out rather than the button doing nothing.
+      if (allData.length === 0) {
+        showMessage(
+          `No data to download between ${startDate} and ${endDate}.`,
+          "regular",
+        );
+        return;
+      }
+
+      exportToCsv({
+        data: allData.map((row) => ({
+          ...row,
+          // A plain YYYY-MM-DD date already.
+          patientDateOfBirth: row.patientDateOfBirth ?? "",
+          // Already YYYY-MM-DD in the project's timezone.
+          generalAppointmentDate: row.generalAppointmentDate ?? "",
+          dentalAppointmentDate: row.dentalAppointmentDate ?? "",
+        })),
+        headers: [
+          { key: "patientFullName", label: "Patient Name" },
+          { key: "patientDateOfBirth", label: "Date of Birth" },
+          { key: "patientPhoneNumber", label: "Phone Number" },
+          { key: "gender", label: "Gender" },
+          {
+            key: "generalAppointmentDate",
+            label: "General Appointment Date",
+          },
+          { key: "generalNotes", label: "General Notes" },
+          {
+            key: "generalPrescribedMedications",
+            label: "General Prescribed Medications",
+          },
+          { key: "patientHeight", label: "Height" },
+          { key: "patientWeight", label: "Weight" },
+          { key: "patientTemperature", label: "Temperature" },
+          { key: "patientBloodGlucose", label: "Blood Glucose" },
+          { key: "patientPulse", label: "Pulse" },
+          { key: "patientOxygenSaturation", label: "Oxygen Saturation" },
+          {
+            key: "patientBloodPressureDiastolic",
+            label: "Blood Pressure Diastolic",
+          },
+          { key: "dentalAppointmentDate", label: "Dental Appointment Date" },
+          { key: "dentalNotes", label: "Dental Notes" },
+          {
+            key: "dentalPrescribedMedications",
+            label: "Dental Prescribed Medications",
+          },
+          { key: "teethNames", label: "Teeth Names" },
+        ],
+        filename: `report_${startDate}_${endDate}.csv`,
+      });
     }
   };
 
