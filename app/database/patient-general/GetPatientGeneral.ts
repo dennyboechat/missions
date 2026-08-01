@@ -21,12 +21,31 @@ export const getPatientGeneral = async ({
 
     const query = `
       SELECT
-        *,
-        TO_CHAR(patient_personal.patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth_text,
+        patient_personal.patient_personal_id,
+        patient_personal.project_id,
+        patient_personal.patient_full_name,
+        patient_personal.is_patient_male,
+        TO_CHAR(patient_personal.patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth,
+        patient_general.patient_general_id,
+        patient_general.appointment_notes,
+        patient_general.appointment_has_referral,
+        patient_general.appointment_referral,
+        patient_general.patient_height,
+        patient_general.patient_weight,
+        patient_general.patient_temperature,
+        patient_general.patient_blood_glucose,
+        patient_general.patient_pulse,
+        patient_general.patient_oxygen_saturation,
+        patient_general.patient_blood_pressure_systolic,
+        patient_general.patient_blood_pressure_diastolic,
+        patient_general.patient_vision_left_tested_distance,
+        patient_general.patient_vision_left_normal_distance,
+        patient_general.patient_vision_right_tested_distance,
+        patient_general.patient_vision_right_normal_distance,
         TO_CHAR(
           (patient_general.appointment_date AT TIME ZONE project.project_timezone)::date,
           'YYYY-MM-DD'
-        ) AS appointment_date_text
+        ) AS appointment_date
       FROM
         patient_personal
       INNER JOIN
@@ -46,11 +65,11 @@ export const getPatientGeneral = async ({
       patientGeneralId: row.patient_general_id,
       patientPersonalId: row.patient_personal_id,
       appointmentNotes: row.appointment_notes,
-      appointmentDate: row.appointment_date_text,
+      appointmentDate: row.appointment_date,
       projectId: row.project_id,
       patientFullName: row.patient_full_name,
       isPatientMale: row.is_patient_male,
-      patientDateOfBirth: row.patient_date_of_birth_text,
+      patientDateOfBirth: row.patient_date_of_birth,
       patientHeight: row.patient_height,
       patientWeight: row.patient_weight,
       patientTemperature: row.patient_temperature,

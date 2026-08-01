@@ -18,10 +18,14 @@ export const getProject = async ({
     await assertProjectAccess({ projectId });
 
     const query = `
-      SELECT 
-        * 
-      FROM 
-        project 
+      SELECT
+        project_id,
+        project_name,
+        project_description,
+        project_timezone,
+        owner_id
+      FROM
+        project
       WHERE 
         project_id = $1
     `;

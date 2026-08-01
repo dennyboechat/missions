@@ -19,9 +19,14 @@ export const getProjectUsers = async ({
     await assertProjectAccess({ projectId }, { ownerOnly: true });
 
     const query = `
-      SELECT 
-        * 
-      FROM 
+      SELECT
+        project_user.project_user_id,
+        project_user.project_id,
+        project_user.user_id,
+        project_user.is_user_active,
+        app_user.user_name,
+        app_user.user_email
+      FROM
         project_user
       INNER JOIN
         app_user ON app_user.user_id = project_user.user_id  

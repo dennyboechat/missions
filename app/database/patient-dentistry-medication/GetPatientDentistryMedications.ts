@@ -19,8 +19,13 @@ export const getPatientDentistryMedications = async ({
     await assertProjectAccess({ patientDentistryId });
 
     const query = `
-      SELECT 
-        * 
+      SELECT
+        patient_dentistry_prescribed_medication_id,
+        patient_dentistry_id,
+        drug_name,
+        dose,
+        quantity,
+        instructions_usage
       FROM
         patient_dentistry_prescribed_medication
       WHERE 

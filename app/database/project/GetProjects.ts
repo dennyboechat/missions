@@ -18,7 +18,12 @@ export const getProjects = async (): Promise<Project[] | undefined> => {
 
     const query = `
       SELECT
-        DISTINCT project.*
+        DISTINCT project.project_id,
+        project.project_name,
+        project.project_description,
+        project.project_timezone,
+        project.owner_id,
+        project.created_at
       FROM
         project
       LEFT JOIN

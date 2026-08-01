@@ -19,8 +19,13 @@ export const getPatientGeneralMedications = async ({
     await assertProjectAccess({ patientGeneralId });
 
     const query = `
-      SELECT 
-        * 
+      SELECT
+        patient_general_prescribed_medication_id,
+        patient_general_id,
+        drug_name,
+        dose,
+        quantity,
+        instructions_usage
       FROM
         patient_general_prescribed_medication
       WHERE 

@@ -20,8 +20,12 @@ export const getPatientSummary = async ({
 
     const query = `
       SELECT
-        *,
-        TO_CHAR(patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth_text
+        patient_personal_id,
+        project_id,
+        patient_full_name,
+        is_patient_male,
+        patient_phone_number,
+        TO_CHAR(patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth
       FROM
         patient_personal
       WHERE
@@ -36,7 +40,7 @@ export const getPatientSummary = async ({
         projectId: row.project_id,
         patientFullName: row.patient_full_name,
         isPatientMale: row.is_patient_male,
-        patientDateOfBirth: row.patient_date_of_birth_text,
+        patientDateOfBirth: row.patient_date_of_birth,
         patientPhoneNumber: row.patient_phone_number,
       })
     );

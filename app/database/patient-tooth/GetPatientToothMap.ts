@@ -19,8 +19,12 @@ export const getPatientToothMap = async ({
     await assertProjectAccess({ patientDentistryId });
 
     const query = `
-      SELECT 
-        * 
+      SELECT
+        patient_dentistry_tooth_id,
+        patient_dentistry_id,
+        tooth_name,
+        tooth_status,
+        tooth_notes
       FROM
         patient_dentistry_tooth
       WHERE 

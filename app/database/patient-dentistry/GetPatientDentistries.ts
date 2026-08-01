@@ -21,12 +21,19 @@ export const getPatientDentistries = async ({
 
     const query = `
       SELECT
-        *,
-        TO_CHAR(patient_personal.patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth_text,
+        patient_personal.patient_personal_id,
+        patient_personal.project_id,
+        patient_personal.patient_full_name,
+        patient_personal.is_patient_male,
+        TO_CHAR(patient_personal.patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth,
+        patient_dentistry.patient_dentistry_id,
+        patient_dentistry.appointment_notes,
+        patient_dentistry.appointment_has_referral,
+        patient_dentistry.appointment_referral,
         TO_CHAR(
           (patient_dentistry.appointment_date AT TIME ZONE project.project_timezone)::date,
           'YYYY-MM-DD'
-        ) AS appointment_date_text
+        ) AS appointment_date
       FROM
         patient_personal
       INNER JOIN
@@ -49,11 +56,11 @@ export const getPatientDentistries = async ({
         appointmentNotes: row.appointment_notes,
         appointmentHasReferral: row.appointment_has_referral,
         appointmentReferral: row.appointment_referral,
-        appointmentDate: row.appointment_date_text,
+        appointmentDate: row.appointment_date,
         projectId: row.project_id,
         patientFullName: row.patient_full_name,
         isPatientMale: row.is_patient_male,
-        patientDateOfBirth: row.patient_date_of_birth_text,
+        patientDateOfBirth: row.patient_date_of_birth,
       })
     );
 

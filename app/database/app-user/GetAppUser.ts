@@ -31,9 +31,12 @@ export const getAppUser = async ({
     await getClerkUserId();
 
     const query = `
-      SELECT 
-        *
-      FROM 
+      SELECT
+        user_id,
+        user_third_party_id,
+        user_name,
+        user_email
+      FROM
         app_user
       WHERE
         ${field} = $1

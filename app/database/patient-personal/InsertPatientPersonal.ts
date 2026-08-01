@@ -28,7 +28,7 @@ export const insertPatientPersonal = async ({
       VALUES 
         ($1, $2, $3, $4, $5)
       RETURNING 
-        patient_personal_id, project_id, patient_full_name, is_patient_male, TO_CHAR(patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth_text, patient_phone_number
+        patient_personal_id, project_id, patient_full_name, is_patient_male, TO_CHAR(patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth, patient_phone_number
     `;
 
     const response = await sql.query(query, [
@@ -45,7 +45,7 @@ export const insertPatientPersonal = async ({
         projectId: row.project_id,
         patientFullName: row.patient_full_name,
         isPatientMale: row.is_patient_male,
-        patientDateOfBirth: row.patient_date_of_birth_text,
+        patientDateOfBirth: row.patient_date_of_birth,
         patientPhoneNumber: row.patient_phone_number,
       })
     );

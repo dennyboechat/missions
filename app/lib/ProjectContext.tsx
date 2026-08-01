@@ -1,14 +1,16 @@
 "use client";
 
 // Multivariate Dependencies
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 // Types
 import { Project } from "../types/ProjectTypes";
 import { ProjectContextType } from "./types/ProjectContextType";
 
-// Hooks
-import { useEffect } from "react";
+// Database
+import { getProject } from "../database/project/GetProject";
+
+const STORAGE_KEY = "projectId";
 
 const ProjectContext = createContext<ProjectContextType>({
   project: undefined,
@@ -20,19 +22,54 @@ export const ProjectProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  // Only the id is persisted. Storing the whole project meant every schema
+  // change left stale objects in browsers -- adding project_timezone produced
+  // cached projects with no such field, which is why the reports had to read
+  // the zone from the row instead of from here.
+  const [projectId, setProjectId] = useState<string | undefined>();
   const [project, setProjectState] = useState<Project | undefined>();
 
   useEffect(() => {
-    const storedProject = localStorage.getItem("project");
-    setProjectState(storedProject ? JSON.parse(storedProject) : undefined);
+    setProjectId(localStorage.getItem(STORAGE_KEY) ?? undefined);
+    // Drop the previous full-object cache left in existing browsers.
+    localStorage.removeItem("project");
   }, []);
 
+  useEffect(() => {
+    let isCurrent = true;
+
+    const loadProject = async () => {
+      if (!projectId) {
+        setProjectState(undefined);
+        return;
+      }
+
+      const loadedProject = await getProject({ projectId });
+
+      // A late response for a project the user has since navigated away from
+      // must not overwrite the current one.
+      if (isCurrent) {
+        setProjectState(loadedProject);
+      }
+    };
+
+    loadProject();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [projectId]);
+
   const setProject = (newProject: Project | undefined) => {
+    // Render the known project immediately; the fetch above reconciles it.
     setProjectState(newProject);
-    localStorage.setItem(
-      "project",
-      newProject ? JSON.stringify(newProject) : ""
-    );
+    setProjectId(newProject?.projectId);
+
+    if (newProject?.projectId) {
+      localStorage.setItem(STORAGE_KEY, newProject.projectId);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
   };
 
   return (
