@@ -145,6 +145,14 @@ const PROJECT_ID_QUERY: Record<keyof ProjectScope, string> = {
  * since that is the clinical work they were added to do.
  *
  * Returns the resolved project id so callers can reuse it.
+ *
+ * Resolving the caller and checking their access is one query rather than two.
+ * Every action under app/database calls this before its own query, so a second
+ * round trip here was a third of the wait on every screen -- and the database
+ * is remote, so a round trip is most of the cost, not the query. The anchor
+ * row is what keeps it to one: both CTEs may be empty, and LEFT JOINs onto a
+ * single row still return one, so "no such user" and "no such project" stay
+ * distinguishable without asking twice.
  */
 export const assertProjectAccess = async (
   scope: ProjectScope,
@@ -161,37 +169,52 @@ export const assertProjectAccess = async (
   }
 
   const [key, value] = entries[0] as [keyof ProjectScope, string];
-  const userIds = await getAuthenticatedUserIds();
+  const clerkUserId = await getClerkUserId();
 
   const response = await sql.query(
     `
-      WITH scoped AS (${PROJECT_ID_QUERY[key]})
+      WITH caller AS (
+        SELECT user_id FROM app_user WHERE user_third_party_id = $2
+      ),
+      scoped AS (${PROJECT_ID_QUERY[key]})
       SELECT
+        (SELECT count(*) FROM caller)::int AS caller_count,
         project.project_id,
-        project.owner_id = ANY($2::uuid[]) AS is_owner,
+        EXISTS (
+          SELECT 1 FROM caller WHERE caller.user_id = project.owner_id
+        ) AS is_owner,
         EXISTS (
           SELECT 1
           FROM project_user
+          JOIN caller ON caller.user_id = project_user.user_id
           WHERE project_user.project_id = project.project_id
-            AND project_user.user_id = ANY($2::uuid[])
             AND project_user.is_user_active = TRUE
         ) AS is_member
-      FROM project
-      JOIN scoped ON scoped.project_id = project.project_id
+      FROM (SELECT 1) AS anchor
+      LEFT JOIN scoped ON TRUE
+      LEFT JOIN project ON project.project_id = scoped.project_id
     `,
-    [value, userIds]
+    [value, clerkUserId]
   );
 
-  if (response.rows.length === 0) {
+  const {
+    caller_count: callerCount,
+    project_id: projectId,
+    is_owner: isOwner,
+    is_member: isMember,
+  } = response.rows[0];
+
+  if (callerCount === 0) {
+    throw new AccessDeniedError("No application user for this session");
+  }
+
+  if (!projectId) {
     throw new AccessDeniedError(`No project found for ${key}`);
   }
 
-  const { project_id: projectId, is_owner: isOwner, is_member: isMember } =
-    response.rows[0];
-
   if (ownerOnly ? !isOwner : !isOwner && !isMember) {
     throw new AccessDeniedError(
-      `User ${userIds.join("/")} may not access project ${projectId}${
+      `User ${clerkUserId} may not access project ${projectId}${
         ownerOnly ? " as owner" : ""
       }`
     );
