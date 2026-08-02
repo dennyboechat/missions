@@ -8,12 +8,17 @@ import { SignInDialog } from "../../../auth/signIn";
 import { SignButtons } from "../../signButtons";
 import Image from "next/image";
 import { Icon } from "../../../ui/Icon";
+import { PagePresence } from "../../../PagePresence";
 
 // Hooks
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useProject } from "../../../../lib/ProjectContext";
+import { usePagePresence } from "../../../../lib/usePagePresence";
+
+// Utils
+import { getPagePresenceTarget } from "../../../../utils/getPagePresenceTarget";
 
 // Styles
 import styles from "../styles/HeaderPanel.module.css";
@@ -28,6 +33,22 @@ export const HeaderPanel = () => {
   const { project } = useProject();
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
+
+  // Read off the path, the same way Back below works out where it points. A
+  // record two people can share resolves to a target; everything else -- the
+  // dashboard, the sign-in screens -- resolves to nothing and never beats.
+  //
+  // Memoised on the path so the target keeps one identity between renders,
+  // which is what stops the heartbeat effect restarting on every keystroke
+  // elsewhere on the page.
+  const isSignedIn = Boolean(user);
+
+  const presenceTarget = useMemo(
+    () => (isSignedIn ? getPagePresenceTarget(currentPath) : undefined),
+    [currentPath, isSignedIn],
+  );
+
+  const { viewers } = usePagePresence(presenceTarget);
 
   const logoLink = user ? "/dashboard" : "/";
 
@@ -140,7 +161,12 @@ export const HeaderPanel = () => {
         <Link className={styles.header_logo_link} href={logoLink}>
           <Image src={logoImage} alt="logo" className={styles.header_logo} />
         </Link>
-        <Box>{backButton}</Box>
+        {/* Back and the roster share the middle column: both answer "what am I
+            looking at", and the column was empty to the right of the button. */}
+        <Box className={styles.header_context}>
+          {backButton}
+          <PagePresence viewers={viewers} />
+        </Box>
         <SignButtons onSignInClick={onSignIn} onSignUpClick={onSignUp} />
       </Grid>
       {showSignUp && <SignUpDialog onClose={() => setShowSignUp(false)} />}

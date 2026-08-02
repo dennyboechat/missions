@@ -132,8 +132,26 @@ CREATE TABLE IF NOT EXISTS patient_general_prescribed_medication (
     CONSTRAINT fk_patient_general_id FOREIGN KEY(patient_general_id) REFERENCES patient_general(patient_general_id) ON DELETE CASCADE
 );
 
+-- Who is looking at what, right now, so the header can name the other people
+-- in a record before two of them overwrite each other. One row per user per
+-- resource, forgotten after thirty seconds of silence. See
+-- migrations/006_page_presence.sql.
+CREATE TABLE IF NOT EXISTS page_presence (
+    user_id UUID NOT NULL,
+    project_id UUID NOT NULL,
+    resource_key VARCHAR(255) NOT NULL,
+    resource_label VARCHAR(64) NOT NULL,
+    last_seen_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, resource_key),
+    CONSTRAINT fk_page_presence_user
+      FOREIGN KEY(user_id) REFERENCES app_user(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_page_presence_project
+      FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE
+);
+
 -- Clean up
--- DROP TABLE IF EXISTS patient_general_prescribed_medication,
+-- DROP TABLE IF EXISTS page_presence,
+-- patient_general_prescribed_medication,
 -- patient_general,
 -- patient_dentistry_prescribed_medication,
 -- patient_dentistry_tooth,
@@ -268,3 +286,4 @@ CREATE INDEX IF NOT EXISTS idx_patient_dentistry_med_dentistry_id ON patient_den
 CREATE INDEX IF NOT EXISTS idx_patient_dentistry_tooth_dentistry_id ON patient_dentistry_tooth (patient_dentistry_id);
 CREATE INDEX IF NOT EXISTS idx_patient_general_appointment_date ON patient_general (appointment_date);
 CREATE INDEX IF NOT EXISTS idx_patient_dentistry_appointment_date ON patient_dentistry (appointment_date);
+CREATE INDEX IF NOT EXISTS idx_page_presence_resource_last_seen ON page_presence (resource_key, last_seen_at);

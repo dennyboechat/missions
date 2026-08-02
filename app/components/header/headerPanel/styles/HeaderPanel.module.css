@@ -15,6 +15,15 @@
   border-bottom: 1px solid var(--border-default);
 }
 
+/* Back, then who else is in this record. Both belong to "where am I", so they
+   sit together at the left of the column rather than pushing apart. */
+.header_context {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-5);
+  min-width: 0;
+}
+
 a.header_logo_link {
   justify-self: start;
   display: inline-flex;

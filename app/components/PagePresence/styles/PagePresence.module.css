@@ -1,0 +1,74 @@
+/* A row of initials in the top bar, beside Back: who else has this record open.
+   Sized to sit inside the 60px header without stretching it, and quiet enough
+   that it reads as status rather than as another control. */
+.presence {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  min-width: 0;
+}
+
+.stack {
+  display: flex;
+  align-items: center;
+}
+
+/* Overlapped, so a crowd stays the width of two or three avatars. Each disc
+   carries the page background as its ring, which is what reads as depth on a
+   flat surface without a shadow. */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--ds-radius-full);
+  border: 2px solid var(--surface-page);
+  margin-right: -7px;
+  font-size: var(--fs-12);
+  font-weight: 600;
+  letter-spacing: var(--ls-snug);
+  color: var(--fg-on-accent);
+  /* Initials are short and read better centred on the cap height. */
+  line-height: 1;
+  user-select: none;
+  cursor: default;
+}
+
+.avatar:last-child {
+  margin-right: 0;
+}
+
+.overflow {
+  background: var(--surface-inverse);
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  font-size: var(--fs-12);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+/* The roster is a convenience, not the point of the screen. Below the phone
+   breakpoint the header is already carrying a wordmark, Back and the account
+   menu, so the wording goes and the avatars speak for themselves. */
+@media (max-width: 768px) {
+  .label {
+    display: none;
+  }
+}
+
+/* Available to a screen reader, which gets the names in full rather than a row
+   of two-letter discs. */
+.visually_hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
