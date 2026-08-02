@@ -8,8 +8,9 @@ import { GeneralAppointmentClinicalNotesProps } from "../types/GeneralAppointmen
 import { PatientGeneralTypes } from "@/app/types/PatientGeneralTypes";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSaveField } from "../../../lib/useSaveField";
+import { useLiveValue } from "../../../lib/useLiveValue";
 
 // Database
 import { updatePatientGeneral } from "../../../database/patient-general/UpdatePatientGeneral";
@@ -22,8 +23,8 @@ export const GeneralAppointmentClinicalNotes = ({
   setPatientGeneral,
 }: GeneralAppointmentClinicalNotesProps) => {
   const { save } = useSaveField();
-  const [notes, setNotes] = useState(patientGeneral.appointmentNotes);
   const { patientGeneralId, appointmentNotes } = patientGeneral;
+  const [notes, setNotes] = useLiveValue(appointmentNotes);
 
   useEffect(() => {
     const onChangeAppointmentNotes = async () => {

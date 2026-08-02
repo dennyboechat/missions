@@ -8,8 +8,9 @@ import { DentalAppointmentClinicalNotesProps } from "../types/DentalAppointmentC
 import { PatientDentistryTypes } from "@/app/types/PatientDentistryTypes";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSaveField } from "../../../lib/useSaveField";
+import { useLiveValue } from "../../../lib/useLiveValue";
 
 // Database
 import { updatePatientDentistry } from "../../../database/patient-dentistry/UpdatePatientDentistry";
@@ -22,8 +23,8 @@ export const DentalAppointmentClinicalNotes = ({
   setPatientDentistries,
 }: DentalAppointmentClinicalNotesProps) => {
   const { save } = useSaveField();
-  const [notes, setNotes] = useState(patientDentistry.appointmentNotes);
   const { patientDentistryId, appointmentNotes } = patientDentistry;
+  const [notes, setNotes] = useLiveValue(appointmentNotes);
 
   useEffect(() => {
     const onChangeAppointmentNotes = async () => {

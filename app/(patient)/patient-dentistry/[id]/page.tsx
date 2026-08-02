@@ -14,10 +14,11 @@ import { getPatientDentistries } from "../../../database/patient-dentistry/GetPa
 import { insertPatientDentistry } from "../../../database/patient-dentistry/InsertPatientDentistry";
 
 // Hooks
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { usePopupMessage } from "../../../lib/PopupMessage";
 import { useSaveField } from "../../../lib/useSaveField";
+import { useLiveData } from "../../../lib/useLiveData";
 
 // Types
 import { PatientDentistryTypes } from "../../../types/PatientDentistryTypes";
@@ -37,24 +38,68 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
   const [lastestAppointment, setLastestAppointment] =
     useState<PatientDentistryTypes>();
 
+  /**
+   * Takes a set of appointments, however it arrived: the first load, a save on
+   * this screen, or the ten-second refresh.
+   *
+   * The appointment on screen is kept rather than reset to the newest one. It
+   * is the same value either way on a first load, but on a refresh replacing it
+   * would throw someone out of the appointment they were reading every ten
+   * seconds. It only moves when the appointment it points at is gone, which is
+   * another user having deleted it.
+   */
+  const applyPatientDentistries = useCallback(
+    (patientDentistriesData?: PatientDentistryTypes[]) => {
+      if (!patientDentistriesData) {
+        return;
+      }
+
+      setPatientDentistries(patientDentistriesData);
+
+      setLastestAppointment((currentAppointment) => {
+        const isCurrentStillPresent = patientDentistriesData.some(
+          ({ patientDentistryId }) =>
+            patientDentistryId &&
+            patientDentistryId === currentAppointment?.patientDentistryId,
+        );
+
+        return isCurrentStillPresent
+          ? currentAppointment
+          : patientDentistriesData[0];
+      });
+    },
+    [],
+  );
+
   useEffect(() => {
     const fetchPatientDentistry = async () => {
       if (patientPersonalId) {
-        const patientDentistryData = actionData(
-          await getPatientDentistries({
-            patientPersonalId: patientPersonalId,
-          }),
+        applyPatientDentistries(
+          actionData(
+            await getPatientDentistries({
+              patientPersonalId: patientPersonalId,
+            }),
+          ),
         );
-        setPatientDentistries(patientDentistryData);
-
-        if (patientDentistryData) {
-          setLastestAppointment(patientDentistryData[0]);
-        }
       }
     };
 
     fetchPatientDentistry();
-  }, [patientPersonalId]);
+  }, [patientPersonalId, applyPatientDentistries]);
+
+  // Re-read the appointments while the page sits open, so a colleague's
+  // charting shows up without anyone reloading. Fields being edited here hold
+  // their ground; see useLiveValue and InputTextField.
+  const refreshPatientDentistries = useCallback(
+    () => getPatientDentistries({ patientPersonalId }),
+    [patientPersonalId],
+  );
+
+  useLiveData({
+    load: refreshPatientDentistries,
+    apply: (result) => applyPatientDentistries(actionData(result)),
+    enabled: Boolean(patientPersonalId),
+  });
 
   if (!patientDentistries || !lastestAppointment) {
     return null;
@@ -67,7 +112,7 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
       }),
     );
 
-    setPatientDentistries(patientDentistriesData);
+    applyPatientDentistries(patientDentistriesData);
 
     return patientDentistriesData;
   };
@@ -99,13 +144,10 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
     }
   };
 
+  // The appointment that was open is the one just deleted, so applying the
+  // fresh list already moves to the newest remaining one.
   const afterDeleteAppointment = async () => {
-    const patientDentistriesData = await updateAppointments();
-
-    if (patientDentistriesData) {
-      const newLastestAppointment = patientDentistriesData[0];
-      setLastestAppointment(newLastestAppointment);
-    }
+    await updateAppointments();
   };
 
   // The query LEFT JOINs the appointment onto the patient, so a patient with

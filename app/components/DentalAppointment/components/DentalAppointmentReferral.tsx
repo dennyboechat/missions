@@ -9,8 +9,9 @@ import { DentalAppointmentReferralProps } from "../types/DentalAppointmentReferr
 import { PatientDentistryTypes } from "@/app/types/PatientDentistryTypes";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSaveField } from "../../../lib/useSaveField";
+import { useLiveValue } from "../../../lib/useLiveValue";
 
 // Database
 import { updatePatientDentistry } from "../../../database/patient-dentistry/UpdatePatientDentistry";
@@ -26,11 +27,9 @@ export const DentalAppointmentReferral = ({
   setPatientDentistries,
 }: DentalAppointmentReferralProps) => {
   const { save } = useSaveField();
-  const [hasReferral, setHasReferral] = useState(patientDentistry.appointmentHasReferral);
-  const [referral, setReferral] = useState(
-    patientDentistry.appointmentReferral
-  );
   const { patientDentistryId, appointmentReferral, appointmentHasReferral } = patientDentistry;
+  const [hasReferral, setHasReferral] = useLiveValue(appointmentHasReferral);
+  const [referral, setReferral] = useLiveValue(appointmentReferral);
 
   useEffect(() => {
     const onChangeAppointmentReferral = async () => {

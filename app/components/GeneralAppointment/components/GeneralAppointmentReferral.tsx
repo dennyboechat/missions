@@ -9,8 +9,9 @@ import { GeneralAppointmentReferralProps } from "../types/GeneralAppointmentRefe
 import { PatientGeneralTypes } from "@/app/types/PatientGeneralTypes";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSaveField } from "../../../lib/useSaveField";
+import { useLiveValue } from "../../../lib/useLiveValue";
 
 // Database
 import { updatePatientGeneral } from "../../../database/patient-general/UpdatePatientGeneral";
@@ -26,9 +27,9 @@ export const GeneralAppointmentReferral = ({
   setPatientGeneral,
 }: GeneralAppointmentReferralProps) => {
   const { save } = useSaveField();
-  const [hasReferral, setHasReferral] = useState(patientGeneral.appointmentHasReferral);
-  const [referral, setReferral] = useState(patientGeneral.appointmentReferral);
   const { patientGeneralId, appointmentReferral, appointmentHasReferral } = patientGeneral;
+  const [hasReferral, setHasReferral] = useLiveValue(appointmentHasReferral);
+  const [referral, setReferral] = useLiveValue(appointmentReferral);
 
   useEffect(() => {
     const onChangeAppointmentReferral = async () => {

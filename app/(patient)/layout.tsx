@@ -1,7 +1,7 @@
 "use client";
 
 // Multivariate Dependencies
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 // Components
@@ -10,6 +10,7 @@ import { PatientMenuItems } from "../components/PatientMenuItems";
 
 // Hooks
 import { PatientProvider } from "../lib/PatientContext";
+import { useLiveData } from "../lib/useLiveData";
 
 // Database
 import { getPatientSummary } from "../database/patient-summary/GetPatientSummary";
@@ -55,6 +56,13 @@ export default function PatientLayout({
 
   const [patient, setPatient] = useState<PatientPersonalSummary>();
 
+  // The last summary the server sent. The personal tab edits this same value
+  // through the context, so this is the baseline that says whether the copy on
+  // screen is the server's or someone's unsaved edit.
+  const lastRemotePatientRef = useRef<PatientPersonalSummary | undefined>(
+    undefined,
+  );
+
   useEffect(() => {
     let isCurrent = true;
 
@@ -68,6 +76,7 @@ export default function PatientLayout({
       // Ignore a response for a patient the user has already navigated away
       // from.
       if (isCurrent) {
+        lastRemotePatientRef.current = summary;
         setPatient(summary);
       }
     };
@@ -78,6 +87,40 @@ export default function PatientLayout({
       isCurrent = false;
     };
   }, [patientPersonalId]);
+
+  // Someone correcting a spelling on the personal tab should show up in this
+  // sidebar on every other tab, and on everyone else's screen.
+  const refreshPatient = useCallback(
+    () => getPatientSummary({ patientPersonalId }),
+    [patientPersonalId],
+  );
+
+  useLiveData({
+    load: refreshPatient,
+    apply: (result) => {
+      const summary = actionData(result);
+
+      if (!summary) return;
+
+      const lastRemotePatient = lastRemotePatientRef.current;
+
+      lastRemotePatientRef.current = summary;
+
+      setPatient((localPatient) => {
+        // An edit made on the personal tab has not necessarily reached the
+        // database yet, and it is the newer of the two. Leave it be; the save
+        // it is waiting on will make the two agree.
+        const hasLocalEdit =
+          localPatient?.patientFullName !== lastRemotePatient?.patientFullName ||
+          localPatient?.isPatientMale !== lastRemotePatient?.isPatientMale ||
+          localPatient?.patientDateOfBirth !==
+            lastRemotePatient?.patientDateOfBirth;
+
+        return hasLocalEdit ? localPatient : summary;
+      });
+    },
+    enabled: Boolean(patientPersonalId),
+  });
 
   return (
     <SideMenuLayout

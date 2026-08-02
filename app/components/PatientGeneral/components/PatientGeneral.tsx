@@ -14,8 +14,9 @@ import { getPatientGeneral } from "../../../database/patient-general/GetPatientG
 import { insertPatientGeneral } from "../../../database/patient-general/InsertPatientGeneral";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSaveField } from "../../../lib/useSaveField";
+import { useLiveData } from "../../../lib/useLiveData";
 
 // Types
 import { PatientGeneralTypes } from "../../../types/PatientGeneralTypes";
@@ -33,39 +34,85 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
 
   const { id: patientPersonalId } = params;
 
+  /**
+   * Takes a set of appointments, however it arrived: the first load, a save on
+   * this screen, or the ten-second refresh.
+   *
+   * The appointment on screen is kept rather than reset to the newest one. It
+   * is the same value either way on a first load, but on a refresh replacing it
+   * would throw someone out of the appointment they were reading every ten
+   * seconds -- and would do it hardest to whoever was reading an older visit.
+   * It only moves when the appointment it points at is gone, which is another
+   * user having deleted it.
+   */
+  const applyPatientGeneral = useCallback(
+    (patientGeneralData?: PatientGeneralTypes[]) => {
+      if (!patientGeneralData) {
+        return;
+      }
+
+      setPatientGeneral(patientGeneralData);
+
+      setLastestAppointment((currentAppointment) => {
+        const isCurrentStillPresent = patientGeneralData.some(
+          ({ patientGeneralId }) =>
+            patientGeneralId &&
+            patientGeneralId === currentAppointment?.patientGeneralId,
+        );
+
+        return isCurrentStillPresent
+          ? currentAppointment
+          : patientGeneralData[0];
+      });
+    },
+    [],
+  );
+
   useEffect(() => {
     const fetchPatientGeneral = async () => {
       if (patientPersonalId) {
-        const patientGeneralData = actionData(
-          await getPatientGeneral({
-            patientPersonalId: patientPersonalId,
-          }),
+        applyPatientGeneral(
+          actionData(
+            await getPatientGeneral({
+              patientPersonalId: patientPersonalId,
+            }),
+          ),
         );
-        setPatientGeneral(patientGeneralData);
-
-        if (patientGeneralData) {
-          setLastestAppointment(patientGeneralData[0]);
-        }
       }
     };
 
     fetchPatientGeneral();
-  }, [patientPersonalId]);
+  }, [patientPersonalId, applyPatientGeneral]);
+
+  // Two clinicians share a patient -- one taking vitals, one writing notes --
+  // so this page re-reads the appointments while it sits open instead of
+  // showing whatever was true when it was opened. Fields already being edited
+  // here hold their ground; see useLiveValue and InputTextField.
+  const refreshPatientGeneral = useCallback(
+    () => getPatientGeneral({ patientPersonalId }),
+    [patientPersonalId],
+  );
+
+  useLiveData({
+    load: refreshPatientGeneral,
+    apply: (result) => applyPatientGeneral(actionData(result)),
+    enabled: Boolean(patientPersonalId),
+  });
 
   if (!patientGeneral || !lastestAppointment) {
     return null;
   }
 
   const updateAppointments = async () => {
-    const patientDentistriesData = actionData(
+    const patientGeneralData = actionData(
       await getPatientGeneral({
         patientPersonalId: patientPersonalId,
       }),
     );
 
-    setPatientGeneral(patientDentistriesData);
+    applyPatientGeneral(patientGeneralData);
 
-    return patientDentistriesData;
+    return patientGeneralData;
   };
 
   const onCreateAppointment = async () => {
@@ -87,13 +134,10 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
     }
   };
 
+  // The appointment that was open is the one just deleted, so applying the
+  // fresh list already moves to the newest remaining one.
   const afterDeleteAppointment = async () => {
-    const patientGeneralData = await updateAppointments();
-
-    if (patientGeneralData) {
-      const newLastestAppointment = patientGeneralData[0];
-      setLastestAppointment(newLastestAppointment);
-    }
+    await updateAppointments();
   };
 
   // The query LEFT JOINs the appointment onto the patient, so a patient with

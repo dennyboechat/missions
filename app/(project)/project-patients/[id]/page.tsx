@@ -11,9 +11,10 @@ import { Icon } from "../../../components/ui/Icon";
 import styles from "../../../styles/content.module.css";
 
 // Hooks
-import { memo, useMemo, useState, useEffect, use } from "react";
+import { memo, useMemo, useState, useEffect, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { useProject } from "../../../lib/ProjectContext";
+import { useLiveData } from "../../../lib/useLiveData";
 
 // Database
 import { getPatientPersonals } from "../../../database/patient-personal/GetPatientPersonals";
@@ -92,6 +93,28 @@ const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
 
     fetchProjects();
   }, [project]);
+
+  // Patients are registered at the door while this list is open on someone
+  // else's screen, so it re-reads itself rather than waiting for a refresh.
+  // Nothing here is editable, so the new list simply replaces the old one --
+  // the search text is separate state and survives untouched, and the rows are
+  // memoised by patient, so only the ones that actually changed re-render.
+  const refreshPatients = useCallback(
+    () => getPatientPersonals({ projectId: project?.projectId ?? "" }),
+    [project?.projectId],
+  );
+
+  useLiveData({
+    load: refreshPatients,
+    apply: (result) => {
+      const projectPersonalsData = actionData(result);
+
+      if (projectPersonalsData) {
+        setPatientPersonals(projectPersonalsData);
+      }
+    },
+    enabled: Boolean(project?.projectId),
+  });
 
   const tableHeader = (
     <Table.Row>
