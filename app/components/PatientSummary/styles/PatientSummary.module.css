@@ -1,32 +1,196 @@
-.summary_subtitle {
+.summary_stack {
+  display: grid;
+  gap: var(--ds-space-6);
+}
+
+/* Personal sits on the page; the record sections sit in it. Grouping is a
+   border plus a background shift, never a shadow. */
+.card {
+  padding: var(--panel-pad);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-md);
+}
+
+.card_sunken {
+  background-color: var(--surface-sunken);
+}
+
+.section_heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-5);
+  margin-bottom: var(--ds-space-6);
+}
+
+.section_title {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--ds-space-4);
+  font: var(--h4-weight) var(--h4-size) / var(--h4-lh) var(--h4-font);
+  color: var(--fg-primary);
 }
 
-.appointments {
-  margin-bottom: 20px;
-  padding: 20px;;
-  background-color: #fbfbfb;
+.section_icon {
+  display: inline-flex;
+  color: var(--sky-700);
 }
 
-.summary_teeth {
+/* ---------- Personal: label / value rows ---------- */
+
+.row {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: var(--ds-space-6);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row_label {
+  font-size: var(--fs-13);
+  color: var(--fg-secondary);
+}
+
+.row_value {
+  font-size: var(--fs-14);
+  color: var(--fg-primary);
+}
+
+/* ---------- One appointment ---------- */
+
+.appointment {
+  display: grid;
+  gap: var(--ds-space-6);
+  padding: var(--ds-space-6);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--ds-radius-md);
+}
+
+.appointment + .appointment {
+  margin-top: var(--ds-space-6);
+}
+
+/* Dates are measurements, so they set in the mono face. */
+.appointment_date {
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: var(--fs-13);
+  color: var(--fg-secondary);
+}
+
+/* ---------- Read-only measurements ---------- */
+
+.vitals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--ds-space-7);
+}
+
+.vital {
+  display: grid;
+  gap: var(--ds-space-3);
+  align-content: start;
+}
+
+.vital_label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  color: var(--fg-secondary);
+}
+
+/* A recorded measurement reads as a value, not as a filled-in field. */
+.vital_value {
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: var(--fs-20);
+  font-weight: var(--fw-medium);
+  line-height: 1.2;
+  color: var(--fg-primary);
+}
+
+.vital_unit {
+  margin-left: var(--ds-space-2);
+  font-family: var(--font-body);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-regular);
+  color: var(--fg-tertiary);
+}
+
+/* ---------- Dental ---------- */
+
+.teeth {
   display: inline-flex;
   flex-wrap: wrap;
-  gap: 5px;
-  margin-left: 20px;
+  gap: var(--ds-space-3);
 }
 
-.summary_margin {
-  margin-left: 20px;
+.field {
+  display: grid;
+  gap: var(--ds-space-3);
 }
 
-.italic {
+.field_label {
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  color: var(--fg-secondary);
+}
+
+.notes {
+  font-size: var(--fs-14);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-secondary);
+}
+
+.referral {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-space-5);
+}
+
+/* ---------- Prescribed medication ---------- */
+
+.medication {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.medication th {
+  text-align: left;
+  padding: 0 var(--ds-space-4) var(--ds-space-3) 0;
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--eyebrow-ls);
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  white-space: nowrap;
+}
+
+.medication td {
+  padding: var(--ds-space-3) var(--ds-space-4) var(--ds-space-3) 0;
+  font-size: var(--fs-14);
+  color: var(--fg-primary);
+  border-top: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+
+.medication td.numeric_cell {
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  white-space: nowrap;
+}
+
+/* Nothing recorded is stated, not left blank -- a blank reads as a bug. */
+.empty {
+  font-size: var(--fs-14);
   font-style: italic;
-}
-
-.summary_medication_item {
-  background-color: #f0f0f0;
-  padding-left: 3px;
-  padding-right: 3px;
+  color: var(--fg-tertiary);
 }

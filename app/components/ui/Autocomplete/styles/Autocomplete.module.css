@@ -2,29 +2,33 @@
   position: relative;
 }
 
+/* The list floats over the page, so it is one of the few surfaces that carries
+   a shadow. */
 .list {
   position: absolute;
-  top: calc(100% + 2px);
+  top: calc(100% + var(--ds-space-2));
   left: 0;
   right: 0;
   z-index: 20;
 
   margin: 0;
-  padding: 4px 0;
+  padding: var(--ds-space-2);
   list-style: none;
 
-  max-height: 240px;
+  max-height: 260px;
   overflow-y: auto;
 
-  background-color: var(--color-panel-solid, #fff);
-  border: 1px solid var(--gray-a6, #d9d9d9);
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .option {
-  padding: 6px 12px;
+  padding: 7px 10px;
   cursor: pointer;
+  border-radius: var(--ds-radius-xs);
+  font-size: var(--fs-14);
 
   white-space: nowrap;
   overflow: hidden;
@@ -32,10 +36,12 @@
 }
 
 .highlighted {
-  background-color: var(--accent-a3, #eaeaea);
+  background-color: var(--sky-50);
+  color: var(--sky-800);
 }
 
 .readonly input {
-  background-color: #f5f5f5;
+  background-color: var(--gray-50);
+  color: var(--fg-disabled);
   cursor: not-allowed;
 }

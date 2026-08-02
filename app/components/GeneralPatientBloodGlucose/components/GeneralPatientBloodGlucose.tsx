@@ -49,7 +49,8 @@ export const GeneralPatientBloodGlucose = ({
 
   return (
     <InputTextField
-      label="Blood glucose (in mg/dL)"
+      label="Blood glucose"
+      labelIcon="glucose"
       value={patientBloodGlucose}
       onBlur={handleBlur}
       type="number"

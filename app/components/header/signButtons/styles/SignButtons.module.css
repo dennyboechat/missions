@@ -1,3 +1,4 @@
 .sign_buttons {
-    margin: 0 10px;
+  justify-self: end;
+  align-items: center;
 }

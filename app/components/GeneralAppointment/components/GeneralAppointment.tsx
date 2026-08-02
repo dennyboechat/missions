@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Tabs, Heading } from "@radix-ui/themes";
+import { Tabs, Text } from "@radix-ui/themes";
 import { TabNavigator } from "../../ui/TabNavigator";
 import { GeneralAppointmentList } from "./GeneralAppointmentList";
 import { GeneralAppointmentContent } from "./GeneralAppointmentContent";
@@ -9,6 +9,9 @@ import { GeneralAppointmentContent } from "./GeneralAppointmentContent";
 // Types
 import { GeneralAppointmentProps } from "../types/GeneralAppointmentProps";
 import { ReactElement } from "react";
+
+// Styles
+import styles from "../styles/GeneralAppointment.module.css";
 
 // Hooks
 import { useState, useEffect } from "react";
@@ -50,7 +53,7 @@ export const GeneralAppointment = ({
 
   return (
     <>
-      <Heading size="3">{"Existing appointments"}</Heading>
+      <Text className={styles.section_title}>{"Existing appointments"}</Text>
       <TabNavigator activeTab={activeTab} setActiveTab={setActiveTab}>
         <Tabs.List>{tabList}</Tabs.List>
         {tabContent}

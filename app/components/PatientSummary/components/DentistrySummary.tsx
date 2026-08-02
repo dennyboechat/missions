@@ -1,17 +1,16 @@
 "use client";
 
 // Multivariate Dependencies
-import { Fragment, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 // Components
-import { Grid, Text, Tooltip } from "@radix-ui/themes";
+import { Text } from "@radix-ui/themes";
 import { ToothButton } from "../../ui/ToothButton";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Space } from "../../ui/Space";
+import { SummarySection } from "./SummarySection";
+import { SummaryMedication } from "./SummaryMedication";
 
 // Styles
 import styles from "../styles/PatientSummary.module.css";
-import generalStyles from "../../../styles/general.module.css";
 
 // Databases
 import { getPatientDentalSummary } from "../../../database/patient-summary/GetPatientDentalSummary";
@@ -19,10 +18,8 @@ import { getPatientDentalSummary } from "../../../database/patient-summary/GetPa
 // Types
 import { PatientDentalSummary } from "../../../types/PatientDentalSummary";
 import { ToothStatus } from "../../../types/ToothStatus";
+import { Tooth } from "../../../types/Tooth";
 import { PatientPersonalId } from "../../../types/PatientPersonalTypes";
-
-// Icons
-import { faTooth } from "@fortawesome/free-solid-svg-icons";
 
 // Utils
 import { getDentalAppointmentsSummary } from "../utils/getDentalAppointmentsSummary";
@@ -30,6 +27,42 @@ import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
+
+/**
+ * Teeth in one state, as the same squares the odontogram uses -- green
+ * treated, clay extracted -- so the summary and the map read alike.
+ */
+const Teeth = ({
+  label,
+  teeth,
+  toothStatus,
+}: {
+  label: string;
+  teeth: (Tooth | undefined)[];
+  toothStatus: ToothStatus;
+}) => {
+  const recorded = teeth.filter((tooth): tooth is Tooth => Boolean(tooth));
+
+  return (
+    <div className={styles.field}>
+      <Text className={styles.field_label}>{label}</Text>
+      {recorded.length > 0 ? (
+        <div className={styles.teeth}>
+          {recorded.map((tooth) => (
+            <ToothButton
+              key={tooth}
+              id={tooth}
+              toothDetails={{ toothStatus }}
+              ignoreAbsolutePosition
+            />
+          ))}
+        </div>
+      ) : (
+        <Text className={styles.empty}>{"None"}</Text>
+      )}
+    </div>
+  );
+};
 
 export const DentistrySummary = ({
   patientPersonalId,
@@ -42,9 +75,9 @@ export const DentistrySummary = ({
   useEffect(() => {
     const fetchProject = async () => {
       if (patientPersonalId) {
-        const patientDentalSummaryData = actionData(await getPatientDentalSummary({
-          patientPersonalId,
-        }));
+        const patientDentalSummaryData = actionData(
+          await getPatientDentalSummary({ patientPersonalId }),
+        );
 
         setPatientDentalSummary(patientDentalSummaryData);
       }
@@ -58,147 +91,63 @@ export const DentistrySummary = ({
   });
 
   return (
-    <>
-      <div className={styles.summary_subtitle}>
-        <FontAwesomeIcon icon={faTooth} />
-        <Text weight="bold" size="5">
-          {"Dental"}
-        </Text>
-      </div>
-      {dentalAppointments.length === 0 && (
-        <Text className={`${styles.italic} ${styles.summary_margin}`}>
-          {"No appointment"}
-        </Text>
-      )}
-      <Space height={3} />
-      {dentalAppointments.map(
-        ({
-          patientDentistryId,
-          appointmentDate,
-          appointmentHasReferral,
-          appointmentReferral,
-          treatedTeeth,
-          extractedTeeth,
-          prescribedMedication,
-        }) => (
-          <Grid key={patientDentistryId} className={styles.appointments}>
-            <Text weight="medium" size="3">
-              {getLocaleFormattedDate({
-                date: appointmentDate,
-              })}
-            </Text>
-            <Space height={3} />
-            <div className={styles.summary_margin}>
-              <div>
-                <Text>{"Teeth treated: "}</Text>
-              </div>
-              <div className={styles.summary_teeth}>
-                {treatedTeeth.length > 0 ? (
-                  treatedTeeth.map((tooth) =>
-                    tooth ? (
-                      <ToothButton
-                        key={tooth}
-                        id={tooth}
-                        toothDetails={{ toothStatus: ToothStatus.TREATED }}
-                        ignoreAbsolutePosition
-                      />
-                    ) : null
-                  )
-                ) : (
-                  <Text className={styles.italic}>{"none"}</Text>
-                )}
-              </div>
-            </div>
-            <Space />
-            <div className={styles.summary_margin}>
-              <div>
-                <Text>{"Teeth extracted: "}</Text>
-              </div>
-              <div className={styles.summary_teeth}>
-                {extractedTeeth.length > 0 ? (
-                  extractedTeeth.map((tooth) =>
-                    tooth ? (
-                      <ToothButton
-                        key={tooth}
-                        id={tooth}
-                        toothDetails={{ toothStatus: ToothStatus.EXTRACTED }}
-                        ignoreAbsolutePosition
-                      />
-                    ) : null
-                  )
-                ) : (
-                  <Text className={styles.italic}>{"none"}</Text>
-                )}
-              </div>
-            </div>
-            <Space />
-            <div className={styles.summary_margin}>
-                <Text>{"Has referral: "}</Text>
-                {appointmentHasReferral ? "Yes" : "No"}
-            </div>
-            <Space />
-            <div className={styles.summary_margin}>
-              <div>
-                <Text>{"Referral details:"}</Text>
-              </div>
-              {appointmentReferral ? (
-                <Tooltip content={appointmentReferral}>
-                  <Text
-                    className={`${styles.summary_margin} ${generalStyles.ellipsis_one_line}`}
-                  >
-                    {appointmentReferral}
-                  </Text>
-                </Tooltip>
-              ) : (
-                <div className={styles.summary_margin}>
-                  <Text className={styles.italic}>{"none"}</Text>
-                </div>
-              )}
-            </div>
-            <Space />
-            <div className={styles.summary_margin}>
-              <div>
-                <Text>{"Prescribed medication by the dentist:"}</Text>
-              </div>
-              {prescribedMedication.length > 0 ? (
-                <Grid
-                  columns="30fr 10fr 10fr 50fr"
-                  gap="2"
-                  className={styles.summary_margin}
-                >
-                  <Text weight="medium">{"Drug"}</Text>
-                  <Text weight="medium">{"Dose"}</Text>
-                  <Text weight="medium">{"Quantity"}</Text>
-                  <Text weight="medium">{"Instructions"}</Text>
-                  {prescribedMedication.map(
-                    ({ rowId, drug, dose, quantity, instructions }) => (
-                      <Fragment key={rowId}>
-                        <Text className={styles.summary_medication_item}>
-                          {drug}
-                        </Text>
-                        <Text className={styles.summary_medication_item}>
-                          {dose}
-                        </Text>
-                        <Text className={styles.summary_medication_item}>
-                          {quantity}
-                        </Text>
-                        <Text className={styles.summary_medication_item}>
-                          {instructions}
-                        </Text>
-                      </Fragment>
-                    )
+    <SummarySection
+      icon="dental"
+      title="Dental"
+      count={dentalAppointments.length}
+      noun="appointment"
+      sunken
+    >
+      {dentalAppointments.length === 0 ? (
+        <Text className={styles.empty}>{"No appointment"}</Text>
+      ) : (
+        dentalAppointments.map(
+          ({
+            patientDentistryId,
+            appointmentDate,
+            appointmentHasReferral,
+            appointmentReferral,
+            treatedTeeth,
+            extractedTeeth,
+            prescribedMedication,
+          }) => (
+            <article key={patientDentistryId} className={styles.appointment}>
+              <Text className={styles.appointment_date}>
+                {getLocaleFormattedDate({ date: appointmentDate })}
+              </Text>
+
+              <Teeth
+                label="Teeth treated"
+                teeth={treatedTeeth}
+                toothStatus={ToothStatus.TREATED}
+              />
+              <Teeth
+                label="Teeth extracted"
+                teeth={extractedTeeth}
+                toothStatus={ToothStatus.EXTRACTED}
+              />
+
+              {appointmentHasReferral && (
+                <div className={styles.field}>
+                  <Text className={styles.field_label}>{"Referral"}</Text>
+                  {appointmentReferral ? (
+                    <Text className={styles.notes}>{appointmentReferral}</Text>
+                  ) : (
+                    <Text className={styles.empty}>{"No details given"}</Text>
                   )}
-                </Grid>
-              ) : (
-                <div className={styles.summary_margin}>
-                  <Text className={styles.italic}>{"none"}</Text>
                 </div>
               )}
-            </div>
-            <Space />
-          </Grid>
+
+              <div className={styles.field}>
+                <Text className={styles.field_label}>
+                  {"Prescribed medication"}
+                </Text>
+                <SummaryMedication medications={prescribedMedication} />
+              </div>
+            </article>
+          ),
         )
       )}
-    </>
+    </SummarySection>
   );
 };

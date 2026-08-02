@@ -1,14 +1,41 @@
+/* A 60px rule across the top of every screen: wordmark, contextual Back,
+   account. Flat white with a single hairline underneath -- the system groups
+   with a border and a background shift, never a shadow.
+
+   Sticky because the side menu pins directly beneath it. If the header scrolled
+   away the menu would either follow it up the page or leave a growing empty
+   band above itself; either way the menu would move while the page scrolled,
+   which is what made a quick second click land on the wrong item. */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 0 var(--ds-space-7);
+  background: var(--surface-page);
+  border-bottom: 1px solid var(--border-default);
+}
+
 a.header_logo_link {
-  justify-self: center;
+  justify-self: start;
+  display: inline-flex;
+}
+
+a.header_logo_link:hover {
+  text-decoration: none;
 }
 
 .header_logo {
-  width: 150px;
+  width: 148px;
   height: auto;
+  display: block;
 }
 
 @media (max-width: 768px) {
+  .header {
+    padding: 0 var(--ds-space-5);
+  }
+
   .header_logo {
-    width: 80px;
+    width: 96px;
   }
 }

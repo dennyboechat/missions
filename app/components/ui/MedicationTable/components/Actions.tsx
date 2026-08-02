@@ -1,15 +1,15 @@
 "use client";
 
 // Components
-import { Button } from "@radix-ui/themes";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconButton } from "@radix-ui/themes";
+import { Icon } from "../../Icon";
+
+// Styles
+import styles from "../styles/MedicationTable.module.css";
 
 // Types
 import { ActionsProps } from "../types/ActionsProps";
 import { Medication } from "../../../../types/Medication";
-
-// Icons
-import { faRemove } from "@fortawesome/free-solid-svg-icons";
 
 // Hooks
 import { useSaveField } from "../../../../lib/useSaveField";
@@ -39,13 +39,15 @@ export const Actions = ({
   };
 
   return (
-    <Button
-      variant="outline"
+    <IconButton
+      variant="ghost"
       disabled={!drug}
       title="Delete row"
+      aria-label="Delete row"
       onClick={onDeleteRow}
+      className={styles.delete_button}
     >
-      <FontAwesomeIcon icon={faRemove} />
-    </Button>
+      <Icon name="trash" size={16} />
+    </IconButton>
   );
 };

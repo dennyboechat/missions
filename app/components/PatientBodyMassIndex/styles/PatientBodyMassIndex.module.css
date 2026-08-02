@@ -1,0 +1,15 @@
+/* BMI is derived, never typed, so it reads as a value rather than a field --
+   the read-only half of the system's measurement pattern. */
+.body_mass_index {
+  display: grid;
+  gap: var(--ds-space-3);
+}
+
+.value {
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: var(--fs-24);
+  font-weight: var(--fw-medium);
+  line-height: 1.2;
+  color: var(--fg-primary);
+}

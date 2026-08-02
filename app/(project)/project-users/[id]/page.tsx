@@ -4,13 +4,14 @@
 import { Container, Table, Switch, Button } from "@radix-ui/themes";
 import { ContentHeader } from "../../../components/ContentHeader";
 import { DataTable } from "../../../components/ui/DataTable";
+import { Icon } from "../../../components/ui/Icon";
 
 // Styles
 import styles from "../../../styles/content.module.css";
 
 // Hooks
 import { useProject } from "../../../lib/ProjectContext";
-import { useState, useEffect, use } from "react";
+import { useMemo, useState, useEffect, use } from "react";
 import { useSaveField } from "../../../lib/useSaveField";
 import { useRouter } from "next/navigation";
 
@@ -35,6 +36,9 @@ const ProjectUsers = ({ params }: { params: Promise<{ id: string }> }) => {
   const { save } = useSaveField();
   const [projectUsers, setProjectUsers] = useState<ProjectUser[]>([]);
   const [searchText, setSearchText] = useState<string | undefined>();
+  // See the patient list: the project resolves after the route, so an
+  // unanswered fetch must not read as an empty project.
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -45,6 +49,7 @@ const ProjectUsers = ({ params }: { params: Promise<{ id: string }> }) => {
           }),
         );
         setProjectUsers(projectUsersData ?? []);
+        setIsLoadingUsers(false);
       }
     };
 
@@ -73,29 +78,36 @@ const ProjectUsers = ({ params }: { params: Promise<{ id: string }> }) => {
     </Table.Row>
   );
 
-  const filteredProjectUsers = getFilteredProjectUsers({
-    projectUsers,
-    filterText: searchText,
-  });
+  const filteredProjectUsers = useMemo(
+    () => getFilteredProjectUsers({ projectUsers, filterText: searchText }),
+    [projectUsers, searchText],
+  );
 
   return (
     <Container className={styles.content}>
       <ContentHeader
         text="Users"
         subText="All users who have access to this project."
+        actions={
+          <Button
+            onClick={() => {
+              router.push(`/project-user/${projectId}`);
+            }}
+          >
+            <Icon name="plus" size={17} />
+            {"Add user"}
+          </Button>
+        }
       />
-      <Button
-        onClick={() => {
-          router.push(`/project-user/${projectId}`);
-        }}
-      >
-        {"Add user"}
-      </Button>
       <DataTable
         tableHeader={tableHeader}
         onSearchTextChange={(text) => setSearchText(text)}
         isSearchAutoFocus
+        searchPlaceholder="Search by name or email..."
         records={filteredProjectUsers}
+        isLoading={isLoadingUsers}
+        noun="user"
+        emptyTitle="No users match that search"
       >
         {filteredProjectUsers.map(
           ({ projectUserId, userName, userEmail, isUserActive }) => (

@@ -4,10 +4,14 @@
 import { Tabs, Box, Text, Grid, Button, Popover } from "@radix-ui/themes";
 import { Space } from "../../ui/Space";
 import { PopupConfirmation } from "../../ui/PopupConfirmation";
+import { Icon } from "../../ui/Icon";
 import { DentalAppointmentMap } from "../../DentalAppointmentMap";
 import { DentalAppointmentClinicalNotes } from "./DentalAppointmentClinicalNotes";
 import { DentalAppointmentReferral } from "./DentalAppointmentReferral";
 import { DentalAppointmentMedicationPrescribed } from "./DentalAppointmentMedicationPrescribed";
+
+// Styles
+import styles from "../styles/DentalAppointment.module.css";
 
 // Types
 import { DentalAppointmentContentProps } from "../types/DentalAppointmentContentProps";
@@ -85,14 +89,16 @@ export const DentalAppointmentContent = ({
         patientDentistry={patientDentistry}
         setPatientDentistries={setPatientDentistries}
       />
-      <Space height={50} />
-      <Grid width={{ initial: "auto", sm: "220px" }}>
-        <PopupConfirmation content={deleteAppointmentPopupConfirmation}>
-          <Button color="red" variant="outline">
-            {"Delete appointment"}
-          </Button>
-        </PopupConfirmation>
-      </Grid>
+      <div className={styles.delete_appointment}>
+        <Grid width={{ initial: "auto", sm: "220px" }}>
+          <PopupConfirmation content={deleteAppointmentPopupConfirmation}>
+            <Button color="red" variant="outline">
+              <Icon name="trash" size={17} />
+              {"Delete appointment"}
+            </Button>
+          </PopupConfirmation>
+        </Grid>
+      </div>
     </Tabs.Content>
   );
 };

@@ -1,15 +1,57 @@
+/* Tooth status is the only place in the product where colour alone carries
+   clinical meaning, so each state also sets a title on the button. The tokens
+   are named for the state, not the hue. */
+.tooth_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  padding: 0;
+  /* The map positions teeth 28-32px apart, which at full size leaves them
+     touching: a neighbour then cuts straight into the selected tooth's ring.
+     A transparent border holds every tooth off its neighbours without moving a
+     single coordinate, and keeps the tap target the full 32x28 -- these get
+     tapped on a tablet, sometimes wearing gloves.
+
+     background-clip is what stops the fill painting under that border, and the
+     radius is 2px over the token so the visible corner still reads as 6px. */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 8px;
+  background-color: var(--tooth-idle-bg);
+  color: var(--tooth-idle-fg);
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-medium);
+  transition: var(--transition-control);
+  z-index: 1;
+}
+
 .tooth_button_position {
   position: absolute;
 }
 
-.tooth_button {
-  border-radius: 8px;
-  width: 30px;
-  z-index: 1;
+.treated {
+  background-color: var(--tooth-treated-bg);
+  color: var(--tooth-treated-fg);
 }
 
+.extracted {
+  background-color: var(--tooth-extracted-bg);
+  color: var(--tooth-extracted-fg);
+}
+
+.has_notes {
+  background-color: var(--tooth-notes-bg);
+  color: var(--tooth-notes-fg);
+}
+
+/* An inset ring rather than an outline, so selecting a tooth does not shift
+   its neighbours. */
 .selected_tooth {
-  box-shadow: inset 0 0 0 2px #202020;
+  box-shadow: inset 0 0 0 2px var(--tooth-selected-ring);
 }
 
 .non_clickable {

@@ -1,17 +1,16 @@
 "use client";
 
 // Multivariate Dependencies
-import { Fragment, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 // Components
-import { Grid, Text, Tooltip } from "@radix-ui/themes";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Space } from "../../ui/Space";
+import { Text } from "@radix-ui/themes";
+import { SummarySection } from "./SummarySection";
+import { SummaryMedication } from "./SummaryMedication";
 import { GeneralSummaryDetails } from "./GeneralSummaryDetails";
 
 // Styles
 import styles from "../styles/PatientSummary.module.css";
-import generalStyles from "../../../styles/general.module.css";
 
 // Databases
 import { getPatientGeneralSummary } from "../../../database/patient-summary/GetPatientGeneralSummary";
@@ -19,9 +18,6 @@ import { getPatientGeneralSummary } from "../../../database/patient-summary/GetP
 // Types
 import { PatientGeneralSummary } from "../../../types/PatientGeneralSummary";
 import { PatientPersonalId } from "../../../types/PatientPersonalTypes";
-
-// Icons
-import { faNotesMedical } from "@fortawesome/free-solid-svg-icons";
 
 // Utils
 import { getGeneralAppointmentsSummary } from "../utils/getGeneralAppointmentsSummary";
@@ -41,9 +37,9 @@ export const GeneralSummary = ({
   useEffect(() => {
     const fetchProject = async () => {
       if (patientPersonalId) {
-        const patientGeneralSummaryData = actionData(await getPatientGeneralSummary({
-          patientPersonalId,
-        }));
+        const patientGeneralSummaryData = actionData(
+          await getPatientGeneralSummary({ patientPersonalId }),
+        );
 
         setPatientGeneralSummary(patientGeneralSummaryData);
       }
@@ -57,128 +53,53 @@ export const GeneralSummary = ({
   });
 
   return (
-    <>
-      <div className={styles.summary_subtitle}>
-        <FontAwesomeIcon icon={faNotesMedical} />
-        <Text weight="bold" size="5">
-          {"General"}
-        </Text>
-      </div>
-      {generalAppointments.length === 0 && (
-        <Text className={`${styles.italic} ${styles.summary_margin}`}>
-          {"No appointment"}
-        </Text>
-      )}
-      <Space height={3} />
-      {generalAppointments.map(
-        ({
-          patientGeneralId,
-          appointmentDate,
-          prescribedMedication,
-          patientHeight,
-          patientWeight,
-          patientTemperature,
-          patientPulse,
-          patientOxygenSaturation,
-          patientBloodGlucose,
-          patientBloodPressureSystolic,
-          patientBloodPressureDiastolic,
-          patientVisionLeftTestedDistance,
-          patientVisionLeftNormalDistance,
-          patientVisionRightTestedDistance,
-          patientVisionRightNormalDistance,
-          appointmentHasReferral,
-          appointmentReferral,
-        }) => (
-          <Grid key={patientGeneralId} className={styles.appointments}>
-            <Text weight="medium" size="3">
-              {getLocaleFormattedDate({
-                date: appointmentDate,
-              })}
-            </Text>
-            <Space />
-            <GeneralSummaryDetails
-              patientHeight={patientHeight}
-              patientWeight={patientWeight}
-              patientTemperature={patientTemperature}
-              patientPulse={patientPulse}
-              patientOxygenSaturation={patientOxygenSaturation}
-              patientBloodGlucose={patientBloodGlucose}
-              patientBloodPressureSystolic={patientBloodPressureSystolic}
-              patientBloodPressureDiastolic={patientBloodPressureDiastolic}
-              patientVisionLeftTestedDistance={patientVisionLeftTestedDistance}
-              patientVisionLeftNormalDistance={patientVisionLeftNormalDistance}
-              patientVisionRightTestedDistance={
-                patientVisionRightTestedDistance
-              }
-              patientVisionRightNormalDistance={
-                patientVisionRightNormalDistance
-              }
-            />
-            <Space />
-            <div className={styles.summary_margin}>
-                <Text>{"Has referral: "}</Text>
-                {appointmentHasReferral ? "Yes" : "No"}
-            </div>
-            <Space />
-            <div className={styles.summary_margin}>
-              <div>
-                <Text>{"Referral details:"}</Text>
-              </div>
-              {appointmentReferral ? (
-                <Tooltip content={appointmentReferral}>
-                  <Text
-                    className={`${styles.summary_margin} ${generalStyles.ellipsis_one_line}`}
-                  >
-                    {appointmentReferral}
-                  </Text>
-                </Tooltip>
-              ) : (
-                <div className={styles.summary_margin}>
-                  <Text className={styles.italic}>{"none"}</Text>
+    <SummarySection
+      icon="general"
+      title="General"
+      count={generalAppointments.length}
+      noun="appointment"
+      sunken
+    >
+      {generalAppointments.length === 0 ? (
+        <Text className={styles.empty}>{"No appointment"}</Text>
+      ) : (
+        generalAppointments.map(
+          ({
+            patientGeneralId,
+            appointmentDate,
+            prescribedMedication,
+            appointmentHasReferral,
+            appointmentReferral,
+            ...vitals
+          }) => (
+            <article key={patientGeneralId} className={styles.appointment}>
+              <Text className={styles.appointment_date}>
+                {getLocaleFormattedDate({ date: appointmentDate })}
+              </Text>
+
+              <GeneralSummaryDetails {...vitals} />
+
+              {appointmentHasReferral && (
+                <div className={styles.field}>
+                  <Text className={styles.field_label}>{"Referral"}</Text>
+                  {appointmentReferral ? (
+                    <Text className={styles.notes}>{appointmentReferral}</Text>
+                  ) : (
+                    <Text className={styles.empty}>{"No details given"}</Text>
+                  )}
                 </div>
               )}
-            </div>
-            <Space />
-            <div className={styles.summary_margin}>
-              <Text>{"Prescribed medication by the doctor: "}</Text>
-              {prescribedMedication.length > 0 ? (
-                <Grid
-                  columns="30fr 10fr 10fr 50fr"
-                  gap="2"
-                  className={styles.summary_margin}
-                >
-                  <Text weight="medium">{"Drug"}</Text>
-                  <Text weight="medium">{"Dose"}</Text>
-                  <Text weight="medium">{"Quantity"}</Text>
-                  <Text weight="medium">{"Instructions"}</Text>
-                  {prescribedMedication.map(
-                    ({ rowId, drug, dose, quantity, instructions }) => (
-                      <Fragment key={rowId}>
-                        <Text className={styles.summary_medication_item}>
-                          {drug}
-                        </Text>
-                        <Text className={styles.summary_medication_item}>
-                          {dose}
-                        </Text>
-                        <Text className={styles.summary_medication_item}>
-                          {quantity}
-                        </Text>
-                        <Text className={styles.summary_medication_item}>
-                          {instructions}
-                        </Text>
-                      </Fragment>
-                    )
-                  )}
-                </Grid>
-              ) : (
-                <Text className={styles.italic}>{"none"}</Text>
-              )}
-            </div>
-            <Space />
-          </Grid>
+
+              <div className={styles.field}>
+                <Text className={styles.field_label}>
+                  {"Prescribed medication"}
+                </Text>
+                <SummaryMedication medications={prescribedMedication} />
+              </div>
+            </article>
+          ),
         )
       )}
-    </>
+    </SummarySection>
   );
 };

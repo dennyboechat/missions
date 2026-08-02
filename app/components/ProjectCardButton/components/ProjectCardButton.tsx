@@ -1,9 +1,9 @@
 "use client";
 
 // Components
-import { Grid, Card, Text, Skeleton } from "@radix-ui/themes";
+import { Skeleton, Text } from "@radix-ui/themes";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "../../ui/Icon";
 
 // Styles
 import styles from "../styles/ProjectCardButton.module.css";
@@ -14,8 +14,8 @@ import { ProjectCardButtonProps } from "../types/ProjectCardButtonProps";
 // Hooks
 import { useProject } from "../../../lib/ProjectContext";
 
-// Icons
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+// Utils
+import { getTimezoneCity } from "../../../utils/getTimezoneLabel";
 
 export const ProjectCardButton = ({
   isLoading,
@@ -24,42 +24,52 @@ export const ProjectCardButton = ({
 }: ProjectCardButtonProps) => {
   const { setProject } = useProject();
 
-  let cardContent;
   if (isLoading) {
-    cardContent = <Skeleton />;
-  } else if (isAddNew) {
-    cardContent = (
-      <Link href="/project">
-        <Grid height="100%">
-          <FontAwesomeIcon
-            icon={faPlus}
-            className={styles.new_card_upper_section}
-          />
-          <Text className={styles.new_card_bottom_section}>
-            {"New project"}
-          </Text>
-        </Grid>
-      </Link>
+    return (
+      <div className={`${styles.card} ${styles.loading_card}`}>
+        <Skeleton height="17px" width="70%" />
+        <Skeleton height="12px" />
+      </div>
     );
-  } else {
-    cardContent = (
-      <Link
-        href={`/project-patients/${project?.projectId}`}
-        onClick={() => setProject(project)}
-      >
-        <Grid height="100%">
-          <Text className={styles.project_name}>{project?.projectName}</Text>
-          <Text as="p" size="1" className={styles.project_description}>
-            {project?.projectDescription}
-          </Text>
-        </Grid>
+  }
+
+  // The dashed tile reads as a slot waiting to be filled rather than a mission
+  // that already exists, which is why it is the one place the system uses a
+  // dashed border.
+  if (isAddNew) {
+    return (
+      <Link href="/project" className={`${styles.card} ${styles.new_card}`}>
+        <Icon name="plus" size={26} />
+        <Text className={styles.new_card_label}>{"New project"}</Text>
       </Link>
     );
   }
 
+  // The mission's timezone is the only thing the record knows about where it
+  // is, so the city half of it stands in for the place: "Pacific/Fiji" is a
+  // configuration value, "Fiji" is what the pin is pointing at.
+  const location = project?.projectTimezone
+    ? getTimezoneCity({ timezone: project.projectTimezone })
+    : undefined;
+
   return (
-    <Card asChild size="3" variant="surface" className={styles.card}>
-      {cardContent}
-    </Card>
+    <Link
+      href={`/project-patients/${project?.projectId}`}
+      onClick={() => setProject(project)}
+      className={`${styles.card} ${styles.project_card}`}
+    >
+      <Text className={styles.project_name}>{project?.projectName}</Text>
+      <span className={styles.project_footer}>
+        <Text as="p" className={styles.project_description}>
+          {project?.projectDescription}
+        </Text>
+        {location && (
+          <Text className={styles.project_location}>
+            <Icon name="location" size={13} />
+            {location}
+          </Text>
+        )}
+      </span>
+    </Link>
   );
 };

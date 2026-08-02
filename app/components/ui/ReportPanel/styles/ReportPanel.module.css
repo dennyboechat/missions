@@ -6,17 +6,19 @@
   display: flex;
   flex-direction: column;
   height: 420px;
-  padding: 20px;
-  background-color: #fbfbfb;
+  padding: var(--panel-pad);
+  background-color: var(--surface-sunken);
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-md);
 }
 
 .panel_header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
-  padding-bottom: 10px;
-  border-bottom: solid 1px #ebebeb;
+  gap: var(--ds-space-5);
+  padding-bottom: var(--ds-space-5);
+  border-bottom: solid 1px var(--border-subtle);
 }
 
 .panel_subtitle {
@@ -32,33 +34,33 @@
   /* Margin rather than padding: a sticky group label sticks to the top of the
      padding box, so top padding would leave a strip above the label where the
      scrolling rows stay visible. */
-  margin-top: 10px;
+  margin-top: var(--ds-space-5);
   /* Keeps the overlay scrollbar off the quantity column. */
-  padding-right: 8px;
+  padding-right: var(--ds-space-4);
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--ds-space-2);
 }
 
 .section + .section {
-  margin-top: 16px;
+  margin-top: var(--ds-space-6);
 }
 
 .section_header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
-  padding-bottom: 6px;
+  gap: var(--ds-space-5);
+  padding-bottom: var(--ds-space-3);
   /* Keeps the group label in view while its rows scroll, and matches the panel
      background so rows pass under the label rather than through it. */
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: #fbfbfb;
+  background-color: var(--surface-sunken);
 }
 
 .row {
@@ -66,9 +68,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(2rem, auto);
   align-items: center;
-  gap: 10px;
-  padding: 4px 6px;
-  background-color: #f0f0f0;
+  gap: var(--ds-space-5);
+  padding: var(--ds-space-2) var(--ds-space-3);
+  background-color: var(--surface-chip);
+  border-radius: var(--ds-radius-xs);
 }
 
 /* Each row's share of the largest row in the panel, so a long list can be
@@ -77,6 +80,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   background-color: var(--accent-a4);
+  border-radius: var(--ds-radius-xs);
 }
 
 .row_label,
@@ -87,5 +91,8 @@
 
 .row_quantity {
   justify-self: end;
-  font-variant-numeric: tabular-nums;
+  /* Quantities are measurements, so they take the mono face with tabular
+     figures and line up down the column. */
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
 }

@@ -2,6 +2,7 @@
 
 // Components
 import { Box, Text } from "@radix-ui/themes";
+import { Icon } from "../../Icon";
 
 // Hooks
 import { useEffect } from "react";
@@ -30,10 +31,12 @@ export const PopupMessage = () => {
 
   return message ? (
     <Box
+      role="status"
       className={`${styles.popup_message} ${
         messageType === "error" ? styles.popup_error : ""
       }`}
     >
+      <Icon name={messageType === "error" ? "warning" : "check"} size={16} />
       <Text>{message}</Text>
     </Box>
   ) : null;

@@ -16,10 +16,12 @@ export const SignButtons = ({
 }: SignButtonsProps) => (
   <Grid columns="auto auto" gap="2" className={styles.sign_buttons}>
     <SignedOut>
-      <Button onClick={onSignUpClick} variant="outline">
+      <Button onClick={onSignUpClick} variant="outline" size="1">
         {"Register"}
       </Button>
-      <Button onClick={onSignInClick}>{"Login"}</Button>
+      <Button onClick={onSignInClick} size="1">
+        {"Login"}
+      </Button>
     </SignedOut>
     <SignedIn>
       <UserButton />

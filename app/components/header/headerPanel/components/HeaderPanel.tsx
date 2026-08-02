@@ -6,8 +6,8 @@ import Link from "next/link";
 import { SignUpDialog } from "../../../auth/signUp";
 import { SignInDialog } from "../../../auth/signIn";
 import { SignButtons } from "../../signButtons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
+import { Icon } from "../../../ui/Icon";
 
 // Hooks
 import { useState } from "react";
@@ -17,9 +17,6 @@ import { useProject } from "../../../../lib/ProjectContext";
 
 // Styles
 import styles from "../styles/HeaderPanel.module.css";
-
-// Icons
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 // Images
 import logoImage from "../../../../../public/image/logo.jpg";
@@ -66,12 +63,13 @@ export const HeaderPanel = () => {
     backButton = (
       <Button
         variant="outline"
+        size="1"
         title="Go back to dashboard"
         onClick={() => {
           router.push("/dashboard");
         }}
       >
-        <FontAwesomeIcon icon={faChevronLeft} />
+        <Icon name="back" />
         {"Back"}
       </Button>
     );
@@ -92,12 +90,13 @@ export const HeaderPanel = () => {
       backButton = (
         <Button
           variant="outline"
+          size="1"
           title="Go back to patients"
           onClick={() => {
             router.push(`/project-patients/${projectId}`);
           }}
         >
-          <FontAwesomeIcon icon={faChevronLeft} />
+          <Icon name="back" />
           {"Back"}
         </Button>
       );
@@ -118,7 +117,7 @@ export const HeaderPanel = () => {
               router.push(`/project-users/${projectId}`);
             }}
           >
-            <FontAwesomeIcon icon={faChevronLeft} />
+            <Icon name="back" />
             {"Back"}
           </Button>
         );
@@ -129,10 +128,14 @@ export const HeaderPanel = () => {
   return (
     <>
       <Grid
-        columns={{ initial: "80px 1fr auto", sm: "200px 1fr auto" }}
+        columns={{
+          initial: "auto 1fr auto",
+          sm: "var(--sidebar-width) 1fr auto",
+        }}
         gap="3"
         align="center"
-        height="50px"
+        height="var(--header-height)"
+        className={styles.header}
       >
         <Link className={styles.header_logo_link} href={logoLink}>
           <Image src={logoImage} alt="logo" className={styles.header_logo} />

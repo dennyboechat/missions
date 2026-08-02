@@ -35,7 +35,9 @@ export const ReportPanel = ({
             </Text>
           ) : null}
         </div>
-        <Text size="7">{total}</Text>
+        <Text size="7" className="mi-numeric">
+          {total}
+        </Text>
       </header>
       <div className={styles.panel_body}>
         {isEmpty ? (

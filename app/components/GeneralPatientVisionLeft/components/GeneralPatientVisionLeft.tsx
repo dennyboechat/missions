@@ -3,6 +3,7 @@
 // Components
 import { Grid, Text } from "@radix-ui/themes";
 import { InputTextField } from "../../ui/InputTextField";
+import { Icon } from "../../ui/Icon";
 
 // Types
 import { FocusEvent } from "react";
@@ -84,9 +85,10 @@ export const GeneralPatientVisionLeft = ({
 
   return (
     <div>
-      <div>
-        <Text>{"Vision left (in feet)"}</Text>
-      </div>
+      <Text className={styles.field_label}>
+        <Icon name="vision" size={15} />
+        {"Vision left"}
+      </Text>
       <Grid columns="1fr auto 1fr" gap="3">
         <InputTextField
           value={patientVisionLeftNormalDistance}

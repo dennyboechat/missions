@@ -3,7 +3,7 @@
 // Components
 import { Container, Button } from "@radix-ui/themes";
 import { ContentHeader } from "../../ContentHeader";
-import { Space } from "../..//ui/Space";
+import { Icon } from "../../ui/Icon";
 import { GeneralAppointment } from "../../GeneralAppointment";
 
 // Styles
@@ -96,11 +96,27 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
     }
   };
 
+  // The query LEFT JOINs the appointment onto the patient, so a patient with
+  // no general record still comes back as one row with a null appointment id.
+  // Counting rows would announce an appointment that does not exist.
+  const appointmentCount = patientGeneral.filter(
+    ({ patientGeneralId }) => patientGeneralId,
+  ).length;
+
   return (
     <Container className={styles.content}>
-      <ContentHeader text="General" />
-      <Button onClick={onCreateAppointment}>{"Create appointment"}</Button>
-      <Space height={20} />
+      <ContentHeader
+        text="General"
+        subText={`${appointmentCount} ${
+          appointmentCount === 1 ? "appointment" : "appointments"
+        } on this mission.`}
+        actions={
+          <Button onClick={onCreateAppointment}>
+            <Icon name="plus" size={17} />
+            {"Create appointment"}
+          </Button>
+        }
+      />
       {lastestAppointment.patientGeneralId && (
         <GeneralAppointment
           patientGeneral={patientGeneral}

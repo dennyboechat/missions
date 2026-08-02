@@ -3,7 +3,7 @@
 // Components
 import { Container, Button } from "@radix-ui/themes";
 import { ContentHeader } from "../../../components/ContentHeader";
-import { Space } from "../../../components/ui/Space";
+import { Icon } from "../../../components/ui/Icon";
 import { DentalAppointment } from "../../../components/DentalAppointment";
 
 // Styles
@@ -108,11 +108,27 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
     }
   };
 
+  // The query LEFT JOINs the appointment onto the patient, so a patient with
+  // no dental record still comes back as one row with a null appointment id.
+  // Counting rows would announce an appointment that does not exist.
+  const appointmentCount = patientDentistries.filter(
+    ({ patientDentistryId }) => patientDentistryId,
+  ).length;
+
   return (
     <Container className={styles.content}>
-      <ContentHeader text="Dental" />
-      <Button onClick={onCreateAppointment}>{"Create appointment"}</Button>
-      <Space height={20} />
+      <ContentHeader
+        text="Dental"
+        subText={`${appointmentCount} ${
+          appointmentCount === 1 ? "appointment" : "appointments"
+        } on this mission.`}
+        actions={
+          <Button onClick={onCreateAppointment}>
+            <Icon name="plus" size={17} />
+            {"Create appointment"}
+          </Button>
+        }
+      />
       {lastestAppointment.patientDentistryId && (
         <DentalAppointment
           patientDentistries={patientDentistries}

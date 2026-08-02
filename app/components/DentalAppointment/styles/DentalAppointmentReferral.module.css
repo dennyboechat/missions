@@ -1,5 +1,5 @@
 .referral_panel {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--ds-space-5);
 }

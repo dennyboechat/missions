@@ -1,8 +1,7 @@
 "use client";
 
 // Components
-import { Text } from "@radix-ui/themes";
-import { Space } from "../../ui/Space";
+import { SummaryVital } from "./SummarySection";
 
 // Styles
 import styles from "../styles/PatientSummary.module.css";
@@ -12,6 +11,10 @@ import { getBodyMassIndex } from "@/app/utils/getBodyMassIndex";
 
 // Types
 import { GeneralSummaryDetailsProps } from "../types/GeneralSummaryDetailsProps";
+
+/** A pair reads as one measurement -- "118/76", "20/25" -- or as nothing. */
+const pair = (first?: number, second?: number) =>
+  first || second ? `${first ?? ""}/${second ?? ""}` : undefined;
 
 export const GeneralSummaryDetails = ({
   patientHeight,
@@ -26,91 +29,54 @@ export const GeneralSummaryDetails = ({
   patientVisionLeftNormalDistance,
   patientVisionRightTestedDistance,
   patientVisionRightNormalDistance,
-}: GeneralSummaryDetailsProps) => {
-  const undefinedText = <Text className={styles.italic}>{"undefined"}</Text>;
-  const bmi = getBodyMassIndex(patientWeight, patientHeight);
-
-  return (
-    <div>
-      <div className={styles.summary_margin}>
-        <Text>{`Height: ${patientHeight ? patientHeight + " cm" : ""}`}</Text>
-        {!patientHeight && undefinedText}
-      </div>
-      <Space />
-      <div className={styles.summary_margin}>
-        <Text>{`Weight: ${patientWeight ? patientWeight + " kg" : ""}`}</Text>
-        {!patientWeight && undefinedText}
-      </div>
-      <Space />
-      <div className={styles.summary_margin}>
-        <Text>{`BMI: ${bmi ? bmi : ""}`}</Text>
-        {!bmi && undefinedText}
-      </div>
-      <Space />
-      <div className={styles.summary_margin}>
-        <Text>{`Temperature: ${
-          patientTemperature ? patientTemperature + " °C" : ""
-        }`}</Text>
-        {!patientTemperature && undefinedText}
-      </div>
-      <Space />
-      <div className={styles.summary_margin}>
-        <Text>{`Pulse: ${patientPulse ? patientPulse + " bpm" : ""}`}</Text>
-        {!patientPulse && undefinedText}
-      </div>
-      <Space />
-      <div className={styles.summary_margin}>
-        <Text>{`Oxygen saturation: ${
-          patientOxygenSaturation ? patientOxygenSaturation + "%" : ""
-        }`}</Text>
-        {!patientOxygenSaturation && undefinedText}
-      </div>
-      <Space />
-      <div className={styles.summary_margin}>
-        <Text>{`Blood glucose: ${
-          patientBloodGlucose ? patientBloodGlucose + " mg/dL" : ""
-        }`}</Text>
-        {!patientBloodGlucose && undefinedText}
-      </div>
-      <Space />
-      <div className={styles.summary_margin}>
-        <Text>{`Blood pressure: ${
-          patientBloodPressureSystolic || patientBloodPressureDiastolic
-            ? `${patientBloodPressureSystolic ?? ""}/${
-                patientBloodPressureDiastolic ?? " "
-              } mmHg`
-            : ""
-        }`}</Text>
-        {!patientBloodPressureSystolic &&
-          !patientBloodPressureDiastolic &&
-          undefinedText}
-      </div>
-      <Space />
-      <div className={styles.summary_margin}>
-        <Text>{`Vision left: ${
-          patientVisionLeftNormalDistance || patientVisionLeftTestedDistance
-            ? `${patientVisionLeftNormalDistance ?? ""}/${
-                patientVisionLeftTestedDistance ?? " "
-              } feet`
-            : ""
-        }`}</Text>
-        {!patientVisionLeftNormalDistance &&
-          !patientVisionLeftTestedDistance &&
-          undefinedText}
-      </div>
-      <Space />
-      <div className={styles.summary_margin}>
-        <Text>{`Vision right: ${
-          patientVisionRightNormalDistance || patientVisionRightTestedDistance
-            ? `${patientVisionRightNormalDistance ?? ""}/${
-                patientVisionRightTestedDistance ?? " "
-              } feet`
-            : ""
-        }`}</Text>
-        {!patientVisionRightNormalDistance &&
-          !patientVisionRightTestedDistance &&
-          undefinedText}
-      </div>
-    </div>
-  );
-};
+}: GeneralSummaryDetailsProps) => (
+  <div className={styles.vitals}>
+    <SummaryVital icon="height" label="Height" value={patientHeight} unit="cm" />
+    <SummaryVital icon="weight" label="Weight" value={patientWeight} unit="kg" />
+    <SummaryVital
+      icon="bmi"
+      label="BMI"
+      value={getBodyMassIndex(patientWeight, patientHeight)}
+    />
+    <SummaryVital
+      icon="temperature"
+      label="Temperature"
+      value={patientTemperature}
+      unit="°C"
+    />
+    <SummaryVital icon="pulse" label="Pulse" value={patientPulse} unit="bpm" />
+    <SummaryVital
+      icon="oxygen"
+      label="Oxygen saturation"
+      value={patientOxygenSaturation}
+      unit="%"
+    />
+    <SummaryVital
+      icon="glucose"
+      label="Blood glucose"
+      value={patientBloodGlucose}
+      unit="mg/dL"
+    />
+    <SummaryVital
+      icon="blood-pressure"
+      label="Blood pressure"
+      value={pair(patientBloodPressureSystolic, patientBloodPressureDiastolic)}
+      unit="mmHg"
+    />
+    <SummaryVital
+      icon="vision"
+      label="Vision left"
+      value={pair(patientVisionLeftNormalDistance, patientVisionLeftTestedDistance)}
+      unit="feet"
+    />
+    <SummaryVital
+      icon="vision"
+      label="Vision right"
+      value={pair(
+        patientVisionRightNormalDistance,
+        patientVisionRightTestedDistance,
+      )}
+      unit="feet"
+    />
+  </div>
+);

@@ -1,6 +1,18 @@
+/* Removing a prescribed drug is destructive, so the control carries the rose
+   the system reserves for that -- quietly, until it is hovered. */
+.delete_button {
+  color: var(--rose-600);
+}
+
+.delete_button:hover {
+  background-color: var(--rose-50);
+}
+
 .suggestion {
-  margin-top: 6px;
-  padding: 8px;
-  background-color: #fdfae4;
-  border-radius: 4px;
+  margin-top: var(--ds-space-3);
+  padding: var(--ds-space-4);
+  background-color: var(--surface-warning);
+  color: var(--sun-800);
+  border-radius: var(--ds-radius-xs);
+  font-size: var(--fs-13);
 }

@@ -3,7 +3,7 @@
 // Components
 import { MenuItem } from "react-pro-sidebar";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "../../ui/Icon";
 
 // Types
 import { ProjectMenuItemsProps } from "../types/ProjectMenuItemsProps";
@@ -11,14 +11,16 @@ import { ProjectMenuItemsProps } from "../types/ProjectMenuItemsProps";
 // Hooks
 import { useAppUser } from "../../../lib/AppUserContext";
 import { useProject } from "../../../lib/ProjectContext";
+import { useMenuNavigation } from "../../../lib/useMenuNavigation";
 
-// Icons
-import {
-  faUserGroup,
-  faUserLock,
-  faGear,
-  faChartPie,
-} from "@fortawesome/free-solid-svg-icons";
+// Users and Settings answer for who may see and change the project, so only
+// its owner gets them.
+const ITEMS = [
+  { key: "project-patients", label: "Patients", icon: "users", ownerOnly: false },
+  { key: "project-reports", label: "Reports", icon: "reports", ownerOnly: false },
+  { key: "project-users", label: "Users", icon: "user-access", ownerOnly: true },
+  { key: "project", label: "Settings", icon: "settings", ownerOnly: true },
+] as const;
 
 export const ProjectMenuItems = ({
   projectId,
@@ -26,51 +28,33 @@ export const ProjectMenuItems = ({
 }: ProjectMenuItemsProps) => {
   const { appUser } = useAppUser();
   const { project } = useProject();
+  const { activeItem, navigate } = useMenuNavigation(activeMenuItem);
 
   if (!appUser || !project) {
     return null;
   }
 
-  const { userId } = appUser;
-  const isProjectEditable = project.ownerId === userId;
-  const projectPatientsIcon = <FontAwesomeIcon icon={faUserGroup} />;
-  const projectUsersIcon = <FontAwesomeIcon icon={faUserLock} />;
-  const projectIcon = <FontAwesomeIcon icon={faGear} />;
-  const projectReportsIcon = <FontAwesomeIcon icon={faChartPie} />;
+  const isProjectEditable = project.ownerId === appUser.userId;
 
   return (
     <>
-      <MenuItem
-        icon={projectPatientsIcon}
-        component={<Link href={`/project-patients/${projectId}`} />}
-        active={activeMenuItem === "project-patients"}
-      >
-        {"Patients"}
-      </MenuItem>
-      <MenuItem
-        icon={projectReportsIcon}
-        component={<Link href={`/project-reports/${projectId}`} />}
-        active={activeMenuItem === "project-reports"}
-      >
-        {"Reports"}
-      </MenuItem>
-      {isProjectEditable && (
-        <MenuItem
-          icon={projectUsersIcon}
-          component={<Link href={`/project-users/${projectId}`} />}
-          active={activeMenuItem === "project-users"}
-        >
-          {"Users"}
-        </MenuItem>
-      )}
-      {isProjectEditable && (
-        <MenuItem
-          icon={projectIcon}
-          component={<Link href={`/project/${projectId}`} />}
-          active={activeMenuItem === "project"}
-        >
-          {"Settings"}
-        </MenuItem>
+      {ITEMS.filter(({ ownerOnly }) => !ownerOnly || isProjectEditable).map(
+        ({ key, label, icon }) => {
+          const href = `/${key}/${projectId}`;
+
+          return (
+            <MenuItem
+              key={key}
+              icon={<Icon name={icon} />}
+              component={
+                <Link href={href} prefetch onClick={navigate(href, key)} />
+              }
+              active={activeItem === key}
+            >
+              {label}
+            </MenuItem>
+          );
+        }
       )}
     </>
   );

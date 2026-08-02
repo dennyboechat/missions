@@ -1,3 +1,33 @@
+/* Title on the left, the screen's primary actions on the right, both sitting
+   on the same baseline above a hairline. */
 .header {
-    margin-bottom: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--ds-space-6);
+  padding-bottom: var(--ds-space-6);
+  margin-bottom: var(--ds-space-7);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.heading {
+  display: grid;
+  gap: var(--ds-space-2);
+}
+
+.title {
+  font: var(--h3-weight) var(--h3-size) / var(--h3-lh) var(--h3-font);
+  letter-spacing: var(--ls-snug);
+  color: var(--fg-primary);
+}
+
+.sub_title {
+  font-size: var(--fs-14);
+  color: var(--fg-secondary);
+}
+
+.actions {
+  display: flex;
+  gap: var(--ds-space-4);
 }

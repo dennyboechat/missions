@@ -6,7 +6,6 @@ import { ContentHeader } from "../../ContentHeader";
 import { ProjectReportsFilter } from "../../ProjectReportsFilter";
 import { ProjectReportsAppointments } from "../../ProjectReportsAppointments";
 import { ProjectReportsMedication } from "../../ProjectReportsMedication";
-import { Space } from "../../ui/Space";
 
 // Hooks
 import { useProject } from "../../../lib/ProjectContext";
@@ -101,25 +100,16 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     setIsEndDateInvalid(!isEndValid);
 
     if (isStartValid && isEndValid) {
-      const projectReportsMedication = actionData(
-        await getProjectReportsMedication({
-          projectId,
-          startDate,
-          endDate,
-        }),
-      );
+      // The two reports read different tables and neither needs the other, so
+      // they go together. Awaited one after the other, the second panel waited
+      // out the first one's round trip for nothing.
+      const [medicationResult, appointmentResult] = await Promise.all([
+        getProjectReportsMedication({ projectId, startDate, endDate }),
+        getProjectReportsAppointment({ projectId, startDate, endDate }),
+      ]);
 
-      setMedications(projectReportsMedication);
-
-      const projectReportsAppointment = actionData(
-        await getProjectReportsAppointment({
-          projectId,
-          startDate,
-          endDate,
-        }),
-      );
-
-      setAppointments(projectReportsAppointment);
+      setMedications(actionData(medicationResult));
+      setAppointments(actionData(appointmentResult));
     }
 
     setIsLoadingMedicationReport(false);
@@ -213,8 +203,16 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
 
   return (
     <Container className={styles.content}>
-      <ContentHeader text="Reports" />
-      <Space />
+      {/* Report days are the mission's days, not the browser's -- saying so
+          here saves an argument about why a count differs by one. */}
+      <ContentHeader
+        text="Reports"
+        subText={
+          project?.projectTimezone
+            ? `Counted in ${project.projectTimezone}, the mission's own days.`
+            : undefined
+        }
+      />
       <ProjectReportsFilter
         startDate={startDate}
         setStartDate={setStartDate}
@@ -225,8 +223,7 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
         onGenerateReports={onGenerateReports}
         onDownloadAllData={onDownloadAllData}
       />
-      <Space height={30} />
-      <Grid gap="10px" columns={{ sm: "2" }}>
+      <Grid gap="16px" columns={{ sm: "2" }} align="start">
         <ProjectReportsAppointments
           appointments={appointments}
           isLoadingReport={isLoadingAppointmentReport}

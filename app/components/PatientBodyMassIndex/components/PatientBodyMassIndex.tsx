@@ -2,7 +2,11 @@
 
 // Components
 import { Text } from "@radix-ui/themes";
-import { Space } from "../../ui/Space";
+import { Icon } from "../../ui/Icon";
+
+// Styles
+import fieldStyles from "../../../styles/fields.module.css";
+import styles from "../styles/PatientBodyMassIndex.module.css";
 
 // Utils
 import { getBodyMassIndex } from "@/app/utils/getBodyMassIndex";
@@ -29,15 +33,12 @@ export const PatientBodyMassIndex = ({
   }, [weight, height]);
 
   return (
-    <div>
-      <div>
-        <Text>{"BMI"}</Text>
-      </div>
-      <Space height={4} />
-      <div>
-        <Text>{bmi}</Text>
-      </div>
-      <Space height={30} />
+    <div className={styles.body_mass_index}>
+      <Text className={fieldStyles.field_label}>
+        <Icon name="bmi" size={15} />
+        {"BMI"}
+      </Text>
+      <Text className={styles.value}>{bmi}</Text>
     </div>
   );
 };

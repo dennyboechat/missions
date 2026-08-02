@@ -1,3 +1,57 @@
-.table tr:hover {
-  background-color: #f0f0f0;
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ds-space-5);
+  margin-bottom: var(--ds-space-5);
+}
+
+/* The rows live inside one rounded, bordered box so the table reads as a
+   single object. overflow: hidden is what keeps the first and last rows from
+   squaring off the corners. */
+.table_frame {
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-md);
+  overflow: hidden;
+  background: var(--surface-raised);
+}
+
+.table tbody tr:hover {
+  background-color: var(--surface-hover);
+}
+
+/* The frame already draws the bottom edge; a separator under the last row
+   would double it. */
+.table tbody tr:last-child :is(td, th) {
+  box-shadow: none;
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-11) var(--panel-pad);
+  text-align: center;
+}
+
+.empty_glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ds-radius-full);
+  background: var(--surface-brand-soft);
+  color: var(--sky-700);
+}
+
+.empty_title {
+  font-size: var(--fs-16);
+  font-weight: var(--fw-medium);
+}
+
+.empty_body {
+  font-size: var(--fs-14);
+  color: var(--fg-secondary);
+  max-width: 380px;
 }

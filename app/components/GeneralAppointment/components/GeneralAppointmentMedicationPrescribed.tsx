@@ -5,6 +5,9 @@ import { Box, Text } from "@radix-ui/themes";
 import { MedicationTable } from "../../ui/MedicationTable";
 import { Space } from "../../ui/Space";
 
+// Styles
+import styles from "../styles/GeneralAppointment.module.css";
+
 // Types
 import { Medication } from "../../../types/Medication";
 import { PatientGeneralId } from "../../../types/PatientGeneralTypes";
@@ -149,8 +152,10 @@ export const GeneralAppointmentMedicationPrescribed = ({
 
   return (
     <Box>
-      <Text>{"Prescribed medication by the doctor:"}</Text>
-      <Space height={3} />
+      <Text className={styles.section_title}>
+        {"Prescribed medication"}
+      </Text>
+      <Space height={8} />
       <MedicationTable
         medications={medications}
         setMedications={setMedications}

@@ -1,0 +1,16 @@
+/* Search is one of the three fully-rounded controls in the system, alongside
+   buttons and badges.
+
+   The class is doubled so this outranks the field radius set for every
+   TextField in styles/radix-bridge.css. Without it the two rules would be
+   decided by stylesheet order, which is not something a component should have
+   to depend on. */
+:global(.radix-themes) .search.search {
+  width: 100%;
+  max-width: 340px;
+  border-radius: var(--ds-radius-full);
+}
+
+.clear_button {
+  color: var(--fg-tertiary);
+}

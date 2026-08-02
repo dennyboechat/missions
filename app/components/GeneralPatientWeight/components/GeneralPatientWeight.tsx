@@ -57,7 +57,8 @@ export const GeneralPatientWeight = ({
 
   return (
     <InputTextField
-      label="Weight (in kg)"
+      label="Weight"
+      labelIcon="weight"
       value={patientWeight}
       onBlur={handleBlur}
       type="number"

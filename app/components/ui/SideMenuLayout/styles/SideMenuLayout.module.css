@@ -1,27 +1,71 @@
+/* The context header: which project, or which patient, the menu below it
+   belongs to. It sits on the brand wash so the eye can tell at a glance that
+   this column is context, not content. */
+.header {
+  display: grid;
+  gap: var(--ds-space-1);
+  padding: var(--ds-space-7) var(--ds-space-6);
+  background-color: var(--surface-brand-soft);
+  text-align: center;
+  align-content: center;
+}
+
 .header_text {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: center;
-  margin: 10px;
+  font-size: var(--fs-15);
+  color: var(--fg-primary);
 }
 
+/* Dates and record counts are measurements, so they set in the mono face with
+   tabular figures, the same as every other number in the product. */
+.header_sub_text {
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: var(--fs-12);
+  color: var(--fg-secondary);
+}
+
+.header_sub_text_footer {
+  font-size: var(--fs-12);
+  color: var(--fg-tertiary);
+}
+
+/* The menu sticks below the header, not to the top of the viewport.
+
+   With `top: 0` the menu slid upward as the page scrolled, so its position
+   depended on how far down the page was. Navigating changes the document
+   height, the browser clamps the scroll, and the whole menu jumped back down --
+   by up to a full item, right under a cursor that was about to click again.
+   That is the "clicked one item, got the one above it" bug.
+
+   Pinned to --header-height (and with the header sticky above it) the menu sits
+   at the same place on screen at every scroll position, so a second click
+   always lands where the first one aimed. The rule down the right edge runs the
+   full height rather than stopping under the last item. */
 aside.sidebar {
   position: sticky;
-  top: 0;
+  top: var(--header-height);
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
   border: none;
+  border-right: 1px solid var(--border-default);
 }
 
-.header {
-  background-color: #f1f6ff;
-  margin-bottom: 20px;
-  align-content: center;
+.content {
+  min-width: 0;
+  padding: var(--ds-space-8) var(--content-pad);
 }
 
 @media (max-width: 768px) {
   .header {
     display: none;
+  }
+
+  .content {
+    padding: var(--ds-space-7) var(--ds-space-6);
   }
 }

@@ -53,27 +53,32 @@ export const SideMenuLayout = ({
   }, []);
 
   return (
-    <Grid columns="auto 1fr" gapX="3">
+    <Grid columns="auto minmax(0, 1fr)">
       <Sidebar
-        width="200px"
+        width="var(--sidebar-width)"
+        collapsedWidth="var(--sidebar-width-collapsed)"
         collapsed={collapsed}
         className={styles.sidebar}
-        backgroundColor="#fff"
+        backgroundColor="var(--surface-raised)"
       >
         <Box
-          width="200px"
-          height={subHeader ? "150px" : "70px"}
+          width="var(--sidebar-width)"
+          height={subHeader ? "150px" : "88px"}
           className={styles.header}
         >
           <Text
-            weight={isBoldHeader ? "bold" : "regular"}
+            weight={isBoldHeader ? "bold" : "medium"}
             className={styles.header_text}
           >
             {header}
           </Text>
-          {subHeader && <Text className={styles.header_text}>{subHeader}</Text>}
+          {subHeader && (
+            <Text className={styles.header_sub_text}>{subHeader}</Text>
+          )}
           {subHeaderFooter && (
-            <Text className={styles.header_text}>{subHeaderFooter}</Text>
+            <Text className={styles.header_sub_text_footer}>
+              {subHeaderFooter}
+            </Text>
           )}
         </Box>
         <Menu>{menuItems}</Menu>

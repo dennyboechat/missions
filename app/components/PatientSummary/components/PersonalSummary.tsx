@@ -1,20 +1,13 @@
 "use client";
 
 // Components
-import { Text } from "@radix-ui/themes";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-// Styles
-import styles from "../styles/PatientSummary.module.css";
+import { SummaryRow, SummarySection } from "./SummarySection";
 
 // Utils
 import { getGenderLabel } from "../../../utils/getGenderLabel";
 import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 import { getAge } from "../../../utils/getAge";
 import { getYearsOldLabel } from "../../../utils/getYearsOldLabel";
-
-// Icons
-import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 // Types
 import { PatientPersonalSummary } from "../../../types/PatientPersonalSummary";
@@ -35,38 +28,23 @@ export const PersonalSummary = ({
     patientPhoneNumber,
   } = patientPersonalSummary;
 
-  const patientAge = getAge({
-    date: patientDateOfBirth,
-  });
-
+  const patientAge = getAge({ date: patientDateOfBirth });
   const patientAgeLabel = getYearsOldLabel({ age: patientAge ?? 0 });
-
   const formattedDateOfBirth = getLocaleFormattedDate({
     date: patientDateOfBirth,
   });
 
-  const birthData = `${formattedDateOfBirth} (${patientAgeLabel})`;
-
   return (
-    <>
-      <div className={styles.summary_subtitle}>
-        <FontAwesomeIcon icon={faUser} />
-        <Text weight="bold" size="5">
-          {patientFullName}
-        </Text>
-      </div>
-      <Text className={styles.summary_margin}>{birthData}</Text>
-      <Text className={styles.summary_margin}>
-        {getGenderLabel({
-          isPatientMale,
-        })}
-      </Text>
-      <div className={styles.summary_margin}>
-        <Text>{`Phone: ${patientPhoneNumber ? patientPhoneNumber : ""}`}</Text>
-        {!patientPhoneNumber && (
-          <Text className={styles.italic}>{"undefined"}</Text>
-        )}
-      </div>
-    </>
+    <SummarySection icon="personal" title="Personal">
+      <SummaryRow label="Full name" value={patientFullName} />
+      {/* Age always follows a date of birth. */}
+      <SummaryRow
+        label="Date of birth"
+        value={`${formattedDateOfBirth} (${patientAgeLabel})`}
+        numeric
+      />
+      <SummaryRow label="Gender" value={getGenderLabel({ isPatientMale })} />
+      <SummaryRow label="Phone number" value={patientPhoneNumber} numeric />
+    </SummarySection>
   );
 };

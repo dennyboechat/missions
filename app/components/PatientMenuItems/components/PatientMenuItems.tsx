@@ -3,58 +3,45 @@
 // Components
 import { MenuItem } from "react-pro-sidebar";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "../../ui/Icon";
 
 // Types
 import { PatientMenuItemsProps } from "../types/PatientMenuItemsProps";
 
-// Icons
-import {
-  faNotesMedical,
-  faTooth,
-  faListCheck,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
+// Hooks
+import { useMenuNavigation } from "../../../lib/useMenuNavigation";
+
+const ITEMS = [
+  { key: "patient-summary", label: "Summary", icon: "summary" },
+  { key: "patient-general", label: "General", icon: "general" },
+  { key: "patient-dentistry", label: "Dental", icon: "dental" },
+  { key: "patient-personal", label: "Personal", icon: "personal" },
+] as const;
 
 export const PatientMenuItems = ({
   patientPersonalId,
   activeMenuItem,
 }: PatientMenuItemsProps) => {
-  const summaryIcon = <FontAwesomeIcon icon={faListCheck} />;
-  const generalIcon = <FontAwesomeIcon icon={faNotesMedical} />;
-  const dentistryIcon = <FontAwesomeIcon icon={faTooth} />;
-  const personalIcon = <FontAwesomeIcon icon={faUser} />;
+  const { activeItem, navigate } = useMenuNavigation(activeMenuItem);
 
   return (
     <>
-      <MenuItem
-        icon={summaryIcon}
-        component={<Link href={`/patient-summary/${patientPersonalId}`} />}
-        active={activeMenuItem === "patient-summary"}
-      >
-        {"Summary"}
-      </MenuItem>
-      <MenuItem
-        icon={generalIcon}
-        component={<Link href={`/patient-general/${patientPersonalId}`} />}
-        active={activeMenuItem === "patient-general"}
-      >
-        {"General"}
-      </MenuItem>
-      <MenuItem
-        icon={dentistryIcon}
-        component={<Link href={`/patient-dentistry/${patientPersonalId}`} />}
-        active={activeMenuItem === "patient-dentistry"}
-      >
-        {"Dental"}
-      </MenuItem>
-      <MenuItem
-        icon={personalIcon}
-        component={<Link href={`/patient-personal/${patientPersonalId}`} />}
-        active={activeMenuItem === "patient-personal"}
-      >
-        {"Personal"}
-      </MenuItem>
+      {ITEMS.map(({ key, label, icon }) => {
+        const href = `/${key}/${patientPersonalId}`;
+
+        return (
+          <MenuItem
+            key={key}
+            icon={<Icon name={icon} />}
+            component={
+              <Link href={href} prefetch onClick={navigate(href, key)} />
+            }
+            active={activeItem === key}
+          >
+            {label}
+          </MenuItem>
+        );
+      })}
     </>
   );
 };

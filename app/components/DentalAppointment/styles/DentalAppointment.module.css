@@ -1,0 +1,17 @@
+/* Small uppercase with wide tracking is a typographic device, not a copy
+   decision: it is reserved for table column headers and section eyebrows. */
+.section_title {
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--eyebrow-ls);
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+/* Deleting an appointment is the one destructive action on the screen, so it
+   is fenced off below a rule rather than sitting among the record fields. */
+.delete_appointment {
+  margin-top: var(--ds-space-9);
+  padding-top: var(--ds-space-7);
+  border-top: 1px solid var(--border-subtle);
+}

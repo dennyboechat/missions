@@ -4,6 +4,7 @@
 import { Tabs, Box, Text, Grid, Button, Popover } from "@radix-ui/themes";
 import { Space } from "../../ui/Space";
 import { PopupConfirmation } from "../../ui/PopupConfirmation";
+import { Icon } from "../../ui/Icon";
 import { GeneralAppointmentClinicalNotes } from "./GeneralAppointmentClinicalNotes";
 import { GeneralAppointmentMedicationPrescribed } from "./GeneralAppointmentMedicationPrescribed";
 import { GeneralPatientHeight } from "../../GeneralPatientHeight";
@@ -96,75 +97,72 @@ export const GeneralAppointmentContent = ({
   return (
     <Tabs.Content key={patientGeneralId} value={patientGeneralId}>
       <Space height={20} />
-      <Grid
-        columns={{ initial: "1", sm: "1fr 1fr 80px" }}
-        gap="5"
-        className={styles.height_weight_panel}
-      >
-        <GeneralPatientHeight
-          patientGeneralId={patientGeneralId}
-          patientHeight={patientHeight}
-          setPatientGeneral={setPatientGeneral}
-        />
-        <GeneralPatientWeight
-          patientGeneralId={patientGeneralId}
-          patientWeight={patientWeight}
-          setPatientGeneral={setPatientGeneral}
-        />
-        <PatientBodyMassIndex weight={patientWeight} height={patientHeight} />
-      </Grid>
-      <Space height={20} />
-      <Grid
-        columns={{ initial: "1", sm: "3" }}
-        gap="5"
-        className={styles.temperature_panel}
-      >
-        <GeneralPatientTemperature
-          patientGeneralId={patientGeneralId}
-          patientTemperature={patientTemperature}
-        />
-        <GeneralPatientPulse
-          patientGeneralId={patientGeneralId}
-          patientPulse={patientPulse}
-        />
-        <GeneralPatientOxygenSaturation
-          patientGeneralId={patientGeneralId}
-          patientOxygenSaturation={patientOxygenSaturation}
-        />
-      </Grid>
-      <Space height={20} />
-      <Grid
-        columns={{ initial: "1", sm: "2" }}
-        gap="5"
-        className={styles.blood_panel}
-      >
-        <GeneralPatientBloodGlucose
-          patientGeneralId={patientGeneralId}
-          patientBloodGlucose={patientBloodGlucose}
-        />
-        <GeneralPatientBloodPressure
-          patientGeneralId={patientGeneralId}
-          patientBloodPressureSystolic={patientBloodPressureSystolic}
-          patientBloodPressureDiastolic={patientBloodPressureDiastolic}
-        />
-      </Grid>
-      <Space height={20} />
-      <Grid
-        columns={{ initial: "1", sm: "2" }}
-        gap="5"
-        className={styles.vision_panel}
-      >
-        <GeneralPatientVisionLeft
-          patientGeneralId={patientGeneralId}
-          patientVisionLeftTestedDistance={patientVisionLeftTestedDistance}
-          patientVisionLeftNormalDistance={patientVisionLeftNormalDistance}
-        />
-        <GeneralPatientVisionRight
-          patientGeneralId={patientGeneralId}
-          patientVisionRightTestedDistance={patientVisionRightTestedDistance}
-          patientVisionRightNormalDistance={patientVisionRightNormalDistance}
-        />
-      </Grid>
+      <section className={`${styles.panel} ${styles.height_weight_panel}`}>
+        <span className={styles.panel_title}>{"Body"}</span>
+        <Grid
+          columns={{ initial: "1", sm: "1fr 1fr 80px" }}
+          gap="5"
+          align="start"
+        >
+          <GeneralPatientHeight
+            patientGeneralId={patientGeneralId}
+            patientHeight={patientHeight}
+            setPatientGeneral={setPatientGeneral}
+          />
+          <GeneralPatientWeight
+            patientGeneralId={patientGeneralId}
+            patientWeight={patientWeight}
+            setPatientGeneral={setPatientGeneral}
+          />
+          <PatientBodyMassIndex weight={patientWeight} height={patientHeight} />
+        </Grid>
+      </section>
+      <section className={`${styles.panel} ${styles.temperature_panel}`}>
+        <span className={styles.panel_title}>{"Vitals"}</span>
+        <Grid columns={{ initial: "1", sm: "3" }} gap="5" align="start">
+          <GeneralPatientTemperature
+            patientGeneralId={patientGeneralId}
+            patientTemperature={patientTemperature}
+          />
+          <GeneralPatientPulse
+            patientGeneralId={patientGeneralId}
+            patientPulse={patientPulse}
+          />
+          <GeneralPatientOxygenSaturation
+            patientGeneralId={patientGeneralId}
+            patientOxygenSaturation={patientOxygenSaturation}
+          />
+        </Grid>
+      </section>
+      <section className={`${styles.panel} ${styles.blood_panel}`}>
+        <span className={styles.panel_title}>{"Blood"}</span>
+        <Grid columns={{ initial: "1", sm: "2" }} gap="5" align="start">
+          <GeneralPatientBloodGlucose
+            patientGeneralId={patientGeneralId}
+            patientBloodGlucose={patientBloodGlucose}
+          />
+          <GeneralPatientBloodPressure
+            patientGeneralId={patientGeneralId}
+            patientBloodPressureSystolic={patientBloodPressureSystolic}
+            patientBloodPressureDiastolic={patientBloodPressureDiastolic}
+          />
+        </Grid>
+      </section>
+      <section className={`${styles.panel} ${styles.vision_panel}`}>
+        <span className={styles.panel_title}>{"Vision"}</span>
+        <Grid columns={{ initial: "1", sm: "2" }} gap="5" align="start">
+          <GeneralPatientVisionLeft
+            patientGeneralId={patientGeneralId}
+            patientVisionLeftTestedDistance={patientVisionLeftTestedDistance}
+            patientVisionLeftNormalDistance={patientVisionLeftNormalDistance}
+          />
+          <GeneralPatientVisionRight
+            patientGeneralId={patientGeneralId}
+            patientVisionRightTestedDistance={patientVisionRightTestedDistance}
+            patientVisionRightNormalDistance={patientVisionRightNormalDistance}
+          />
+        </Grid>
+      </section>
       <Space height={40} />
       <GeneralAppointmentMedicationPrescribed
         patientGeneralId={patientGeneralId}
@@ -179,14 +177,16 @@ export const GeneralAppointmentContent = ({
         patientGeneral={patientGeneral}
         setPatientGeneral={setPatientGeneral}
       />
-      <Space height={40} />
-      <Grid width={{ initial: "auto", sm: "220px" }}>
-        <PopupConfirmation content={deleteAppointmentPopupConfirmation}>
-          <Button color="red" variant="outline">
-            {"Delete appointment"}
-          </Button>
-        </PopupConfirmation>
-      </Grid>
+      <div className={styles.delete_appointment}>
+        <Grid width={{ initial: "auto", sm: "220px" }}>
+          <PopupConfirmation content={deleteAppointmentPopupConfirmation}>
+            <Button color="red" variant="outline">
+              <Icon name="trash" size={17} />
+              {"Delete appointment"}
+            </Button>
+          </PopupConfirmation>
+        </Grid>
+      </div>
     </Tabs.Content>
   );
 };

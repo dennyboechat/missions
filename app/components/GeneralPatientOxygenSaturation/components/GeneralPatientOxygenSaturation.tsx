@@ -51,7 +51,8 @@ export const GeneralPatientOxygenSaturation = ({
 
   return (
     <InputTextField
-      label="Oxygen saturation (in %)"
+      label="Oxygen saturation"
+      labelIcon="oxygen"
       value={patientOxygenSaturation}
       onBlur={handleBlur}
       type="number"

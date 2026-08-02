@@ -57,7 +57,8 @@ export const GeneralPatientHeight = ({
 
   return (
     <InputTextField
-      label="Height (in cm)"
+      label="Height"
+      labelIcon="height"
       value={patientHeight}
       autoFocus
       onBlur={handleBlur}

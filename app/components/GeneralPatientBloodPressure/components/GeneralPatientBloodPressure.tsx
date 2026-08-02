@@ -3,6 +3,7 @@
 // Components
 import { Grid, Text } from "@radix-ui/themes";
 import { InputTextField } from "../../ui/InputTextField";
+import { Icon } from "../../ui/Icon";
 
 // Types
 import { FocusEvent } from "react";
@@ -98,9 +99,10 @@ export const GeneralPatientBloodPressure = ({
 
   return (
     <div>
-      <div>
-        <Text>{"Blood pressure (in mmHg)"}</Text>
-      </div>
+      <Text className={styles.field_label}>
+        <Icon name="blood-pressure" size={15} />
+        {"Blood pressure"}
+      </Text>
       <Grid columns="1fr auto 1fr" gap="3">
         <InputTextField
           value={patientBloodPressureSystolic}

@@ -1,5 +1,25 @@
+/* A date is a measurement, so it sets in the mono face with tabular figures --
+   the same treatment vitals, doses and record IDs get. */
 .input_date {
-  border: 1px solid #d3d3d3;
-  border-radius: 3px;
-  padding: 7px;
+  height: var(--control-h-md);
+  padding: 0 var(--ds-space-5);
+  background: var(--white);
+  color: var(--fg-primary);
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: var(--fs-14);
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-sm);
+  outline: none;
+  transition: var(--transition-control);
+}
+
+.input_date:focus {
+  border-color: var(--border-brand);
+  box-shadow: var(--focus-ring);
+}
+
+.input_date:disabled {
+  background: var(--gray-50);
+  color: var(--fg-disabled);
 }

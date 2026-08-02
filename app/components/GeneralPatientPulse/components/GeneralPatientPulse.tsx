@@ -47,7 +47,8 @@ export const GeneralPatientPulse = ({
 
   return (
     <InputTextField
-      label="Pulse (in bpm)"
+      label="Pulse"
+      labelIcon="pulse"
       value={patientPulse}
       onBlur={handleBlur}
       type="number"

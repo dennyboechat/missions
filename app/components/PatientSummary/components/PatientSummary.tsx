@@ -1,15 +1,15 @@
 "use client";
 
 // Components
-import { Container, Grid } from "@radix-ui/themes";
+import { Container } from "@radix-ui/themes";
 import { ContentHeader } from "../../ContentHeader";
-import { Space } from "../../ui/Space";
 import { GeneralSummary } from "./GeneralSummary";
 import { DentistrySummary } from "./DentistrySummary";
 import { PersonalSummary } from "./PersonalSummary";
 
 // Styles
-import styles from "../../../styles/content.module.css";
+import contentStyles from "../../../styles/content.module.css";
+import styles from "../styles/PatientSummary.module.css";
 
 // Hooks
 import { usePatient } from "../../../lib/PatientContext";
@@ -22,16 +22,16 @@ export const PatientSummary = ({ params }: { params: { id: string } }) => {
   const { patient: patientPersonalSummary } = usePatient();
 
   return (
-    <Container className={styles.content}>
-      <ContentHeader text="Summary" />
-      <Grid>
+    <Container className={contentStyles.content}>
+      <ContentHeader
+        text="Summary"
+        subText="Everything recorded for this patient on this mission."
+      />
+      <div className={styles.summary_stack}>
         <PersonalSummary patientPersonalSummary={patientPersonalSummary} />
-        <Space />
         <GeneralSummary patientPersonalId={patientPersonalId} />
-        <Space />
         <DentistrySummary patientPersonalId={patientPersonalId} />
-        <Space />
-      </Grid>
+      </div>
     </Container>
   );
 };

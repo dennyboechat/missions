@@ -1,0 +1,21 @@
+/* Dates and actions on one baseline: the pair of dates is a single decision,
+   and the buttons act on it. */
+.filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--ds-space-6);
+  margin-bottom: var(--ds-space-9);
+}
+
+.date_field {
+  width: 190px;
+}
+
+.actions {
+  display: flex;
+  gap: var(--ds-space-4);
+  /* Lifts the buttons off the bottom of the fields' reserved message line so
+     they sit on the control baseline rather than the message baseline. */
+  padding-bottom: 25px;
+}

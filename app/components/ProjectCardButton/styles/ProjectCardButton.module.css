@@ -1,16 +1,33 @@
+/* A mission on the dashboard. Flat in place; the shadow only appears under the
+   cursor, because in this system elevation means "floating or hovered". */
 .card {
-  height: 200px;
+  display: grid;
+  height: 190px;
+  padding: var(--panel-pad);
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-md);
+  background: var(--surface-raised);
+  transition: var(--transition-control);
+  text-decoration: none;
 }
 
-.new_card_upper_section {
-  align-self: center;
-  justify-self: center;
-  font-size: 40px;
+.card:hover {
+  text-decoration: none;
 }
 
-.new_card_bottom_section {
-  align-self: baseline;
-  justify-self: center;
+.loading_card {
+  align-content: space-between;
+}
+
+.project_card {
+  align-content: space-between;
+  color: var(--fg-primary);
+}
+
+.project_card:hover {
+  border-color: var(--sky-300);
+  box-shadow: var(--shadow-md);
+  color: var(--fg-primary);
 }
 
 .project_name {
@@ -21,25 +38,63 @@
   overflow: hidden;
   text-overflow: ellipsis;
   align-self: baseline;
+  font: var(--fw-semibold) var(--fs-18) / var(--lh-snug) var(--font-body);
+}
+
+.project_footer {
+  display: grid;
+  gap: var(--ds-space-5);
+  align-self: self-end;
 }
 
 .project_description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  line-clamp: 3;
-  -webkit-line-clamp: 3;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
-  align-self: self-end;
+  font-size: var(--fs-13);
+  line-height: var(--lh-normal);
+  color: var(--fg-secondary);
+}
+
+.project_location {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  font-size: var(--fs-12);
+  color: var(--fg-tertiary);
+}
+
+.new_card {
+  place-content: center;
+  justify-items: center;
+  gap: var(--ds-space-5);
+  border-style: dashed;
+  border-color: var(--border-strong);
+  background: var(--surface-subtle);
+  color: var(--fg-secondary);
+}
+
+.new_card:hover {
+  border-color: var(--sky-500);
+  background: var(--sky-50);
+  color: var(--sky-700);
+}
+
+.new_card_label {
+  font-size: var(--fs-14);
+  font-weight: var(--fw-medium);
 }
 
 @media (max-width: 768px) {
   .card {
-    height: 130px;
+    height: 150px;
+    padding: var(--ds-space-6);
   }
 
-  .project_name,
-  .project_description {
+  .project_name {
     line-clamp: 2;
     -webkit-line-clamp: 2;
   }

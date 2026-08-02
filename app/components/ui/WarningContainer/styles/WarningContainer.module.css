@@ -1,4 +1,18 @@
 .container {
-  padding: 20px;
-  background-color: #fdfae4;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-space-5);
+  padding: var(--ds-space-6) var(--panel-pad);
+  background-color: var(--surface-warning);
+  color: var(--sun-800);
+  border-radius: var(--ds-radius-md);
+  font-size: var(--fs-14);
+  line-height: var(--lh-normal);
+}
+
+/* The glyph sits on the first line of text rather than centred against the
+   whole block, which is where the eye expects it when the message wraps. */
+.icon {
+  margin-top: 1px;
+  flex: none;
 }

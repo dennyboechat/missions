@@ -20,7 +20,9 @@ export const ReportPanelSection = ({
   <div className={styles.section}>
     <div className={styles.section_header}>
       <Text size="4">{title}</Text>
-      <Text size="5">{total}</Text>
+      <Text size="5" className="mi-numeric">
+        {total}
+      </Text>
     </div>
     {isEmpty ? (
       <Text size="2" color="gray">

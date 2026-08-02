@@ -2,6 +2,7 @@
 
 // Components
 import { Grid, Container, Text, TextField } from "@radix-ui/themes";
+import { Icon } from "../../Icon";
 
 // Types
 import { InputTextFieldProps } from "../types/InputTextFieldProps";
@@ -11,6 +12,7 @@ import styles from "../../../../styles/fields.module.css";
 
 export const InputTextField = ({
   label,
+  labelIcon,
   placeholder,
   value,
   maxLength = 255,
@@ -26,7 +28,12 @@ export const InputTextField = ({
   className,
 }: InputTextFieldProps) => (
   <Grid>
-    {label && <Text>{`${label}${required ? " *" : ""}`}</Text>}
+    {label && (
+      <Text className={styles.field_label}>
+        {labelIcon && <Icon name={labelIcon} size={15} />}
+        {`${label}${required ? " *" : ""}`}
+      </Text>
+    )}
     <TextField.Root
       onBlur={onBlur}
       defaultValue={value}
@@ -37,7 +44,11 @@ export const InputTextField = ({
       type={type}
       max={max}
       min={min}
-      className={className}
+      // A measurement is read off a laptop screen in bad light, so numbers take
+      // the mono face with tabular figures and a slashed zero.
+      className={`${type === "number" ? styles.numeric_input : ""}${
+        className ? ` ${className}` : ""
+      }`}
     >
       <TextField.Slot>{prefix}</TextField.Slot>
       <TextField.Slot>{suffix}</TextField.Slot>

@@ -1,7 +1,8 @@
 "use client";
 
 // Components
-import { Container, Grid, Skeleton } from "@radix-ui/themes";
+import { Container } from "@radix-ui/themes";
+import { ContentHeader } from "../components/ContentHeader";
 import { ProjectCardButton } from "../components/ProjectCardButton";
 
 // Database
@@ -101,10 +102,14 @@ const DashboardPage = () => {
 
   return (
     <Container className={styles.content}>
-      <Grid
-        columns={{ initial: "1", xs: "2", sm: "3", md: "4", lg: "5" }}
-        gap="3"
-      >
+      <ContentHeader
+        text="Your missions"
+        subText="Every project you have been given access to."
+      />
+      {/* auto-fill rather than a fixed column count: the cards keep their
+          readable width and the row simply fits as many as the screen has room
+          for. */}
+      <div className={styles.project_grid}>
         <ProjectCardButton isAddNew />
         {isLoadingProjects && <ProjectCardButton isLoading />}
         {projects?.map((project) => {
@@ -112,7 +117,7 @@ const DashboardPage = () => {
             <ProjectCardButton key={project.projectId} project={project} />
           );
         })}
-      </Grid>
+      </div>
     </Container>
   );
 };

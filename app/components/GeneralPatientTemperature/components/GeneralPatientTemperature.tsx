@@ -49,7 +49,8 @@ export const GeneralPatientTemperature = ({
 
   return (
     <InputTextField
-      label="Temperature (in °C)"
+      label="Temperature"
+      labelIcon="temperature"
       value={patientTemperature}
       onBlur={handleBlur}
       type="number"
