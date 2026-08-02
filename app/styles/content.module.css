@@ -1,8 +1,23 @@
+/* The scrolling pane beside the side menu. --content-pad is the system's
+   content gutter; the menu column supplies its own. */
 .content {
-  padding: 10px;
+  padding: var(--content-pad);
+}
+
+.project_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: var(--ds-space-6);
 }
 
 .delete_section {
-  border: solid 1px #ff0000;
-  padding: 10px;
+  border: solid 1px var(--border-invalid);
+  border-radius: var(--ds-radius-md);
+  padding: var(--ds-space-6);
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: var(--ds-space-6);
+  }
 }

@@ -1,0 +1,9 @@
+/* Missions design system — token entry point.
+   Imports only; no rules live here. Load this before any component styles. */
+
+@import url("./colors.css");
+@import url("./typography.css");
+@import url("./spacing.css");
+@import url("./shape.css");
+@import url("./motion.css");
+@import url("./base.css");

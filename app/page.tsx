@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Box, Grid, Container, Heading, Button } from "@radix-ui/themes";
+import { Box, Grid, Container, Heading, Text, Button } from "@radix-ui/themes";
 import Image from "next/image";
 
 // Hooks
@@ -21,24 +21,27 @@ export default function Home() {
       <Container>
         <Grid
           columns={{ initial: "1", sm: "2" }}
-          gap="20px"
+          gap="48px"
           align="center"
           justify="center"
           className={styles.hero_section}
         >
           <Grid gap="20px">
-            <Heading size="8">{"Empowering health at communities"}</Heading>
-            <Heading as="h2" size="3">
-              {"Our mission to enhance well-being through innovative solutions"}
+            <Heading className={styles.hero_title}>
+              {"Empowering health at communities"}
             </Heading>
+            <Text as="p" className={styles.hero_subtitle}>
+              {"Our mission to enhance well-being through innovative solutions"}
+            </Text>
             <Grid
               columns={{ initial: "1", sm: "2" }}
-              gap="10px"
-              width={{ initial: "100%", sm: "300px" }}
+              gap="12px"
+              width={{ initial: "100%", sm: "320px" }}
               justify={{ initial: "center", sm: "start" }}
             >
               <Button
                 variant="outline"
+                size="3"
                 onClick={() => {
                   router.push("/sign-up");
                 }}
@@ -46,6 +49,7 @@ export default function Home() {
                 {"Register"}
               </Button>
               <Button
+                size="3"
                 onClick={() => {
                   router.push("/sign-in");
                 }}

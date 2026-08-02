@@ -1,0 +1,258 @@
+/* Radix Themes → Missions design system.
+
+   The app is built on Radix Themes, so most of what a screen renders is a
+   .rt-* component whose colour, size and radius come from Radix's own scales.
+   Restyling every call site would be a rewrite; instead this file re-points
+   those scales at the design tokens, and corrects the handful of components
+   whose shape the system specifies differently (pill buttons, 6px inputs,
+   uppercase table headers, the brand rule under an active tab).
+
+   Load order matters: Radix's stylesheet and this one both target
+   `.radix-themes` at the same specificity, so this file must be imported after
+   "@radix-ui/themes/styles.css" — see app/layout.tsx, where they sit together.
+
+   Anything Radix does not render is styled at its own component instead. */
+
+.radix-themes {
+  /* ---------- Type ----------
+     Radix's own ramp is close to the system's: 12 · 14 · 18 · 20 · 24. Only
+     the body step differs — Radix sets 16px, the system sets 15. */
+  --default-font-family: var(--font-body);
+  --heading-font-family: var(--font-body);
+  --code-font-family: var(--font-mono);
+  --strong-font-family: var(--font-body);
+  --em-font-family: var(--font-body);
+  --quote-font-family: var(--font-display);
+  --font-size-3: var(--fs-15);
+  --font-weight-regular: var(--fw-text);
+  --font-weight-medium: var(--fw-medium);
+  --font-weight-bold: var(--fw-semibold);
+
+  /* ---------- Accent: the sky ramp ----------
+     Radix reads a 12-step scale: 1-2 backgrounds, 3-5 component fills, 6-8
+     borders, 9 the solid brand fill, 10 its hover, 11-12 text. The logo cyan
+     (--sky-300) fails contrast on white, so the solid step is --sky-700 and it
+     hovers *lighter* to --sky-600, which is what the system specifies. */
+  --accent-1: #f6fdff;
+  --accent-2: var(--sky-50);
+  --accent-3: var(--sky-100);
+  --accent-4: #bfeeff;
+  --accent-5: var(--sky-200);
+  --accent-6: #8bdcfa;
+  --accent-7: var(--sky-300);
+  --accent-8: var(--sky-400);
+  --accent-9: var(--sky-700);
+  --accent-10: var(--sky-600);
+  --accent-11: var(--sky-700);
+  --accent-12: var(--sky-900);
+
+  /* The alpha steps are the same ramp over the page, so a tint laid on a
+     tinted panel still reads as one colour. */
+  --accent-a1: rgba(34, 188, 237, 0.03);
+  --accent-a2: rgba(34, 188, 237, 0.09);
+  --accent-a3: rgba(34, 188, 237, 0.2);
+  --accent-a4: rgba(34, 188, 237, 0.29);
+  --accent-a5: rgba(34, 188, 237, 0.39);
+  --accent-a6: rgba(34, 188, 237, 0.52);
+  --accent-a7: rgba(34, 188, 237, 0.79);
+  --accent-a8: rgba(34, 188, 237, 0.95);
+  --accent-a9: rgba(5, 106, 145, 0.98);
+  --accent-a10: rgba(7, 132, 178, 0.97);
+  --accent-a11: rgba(5, 106, 145, 0.98);
+  --accent-a12: rgba(11, 63, 83, 0.98);
+
+  --accent-contrast: var(--fg-on-accent);
+  --accent-surface: var(--surface-brand-soft);
+  /* The indicator is the 2px rule under an active tab, which the system sets
+     one step lighter than the solid fill. */
+  --accent-indicator: var(--sky-600);
+  --accent-track: var(--accent-9);
+
+  /* Focus follows the brand rather than the accent's border step, so a focus
+     ring reads the same whether or not the control is accented. */
+  --focus-8: var(--border-brand);
+  --focus-a5: rgba(7, 132, 178, 0.28);
+
+  /* Panels and fields are flat white; grouping is a border plus a background
+     shift, never translucency. */
+  --color-surface: var(--white);
+  --color-panel-solid: var(--surface-raised);
+  --color-overlay: var(--surface-overlay);
+}
+
+/* ---------- Buttons ----------
+   Pill-shaped at every size, 40px tall by default because they get tapped on a
+   tablet, standing up, sometimes wearing gloves. */
+
+.radix-themes .rt-BaseButton {
+  border-radius: var(--ds-radius-full);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-snug);
+}
+
+.radix-themes .rt-BaseButton.rt-r-size-1 {
+  --base-button-height: var(--control-h-sm);
+  font-size: var(--fs-13);
+}
+
+.radix-themes .rt-BaseButton.rt-r-size-2 {
+  --base-button-height: var(--control-h-md);
+  font-size: var(--fs-14);
+}
+
+.radix-themes .rt-BaseButton.rt-r-size-3 {
+  --base-button-height: var(--control-h-lg);
+  font-size: var(--fs-15);
+}
+
+.radix-themes .rt-Button.rt-r-size-2 {
+  padding-left: var(--ds-space-7);
+  padding-right: var(--ds-space-7);
+}
+
+/* Outline is the system's secondary button: white, a grey edge that darkens on
+   hover, ink text — not the accent-tinted outline Radix ships.
+
+   Only when the call site has not asked for a colour. Radix stamps
+   data-accent-color on a button given `color`, and the one place that happens
+   is the destructive action, which has to stay rose. */
+.radix-themes .rt-BaseButton.rt-variant-outline:not([data-accent-color]) {
+  background-color: var(--white);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  color: var(--gray-800);
+}
+
+@media (hover: hover) {
+  .radix-themes .rt-BaseButton.rt-variant-outline:not([data-accent-color]):hover {
+    background-color: var(--surface-hover);
+    box-shadow: inset 0 0 0 1px var(--gray-400);
+  }
+}
+
+/* Destructive: rose text on white, filling to the palest rose under the
+   cursor. Never a solid red button — the weight is in the confirmation, not
+   in the control. */
+.radix-themes .rt-BaseButton.rt-variant-outline[data-accent-color='red'] {
+  background-color: var(--white);
+  box-shadow: inset 0 0 0 1px var(--rose-300);
+  color: var(--rose-600);
+}
+
+@media (hover: hover) {
+  .radix-themes .rt-BaseButton.rt-variant-outline[data-accent-color='red']:hover {
+    background-color: var(--rose-50);
+    box-shadow: inset 0 0 0 1px var(--rose-400);
+  }
+}
+
+/* ---------- Fields ----------
+   6px radius, 40px tall, and a focus state that moves the border to the brand
+   and lays a 3px ring outside it. */
+
+.radix-themes .rt-TextFieldRoot.rt-r-size-2,
+.radix-themes .rt-SelectTrigger.rt-r-size-2 {
+  --text-field-height: var(--control-h-md);
+  --text-field-border-radius: var(--ds-radius-sm);
+  --select-trigger-height: var(--control-h-md);
+  border-radius: var(--ds-radius-sm);
+  font-size: var(--fs-15);
+}
+
+.radix-themes .rt-TextAreaRoot {
+  --text-area-border-radius: var(--ds-radius-sm);
+  border-radius: var(--ds-radius-sm);
+}
+
+.radix-themes .rt-TextFieldRoot.rt-variant-surface,
+.radix-themes .rt-TextAreaRoot.rt-variant-surface {
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  transition: var(--transition-control);
+}
+
+.radix-themes .rt-TextFieldRoot.rt-variant-surface:focus-within,
+.radix-themes .rt-TextAreaRoot.rt-variant-surface:focus-within {
+  box-shadow: inset 0 0 0 1px var(--border-brand), var(--focus-ring);
+}
+
+.radix-themes .rt-SelectTrigger.rt-variant-surface {
+  box-shadow: inset 0 0 0 1px var(--border-default);
+  transition: var(--transition-control);
+}
+
+.radix-themes .rt-SelectTrigger.rt-variant-surface:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1px var(--border-brand), var(--focus-ring);
+}
+
+.radix-themes .rt-SelectContent,
+.radix-themes .rt-PopoverContent,
+.radix-themes .rt-DropdownMenuContent {
+  border-radius: var(--ds-radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---------- Table ----------
+   Column headers are the system's one uppercase device; rows separate with the
+   subtle border and shift background on hover. */
+
+.radix-themes .rt-TableColumnHeaderCell {
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--eyebrow-ls);
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  white-space: nowrap;
+}
+
+.radix-themes .rt-TableCell,
+.radix-themes .rt-TableColumnHeaderCell,
+.radix-themes .rt-TableRowHeaderCell {
+  --table-row-box-shadow: inset 0 -1px 0 0 var(--border-subtle);
+  font-size: var(--fs-14);
+}
+
+.radix-themes .rt-TableHeader .rt-TableColumnHeaderCell {
+  --table-row-box-shadow: inset 0 -1px 0 0 var(--border-default);
+}
+
+/* ---------- Tabs ----------
+   Radix already draws the 2px rule under the active tab out of
+   --accent-indicator, set above; what is left is the tab's own type and the
+   hairline the strip sits on. */
+
+.radix-themes .rt-BaseTabList {
+  box-shadow: inset 0 -1px 0 0 var(--border-default);
+}
+
+.radix-themes .rt-BaseTabListTrigger {
+  font-size: var(--fs-14);
+  color: var(--fg-secondary);
+}
+
+.radix-themes .rt-BaseTabListTrigger[data-state='active'],
+.radix-themes .rt-BaseTabListTrigger[data-active] {
+  font-weight: var(--fw-medium);
+  color: var(--sky-800);
+}
+
+/* ---------- Cards, dialogs, callouts ---------- */
+
+.radix-themes .rt-Card {
+  --card-border-radius: var(--ds-radius-md);
+}
+
+.radix-themes .rt-BaseDialogContent {
+  border-radius: var(--ds-radius-md);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Nothing in a patient record bounces. Radix's dialogs and popovers ship with
+   a scale-in; the system allows colour, border and shadow transitions only. */
+@media (prefers-reduced-motion: no-preference) {
+  .radix-themes .rt-BaseDialogContent,
+  .radix-themes .rt-PopoverContent,
+  .radix-themes .rt-SelectContent {
+    animation-duration: var(--duration-base);
+    animation-timing-function: var(--ease-out);
+  }
+}

@@ -1,0 +1,41 @@
+/* Missions spacing tokens — 4px base.
+
+   The scale is named --ds-space-* rather than the design system's --space-*
+   because Radix Themes already owns --space-1 through --space-9 on
+   .radix-themes, on its own 4/8/12/16/24/32/40/48/64 ramp. Two ramps under one
+   name means whichever stylesheet loads last silently rewrites the other's
+   spacing -- Radix's gap="3" would become 6px, or our 16px gaps would become
+   32px. The prefix keeps both intact. Every other token group in this folder
+   keeps its design-system name; these are the only collisions. */
+
+:root {
+  --ds-space-0: 0;
+  --ds-space-1: 2px;
+  --ds-space-2: 4px;
+  --ds-space-3: 6px;
+  --ds-space-4: 8px;
+  --ds-space-5: 12px;
+  --ds-space-6: 16px;
+  --ds-space-7: 20px;
+  --ds-space-8: 24px;
+  --ds-space-9: 32px;
+  --ds-space-10: 40px;
+  --ds-space-11: 48px;
+  --ds-space-12: 64px;
+  --ds-space-13: 80px;
+
+  /* Layout */
+  --sidebar-width: 248px;
+  --sidebar-width-collapsed: 72px;
+  --header-height: 60px;
+  --content-max: 1180px;
+  --content-pad: var(--ds-space-8);
+  --field-gap: var(--ds-space-5);
+  --panel-pad: var(--ds-space-7);
+
+  /* Control heights — 40px default keeps touch targets honest on a tablet
+     in a clinic tent. */
+  --control-h-sm: 32px;
+  --control-h-md: 40px;
+  --control-h-lg: 48px;
+}

@@ -1,0 +1,71 @@
+/* Missions base layer — resets and element defaults only.
+
+   Everything here is deliberately element-level. Radix Themes styles its own
+   components through .rt-* classes, which outrank these selectors, so this file
+   sets the floor for plain markup without fighting the component library. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--fg-primary);
+  font-family: var(--body-font);
+  font-size: var(--body-size);
+  font-weight: var(--body-weight);
+  line-height: var(--body-lh);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-wrap: pretty;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+h1 { font: var(--h1-weight) var(--h1-size) / var(--h1-lh) var(--h1-font); letter-spacing: var(--h1-ls); }
+h2 { font: var(--h2-weight) var(--h2-size) / var(--h2-lh) var(--h2-font); letter-spacing: var(--h2-ls); }
+h3 { font: var(--h3-weight) var(--h3-size) / var(--h3-lh) var(--h3-font); letter-spacing: var(--h3-ls); }
+h4 { font: var(--h4-weight) var(--h4-size) / var(--h4-lh) var(--h4-font); }
+h5 { font: var(--h5-weight) var(--h5-size) / var(--h5-lh) var(--h5-font); }
+
+p { margin: 0; }
+
+a {
+  color: var(--fg-link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--fg-link-hover);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/* Numeric data — vitals, doses, quantities, dates in tables. */
+.mi-numeric {
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+}
