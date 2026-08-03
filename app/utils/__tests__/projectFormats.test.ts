@@ -1,0 +1,246 @@
+import { describe, it, expect } from "vitest";
+
+import {
+  formatProjectDate,
+  getDateFormatExample,
+  getLengthUnitLabel,
+  getTemperatureUnitLabel,
+  getWeightUnitLabel,
+  toDisplayLength,
+  toDisplayLengthBounds,
+  toDisplayTemperature,
+  toDisplayTemperatureBounds,
+  toStoredLength,
+  toStoredTemperature,
+  toDisplayWeight,
+  toDisplayWeightBounds,
+  toStoredWeight,
+} from "../projectFormats";
+
+describe("length", () => {
+  it("leaves centimetres alone", () => {
+    expect(toDisplayLength({ centimetres: 178, unit: "cm" })).toBe(178);
+    expect(toStoredLength({ value: 178, unit: "cm" })).toBe(178);
+  });
+
+  it("converts to and from inches", () => {
+    expect(toDisplayLength({ centimetres: 177.8, unit: "in" })).toBe(70);
+    expect(toStoredLength({ value: 70, unit: "in" })).toBe(177.8);
+  });
+
+  // The property that matters: a project switching units must not creep a
+  // patient's height. Nothing here writes to the database, but a figure that
+  // drifts on every view would eventually be saved by someone re-typing it.
+  //
+  // Two roundings, so the bound is the sum of both: showing inches to a tenth
+  // can move a height by half a tenth (0.127cm), and storing centimetres to two
+  // places adds another half of 0.01cm. 0.132cm all told -- a third of a
+  // millimetre, well inside how precisely anyone measures a person. Anything
+  // beyond it would mean the rounding, not the notation, had changed the figure.
+  const MAX_DRIFT_CM = 0.05 * 2.54 + 0.005;
+
+  it("round-trips every plausible height within a third of a millimetre", () => {
+    for (let centimetres = 30; centimetres <= 220; centimetres += 0.5) {
+      const shown = toDisplayLength({ centimetres, unit: "in" }) as number;
+      const back = toStoredLength({ value: shown, unit: "in" }) as number;
+
+      expect(Math.abs(back - centimetres)).toBeLessThanOrEqual(
+        MAX_DRIFT_CM + 1e-9
+      );
+    }
+  });
+
+  // 2.54cm to the inch, so whole inches would collapse 177cm, 178cm and 179cm
+  // onto the same 70in and lose a centimetre a clinician measured.
+  it("keeps neighbouring centimetres distinguishable in inches", () => {
+    const a = toDisplayLength({ centimetres: 177, unit: "in" });
+    const b = toDisplayLength({ centimetres: 178, unit: "in" });
+
+    expect(a).not.toBe(b);
+  });
+
+  it("treats nothing recorded as nothing to show", () => {
+    for (const centimetres of [undefined, null, ""]) {
+      expect(toDisplayLength({ centimetres, unit: "in" })).toBeUndefined();
+    }
+    expect(toDisplayLength({ centimetres: "nope", unit: "in" })).toBeUndefined();
+    expect(toStoredLength({ value: undefined, unit: "in" })).toBeUndefined();
+  });
+
+  it("names the unit", () => {
+    expect(getLengthUnitLabel("cm")).toBe("cm");
+    expect(getLengthUnitLabel("in")).toBe("in");
+  });
+});
+
+describe("weight", () => {
+  it("leaves kilograms alone", () => {
+    expect(toDisplayWeight({ kilograms: 64, unit: "kg" })).toBe(64);
+    expect(toStoredWeight({ value: 64, unit: "kg" })).toBe(64);
+  });
+
+  it("converts to and from pounds", () => {
+    // 1lb is exactly 0.45359237kg, so 64kg is 141.1lb.
+    expect(toDisplayWeight({ kilograms: 64, unit: "lb" })).toBe(141.1);
+    expect(toDisplayWeight({ kilograms: 0.45359237, unit: "lb" })).toBe(1);
+    expect(toStoredWeight({ value: 141.1, unit: "lb" })).toBe(64);
+  });
+
+  // Two roundings again: a tenth of a pound is 0.0227kg, and storing kilograms
+  // to two places adds half of 0.01kg. 0.028kg -- under thirty grams.
+  const MAX_DRIFT_KG = 0.05 * 0.45359237 + 0.005;
+
+  it("round-trips every plausible weight within thirty grams", () => {
+    for (let kilograms = 0.5; kilograms <= 180; kilograms += 0.5) {
+      const shown = toDisplayWeight({ kilograms, unit: "lb" }) as number;
+      const back = toStoredWeight({ value: shown, unit: "lb" }) as number;
+
+      expect(Math.abs(back - kilograms)).toBeLessThanOrEqual(MAX_DRIFT_KG + 1e-9);
+    }
+  });
+
+  // A pound is a coarser division than a kilogram, so whole pounds would put a
+  // 3.0kg and a 3.4kg newborn on the same number.
+  it("keeps small weights distinguishable in pounds", () => {
+    expect(toDisplayWeight({ kilograms: 3.0, unit: "lb" })).not.toBe(
+      toDisplayWeight({ kilograms: 3.4, unit: "lb" })
+    );
+  });
+
+  it("treats nothing recorded as nothing to show", () => {
+    for (const kilograms of [undefined, null, ""]) {
+      expect(toDisplayWeight({ kilograms, unit: "lb" })).toBeUndefined();
+    }
+    expect(toStoredWeight({ value: undefined, unit: "lb" })).toBeUndefined();
+  });
+
+  it("names the unit", () => {
+    expect(getWeightUnitLabel("kg")).toBe("kg");
+    expect(getWeightUnitLabel("lb")).toBe("lb");
+  });
+});
+
+describe("temperature", () => {
+  it("leaves Celsius alone", () => {
+    expect(toDisplayTemperature({ celsius: 36.8, unit: "C" })).toBe(36.8);
+    expect(toStoredTemperature({ value: 36.8, unit: "C" })).toBe(36.8);
+  });
+
+  it("converts to and from Fahrenheit", () => {
+    expect(toDisplayTemperature({ celsius: 37, unit: "F" })).toBe(98.6);
+    expect(toDisplayTemperature({ celsius: 0, unit: "F" })).toBe(32);
+    expect(toStoredTemperature({ value: 98.6, unit: "F" })).toBe(37);
+  });
+
+  // 0 is a real reading, and `if (!celsius)` would have discarded it.
+  it("does not mistake zero for nothing recorded", () => {
+    expect(toDisplayTemperature({ celsius: 0, unit: "C" })).toBe(0);
+    expect(toStoredTemperature({ value: 0, unit: "C" })).toBe(0);
+  });
+
+  it("round-trips every plausible body temperature", () => {
+    for (let celsius = 34; celsius <= 44; celsius += 0.1) {
+      const rounded = Math.round(celsius * 10) / 10;
+      const shown = toDisplayTemperature({ celsius: rounded, unit: "F" }) as number;
+      const back = toStoredTemperature({ value: shown, unit: "F" }) as number;
+
+      expect(Math.abs(back - rounded)).toBeLessThanOrEqual(0.06);
+    }
+  });
+
+  it("names the unit", () => {
+    expect(getTemperatureUnitLabel("C")).toBe("°C");
+    expect(getTemperatureUnitLabel("F")).toBe("°F");
+  });
+});
+
+describe("field bounds", () => {
+  it("passes centimetre bounds through unchanged", () => {
+    expect(toDisplayLengthBounds({ min: 0, max: 220, unit: "cm" })).toEqual({
+      min: 0,
+      max: 220,
+    });
+  });
+
+  // Rounded outward: 220cm is 86.6in, and a max of 86 would reject the tallest
+  // height the rule is meant to permit.
+  it("widens rather than narrows when converting", () => {
+    expect(toDisplayLengthBounds({ min: 0, max: 220, unit: "in" })).toEqual({
+      min: 0,
+      max: 87,
+    });
+    expect(
+      toDisplayTemperatureBounds({ min: 34, max: 44, unit: "F" })
+    ).toEqual({ min: 93, max: 112 });
+    // 180kg is 396.8lb, so the field must accept 397.
+    expect(toDisplayWeightBounds({ min: 0, max: 180, unit: "lb" })).toEqual({
+      min: 0,
+      max: 397,
+    });
+  });
+
+  // Whatever the field accepts, the stored value still has to satisfy the rule
+  // in its own unit -- the bounds are a hint, not the check.
+  it("stays inside the stored rule once converted back", () => {
+    const { max } = toDisplayLengthBounds({ min: 0, max: 220, unit: "in" });
+    const asCentimetres = toStoredLength({ value: max, unit: "in" }) as number;
+
+    expect(asCentimetres).toBeGreaterThan(220);
+  });
+});
+
+describe("dates", () => {
+  it("writes the order the project asked for", () => {
+    expect(
+      formatProjectDate({ date: "2026-03-04", dateFormat: "mm/dd/yyyy" })
+    ).toBe("03/04/2026");
+    expect(
+      formatProjectDate({ date: "2026-03-04", dateFormat: "dd/mm/yyyy" })
+    ).toBe("04/03/2026");
+  });
+
+  it("pads single digits so a column lines up", () => {
+    expect(
+      formatProjectDate({ date: "2026-3-4", dateFormat: "mm/dd/yyyy" })
+    ).toBe("03/04/2026");
+  });
+
+  // The bug the old formatter was written to avoid: a date built into a Date and
+  // read back shifts a day for anyone west of Greenwich. This splits the string
+  // instead, so the answer cannot depend on where it is read.
+  it("shows the stored day from any timezone", () => {
+    const original = process.env.TZ;
+
+    for (const timeZone of [
+      "Pacific/Kiritimati",
+      "Pacific/Fiji",
+      "UTC",
+      "America/New_York",
+      "Pacific/Midway",
+    ]) {
+      process.env.TZ = timeZone;
+      expect(
+        formatProjectDate({ date: "2006-02-25", dateFormat: "dd/mm/yyyy" })
+      ).toBe("25/02/2006");
+    }
+
+    process.env.TZ = original;
+  });
+
+  it("handles missing and malformed input", () => {
+    expect(formatProjectDate({ dateFormat: "mm/dd/yyyy" })).toBe("");
+    expect(formatProjectDate({ date: "", dateFormat: "mm/dd/yyyy" })).toBe("");
+    // Handed back rather than blanked: whatever it is, it is more informative
+    // on screen than an empty cell.
+    expect(formatProjectDate({ date: "nope", dateFormat: "mm/dd/yyyy" })).toBe(
+      "nope"
+    );
+  });
+
+  it("shows an example that distinguishes the two orders", () => {
+    // The 4th of March: the one date that reads differently either way, which is
+    // the whole point of the hint in the settings.
+    expect(getDateFormatExample("mm/dd/yyyy")).toBe("03/04/2026");
+    expect(getDateFormatExample("dd/mm/yyyy")).toBe("04/03/2026");
+  });
+});

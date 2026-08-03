@@ -60,7 +60,7 @@ export default function Home() {
           </Grid>
           <Image
             src={heroImage}
-            alt="hero image"
+            alt="Doctors and nurses seeing patients outdoors around a phone showing a medical cross, with a pharmacy, a clinic and an ambulance behind them"
             className={styles.hero_image}
           />
         </Grid>

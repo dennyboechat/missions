@@ -26,7 +26,7 @@ export const getProjectUsers = async ({
   projectId: ProjectId;
 }): Promise<ActionResult<ProjectUser[]>> => {
   try {
-    await assertProjectAccess({ projectId }, { ownerOnly: true });
+    await assertProjectAccess({ projectId }, { requires: "admin" });
 
     const query = `
       SELECT
@@ -34,6 +34,7 @@ export const getProjectUsers = async ({
         project_user.project_id,
         project_user.user_id,
         project_user.is_user_active,
+        project_user.is_user_admin,
         app_user.user_name,
         app_user.user_email
       FROM
@@ -55,6 +56,7 @@ export const getProjectUsers = async ({
       userName: row.user_name,
       userEmail: row.user_email,
       isUserActive: row.is_user_active,
+      isUserAdmin: row.is_user_admin,
     }));
 
     return actionOk(projectUsers);

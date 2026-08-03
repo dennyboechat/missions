@@ -17,6 +17,9 @@ import { useSaveField } from "../../../lib/useSaveField";
 
 // Utils
 
+// Styles
+import styles from "../styles/DentalAppointmentToothStatus.module.css";
+
 
 export const DentalAppointmentToothStatus = ({
   patientDentistryId,
@@ -95,6 +98,7 @@ export const DentalAppointmentToothStatus = ({
       <Text>{"Tooth status"}</Text>
       <Grid columns="2" gap="10px">
         <Button
+          className={styles.extracted_button}
           color="bronze"
           variant={
             toothDetails?.[selectedTooth]?.toothStatus === ToothStatus.EXTRACTED

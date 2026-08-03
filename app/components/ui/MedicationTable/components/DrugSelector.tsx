@@ -5,10 +5,9 @@ import { Button, Flex, Text } from "@radix-ui/themes";
 import { Autocomplete } from "../../Autocomplete";
 
 // Utils
-import { getMostCommonDentalDrugs } from "../../../../utils/getMostCommonDentalDrugs";
+import { getDrugOptions, resolveDrugName } from "../../../../utils/drugs";
 import { getNewMedicationRecord } from "../utils/getNewMedicationRecord";
 import { getDrugSuggestion } from "../../../../utils/getDrugSuggestion";
-import { isSameName } from "../../../../utils/isSameName";
 
 // Types
 import { DrugSelectorProps } from "../types/DrugSelectorProps";
@@ -31,7 +30,7 @@ export const DrugSelector = ({
   insertMedication,
 }: DrugSelectorProps) => {
   const [suggestion, setSuggestion] = useState(noSuggestion);
-  const drugs = getMostCommonDentalDrugs();
+  const drugs = getDrugOptions();
   // Confirming moves focus, which blurs the field, and the insert it is waiting
   // on has not finished setting the drug yet. Without this the row would be
   // added twice.
@@ -46,7 +45,13 @@ export const DrugSelector = ({
 
     const updatedMedications = [...medications];
 
-    await insertMedication(drugName, updatedMedications);
+    // Canonicalised here rather than at each caller, so every way into the row
+    // gets it: typing, picking from the list, and accepting a "did you mean" --
+    // which can itself suggest an alias, since aliases are searchable. A name
+    // nothing is known by is left exactly as typed, which is the point.
+    const storedName = resolveDrugName(drugName) ?? drugName.trim();
+
+    await insertMedication(storedName, updatedMedications);
     updatedMedications.push(getNewMedicationRecord());
 
     if (!andMoveToAmount) {
@@ -82,12 +87,14 @@ export const DrugSelector = ({
       return;
     }
 
-    // Picked from the list, or typed out exactly: store the list's spelling, so
-    // one drug is never filed under two capitalisations.
-    const knownDrug = drugs.find(({ name }) => isSameName(name, typed));
+    // Picked from the list, or typed out exactly, or typed as a brand or an
+    // Atlantic-crossing synonym: store the canonical name either way, so one
+    // drug is never filed under two spellings. That is what keeps the
+    // medication report from splitting Paracetamol across three rows.
+    const knownDrug = resolveDrugName(typed);
 
     if (knownDrug) {
-      await addMedication(knownDrug.name, { andMoveToAmount });
+      await addMedication(knownDrug, { andMoveToAmount });
       return;
     }
 

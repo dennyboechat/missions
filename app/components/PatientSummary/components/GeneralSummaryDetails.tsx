@@ -9,6 +9,12 @@ import styles from "../styles/PatientSummary.module.css";
 // Utils
 import { getBodyMassIndex } from "@/app/utils/getBodyMassIndex";
 
+// Hooks
+import { useProjectFormats } from "@/app/lib/useProjectFormats";
+
+// Components
+import { UnitSwitch } from "../../ui/UnitSwitch";
+
 // Types
 import { GeneralSummaryDetailsProps } from "../types/GeneralSummaryDetailsProps";
 
@@ -29,10 +35,31 @@ export const GeneralSummaryDetails = ({
   patientVisionLeftNormalDistance,
   patientVisionRightTestedDistance,
   patientVisionRightNormalDistance,
-}: GeneralSummaryDetailsProps) => (
+}: GeneralSummaryDetailsProps) => {
+  const {
+    displayLength,
+    displayWeight,
+    displayTemperature,
+  } = useProjectFormats();
+
+  return (
   <div className={styles.vitals}>
-    <SummaryVital icon="height" label="Height" value={patientHeight} unit="cm" />
-    <SummaryVital icon="weight" label="Weight" value={patientWeight} unit="kg" />
+    <SummaryVital
+      icon="height"
+      label="Height"
+      value={displayLength(patientHeight)}
+      unit={<UnitSwitch measure="length" />}
+    />
+    <SummaryVital
+      icon="weight"
+      label="Weight"
+      value={displayWeight(patientWeight)}
+      unit={<UnitSwitch measure="weight" />}
+    />
+    {/* Fed the stored kilograms and centimetres, never the displayed figures:
+        the formula is kg/m2, so pounds over inches squared is not a BMI at all.
+        A project on inches would have read three times too high, and one on
+        pounds a little over twice. */}
     <SummaryVital
       icon="bmi"
       label="BMI"
@@ -41,8 +68,8 @@ export const GeneralSummaryDetails = ({
     <SummaryVital
       icon="temperature"
       label="Temperature"
-      value={patientTemperature}
-      unit="°C"
+      value={displayTemperature(patientTemperature)}
+      unit={<UnitSwitch measure="temperature" />}
     />
     <SummaryVital icon="pulse" label="Pulse" value={patientPulse} unit="bpm" />
     <SummaryVital
@@ -79,4 +106,5 @@ export const GeneralSummaryDetails = ({
       unit="feet"
     />
   </div>
-);
+  );
+};

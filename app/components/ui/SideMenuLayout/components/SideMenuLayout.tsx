@@ -13,12 +13,32 @@ import styles from "../styles/SideMenuLayout.module.css";
 // Hooks
 import { useEffect, useState } from "react";
 
+// The same breakpoint as the rail rules in globals.css and the blocks hidden in
+// SideMenuLayout.module.css. It has to exist in both languages: CSS decides how
+// the narrow menu looks, and react-pro-sidebar only takes a boolean.
+const COLLAPSE_BELOW = "(max-width: 768px)";
+
+// What the context block reserves, in pixels. A name on its own needs one line
+// and its padding; a name with a date of birth and a sex under it needs three.
+// The block is measured rather than grown to fit because the menu below has to
+// start in the same place on the first paint as it does once the record has
+// loaded -- see the height it is applied to.
+const HEADER_HEIGHT = 88;
+const HEADER_WITH_SUB_HEADER_HEIGHT = 150;
+// The same three lines with a QR code under them. Measured as its own figure,
+// not added to the one above: those two carry enough slack for a name that wraps
+// to a second line, and adding one to the other banked the slack twice over,
+// which is what left the code floating in the middle of a tall panel.
+const HEADER_WITH_EXTRA_HEIGHT = 216;
+
 export const SideMenuLayout = ({
   menuItems,
   header,
   subHeader,
   subHeaderFooter,
+  headerExtra,
   isBoldHeader,
+  footer,
   children,
 }: SideMenuLayoutProps) => {
   // Starts false on the server and on the first client render, so the two
@@ -27,29 +47,24 @@ export const SideMenuLayout = ({
   // blanked the whole layout on every navigation -- that blank was the
   // "refresh", and clicking again while the menu reflowed landed on whichever
   // item had moved under the cursor.
+  //
+  // The false first render is no longer visible: the rail's width and padding
+  // come from the matching media query in globals.css, so the narrow layout is
+  // painted before this runs. What this state is for is telling
+  // react-pro-sidebar, which cannot read a media query.
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      const smallScreenResolution = 768;
+    const query = window.matchMedia(COLLAPSE_BELOW);
+    const apply = () => setCollapsed(query.matches);
 
-      setCollapsed(
-        typeof window !== "undefined" &&
-          window.innerWidth <= smallScreenResolution
-      );
-    };
+    apply();
+    // Crossings only. The resize listener this replaced re-ran on every pixel
+    // of a drag, and on mobile on every scroll that nudges the viewport, each
+    // time setting the same boolean it already held.
+    query.addEventListener("change", apply);
 
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", handleResize);
-    }
-
-    handleResize();
-
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("resize", handleResize);
-      }
-    };
+    return () => query.removeEventListener("change", apply);
   }, []);
 
   return (
@@ -61,27 +76,49 @@ export const SideMenuLayout = ({
         className={styles.sidebar}
         backgroundColor="var(--surface-raised)"
       >
-        <Box
-          width="var(--sidebar-width)"
-          height={subHeader ? "150px" : "88px"}
-          className={styles.header}
-        >
-          <Text
-            weight={isBoldHeader ? "bold" : "medium"}
-            className={styles.header_text}
+        {/* Present but empty is not the same as absent: "" still reserves the
+            block, so the menu does not shift when the name arrives. A panel
+            that puts its context at the bottom passes no header at all. */}
+        {header !== undefined && (
+          <Box
+            width="var(--sidebar-width)"
+            // Presence, not content: a panel that will show a date of birth
+            // reserves the taller block from the start, so the menu does not
+            // step down and back up as the record loads.
+            height={`${
+              headerExtra
+                ? HEADER_WITH_EXTRA_HEIGHT
+                : subHeader !== undefined
+                  ? HEADER_WITH_SUB_HEADER_HEIGHT
+                  : HEADER_HEIGHT
+            }px`}
+            className={styles.header}
           >
-            {header}
-          </Text>
-          {subHeader && (
-            <Text className={styles.header_sub_text}>{subHeader}</Text>
-          )}
-          {subHeaderFooter && (
-            <Text className={styles.header_sub_text_footer}>
-              {subHeaderFooter}
+            <Text
+              weight={isBoldHeader ? "bold" : "medium"}
+              className={styles.header_text}
+            >
+              {header}
             </Text>
-          )}
-        </Box>
+            {subHeader && (
+              <Text className={styles.header_sub_text}>{subHeader}</Text>
+            )}
+            {subHeaderFooter && (
+              <Text className={styles.header_sub_text_footer}>
+                {subHeaderFooter}
+              </Text>
+            )}
+            {headerExtra}
+          </Box>
+        )}
         <Menu>{menuItems}</Menu>
+        {footer !== undefined && (
+          <Box width="var(--sidebar-width)" className={styles.footer}>
+            <Text weight="medium" className={styles.footer_text}>
+              {footer}
+            </Text>
+          </Box>
+        )}
       </Sidebar>
       {children}
     </Grid>

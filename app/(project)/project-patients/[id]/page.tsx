@@ -14,6 +14,7 @@ import styles from "../../../styles/content.module.css";
 import { memo, useMemo, useState, useEffect, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { useProject } from "../../../lib/ProjectContext";
+import { useProjectFormats } from "../../../lib/useProjectFormats";
 import { useLiveData } from "../../../lib/useLiveData";
 
 // Database
@@ -24,7 +25,6 @@ import { PatientPersonalTypes } from "../../../types/PatientPersonalTypes";
 
 // Utils
 import { getFilteredPatientPersonals } from "../../../utils/getFilteredPatientPersonals";
-import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 import { getGenderLabel } from "../../../utils/getGenderLabel";
 import { getAge } from "../../../utils/getAge";
 
@@ -44,6 +44,9 @@ const PatientRow = memo(function PatientRow({
   isPatientMale,
   patientPhoneNumber,
 }: PatientPersonalTypes) {
+  const { formatDate } = useProjectFormats();
+  const age = getAge({ date: patientDateOfBirth });
+
   return (
     <Table.Row>
       <Table.RowHeaderCell>
@@ -53,10 +56,13 @@ const PatientRow = memo(function PatientRow({
           </NextLink>
         </Link>
       </Table.RowHeaderCell>
+      {/* Each part only if it is known -- a patient registered without a date
+          of birth read "(undefinedyo)" here, the same way the side menu read
+          "(yo)". patient_date_of_birth is nullable, so both are reachable. */}
       <Table.Cell className="mi-numeric">
-        {`${getLocaleFormattedDate({ date: patientDateOfBirth })} (${getAge({
-          date: patientDateOfBirth,
-        })}yo)`}
+        {[formatDate(patientDateOfBirth), age === undefined ? "" : `(${age}yo)`]
+          .filter(Boolean)
+          .join(" ")}
       </Table.Cell>
       <Table.Cell>{getGenderLabel({ isPatientMale })}</Table.Cell>
       <Table.Cell className="mi-numeric">{patientPhoneNumber}</Table.Cell>
@@ -68,6 +74,7 @@ const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id: projectId } = use(params);
   const router = useRouter();
   const { project } = useProject();
+  const { dateFormat, formatDate } = useProjectFormats();
   const [patientPersonals, setPatientPersonals] = useState<
     PatientPersonalTypes[]
   >([]);
@@ -126,8 +133,13 @@ const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
   );
 
   const filteredPatientPersonals = useMemo(
-    () => getFilteredPatientPersonals({ patientPersonals, filterText: searchText }),
-    [patientPersonals, searchText],
+    () =>
+      getFilteredPatientPersonals({
+        patientPersonals,
+        filterText: searchText,
+        dateFormat,
+      }),
+    [patientPersonals, searchText, dateFormat],
   );
 
   return (

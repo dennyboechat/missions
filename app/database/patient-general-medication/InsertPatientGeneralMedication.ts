@@ -35,6 +35,13 @@ export const insertPatientGeneralMedication = async ({
 
     const { drug, dose, quantity, instructions } = medication;
 
+    // Trimmed here as well as in the field. The medication report groups by the
+    // stored name, so a stray trailing space makes "Ibuprofen " its own row
+    // beside "Ibuprofen" -- which is how 9 of 71 ibuprofen prescriptions ended
+    // up reported separately. This is a server action, so the field's own trim
+    // is not the last word on what arrives.
+    const trim = (value?: string) => value?.trim() || undefined;
+
     const query = `
       INSERT INTO
         patient_general_prescribed_medication (patient_general_id, drug_name, dose, quantity, instructions_usage)
@@ -46,10 +53,10 @@ export const insertPatientGeneralMedication = async ({
 
     const response = await sql.query(query, [
       patientGeneralId,
-      drug,
-      dose,
+      trim(drug),
+      trim(dose),
       quantity,
-      instructions,
+      trim(instructions),
     ]);
 
     const generalPrescribedMedications: GeneralPrescribedMedication[] =

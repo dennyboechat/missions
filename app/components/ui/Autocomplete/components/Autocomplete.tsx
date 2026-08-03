@@ -24,6 +24,31 @@ import styles from "../styles/Autocomplete.module.css";
 const MAX_RESULTS = 50;
 
 /**
+ * Whether a mousedown landed on an element's scrollbar rather than its content.
+ *
+ * A scrollbar sits inside the element's border box but outside its client box,
+ * so an offset past clientWidth or clientHeight is the gutter. Used to tell
+ * "reaching for the page's scrollbar" apart from "clicking away from the field":
+ * the page scrollbar is outside this component, so without this the list closed
+ * as someone went to scroll the page it sits on.
+ *
+ * Whether a browser reports a scrollbar press as a mousedown at all differs --
+ * macOS overlay scrollbars have no gutter to press -- so this only ever has to
+ * be right when the event does arrive.
+ */
+const isScrollbarPress = (event: MouseEvent) => {
+  const target = event.target;
+
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return (
+    event.offsetX > target.clientWidth || event.offsetY > target.clientHeight
+  );
+};
+
+/**
  * A combobox: type to filter, pick with the mouse or keyboard, or just type a
  * value that is not in the list.
  *
@@ -48,6 +73,17 @@ export const Autocomplete = ({
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  // Set while the mouse is held down inside the field or its list. Read by
+  // handleBlur, which must not treat a scrollbar press as leaving the field.
+  const isPressInsideRef = useRef(false);
+  // The listeners below are registered once, so they read the open state from a
+  // ref rather than closing over a stale value.
+  const isOpenRef = useRef(false);
+
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+  }, [isOpen]);
 
   // Follow the value the parent holds, e.g. when a country resolves from a
   // saved timezone, or the field is cleared.
@@ -76,19 +112,66 @@ export const Autocomplete = ({
 
   useEffect(() => {
     const closeOnOutsideClick = (event: MouseEvent) => {
+      if (isScrollbarPress(event)) {
+        return;
+      }
+
       if (!containerRef.current?.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
+    // Pressing anywhere in the field or its list is not leaving the field, even
+    // when the browser moves focus off the input for it. See handleBlur.
+    const noteInsidePress = (event: MouseEvent) => {
+      isPressInsideRef.current = Boolean(
+        containerRef.current?.contains(event.target as Node)
+      );
+    };
+
+    const releasePress = () => {
+      if (!isPressInsideRef.current) {
+        return;
+      }
+
+      isPressInsideRef.current = false;
+
+      // Focus goes back once the scroll is over, so typing and the arrow keys
+      // still work. Left on the body, the next keystroke would go nowhere.
+      if (isOpenRef.current) {
+        inputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("mousedown", noteInsidePress, true);
     document.addEventListener("mousedown", closeOnOutsideClick);
-    return () => document.removeEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("mouseup", releasePress);
+
+    return () => {
+      document.removeEventListener("mousedown", noteInsidePress, true);
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("mouseup", releasePress);
+    };
   }, []);
 
-  // Leaving the field closes the list. Picking an option does not go through
-  // here: the options answer to mousedown and cancel it, so the input keeps
-  // focus and the list is closed by choose() instead.
+  /**
+   * Leaving the field closes the list.
+   *
+   * Two things that look like leaving are not. Picking an option cancels its own
+   * mousedown, so the input never loses focus and choose() does the closing.
+   * Pressing the list's scrollbar is the case this guard exists for: the gutter
+   * is not an option, nothing cancels that mousedown, and the browser moves
+   * focus off the input -- which used to shut the list on the way to scrolling
+   * it, so the list could not be scrolled by its own scrollbar at all.
+   *
+   * Cancelling the mousedown on the list instead would keep focus, but it also
+   * cancels the browser's scrollbar drag, which is the thing being reached for.
+   */
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    if (isPressInsideRef.current) {
+      return;
+    }
+
     setIsOpen(false);
     setHighlightedIndex(-1);
 
@@ -169,6 +252,7 @@ export const Autocomplete = ({
       className={`${styles.container}${readOnly ? ` ${styles.readonly}` : ""}`}
     >
       <TextField.Root
+        ref={inputRef}
         value={text}
         placeholder={placeholder}
         readOnly={readOnly}

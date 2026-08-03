@@ -7,10 +7,12 @@ import { usePathname } from "next/navigation";
 // Components
 import { SideMenuLayout } from "../components/ui/SideMenuLayout";
 import { PatientMenuItems } from "../components/PatientMenuItems";
+import { PatientQrCode } from "../components/PatientQrCode";
 
 // Hooks
 import { PatientProvider } from "../lib/PatientContext";
 import { useLiveData } from "../lib/useLiveData";
+import { useProjectFormats } from "../lib/useProjectFormats";
 
 // Database
 import { getPatientSummary } from "../database/patient-summary/GetPatientSummary";
@@ -51,6 +53,7 @@ export default function PatientLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { dateFormat } = useProjectFormats();
   const [, segment, patientPersonalId] = pathname.split("/");
   const activeMenuItem = MENU_ITEM_BY_SEGMENT[segment];
 
@@ -133,10 +136,19 @@ export default function PatientLayout({
       header={patient?.patientFullName ?? ""}
       subHeader={getSideMenuSubHeader({
         patientDateOfBirth: patient?.patientDateOfBirth,
+        dateFormat,
       })}
       subHeaderFooter={getSideMenuSubHeaderFooter({
         isPatientMale: patient?.isPatientMale,
       })}
+      // The id comes out of the URL, so the code is drawn on the first paint
+      // rather than waiting on the summary the name arrives with.
+      headerExtra={
+        <PatientQrCode
+          patientPersonalId={patientPersonalId}
+          patientFullName={patient?.patientFullName}
+        />
+      }
       isBoldHeader
     >
       <PatientProvider value={{ patient, setPatient }}>

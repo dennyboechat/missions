@@ -4,7 +4,10 @@
 .header {
   display: grid;
   gap: var(--ds-space-1);
-  padding: var(--ds-space-7) var(--ds-space-6);
+  /* Tighter over and under than to either side: the block is centred inside a
+     measured height, so this padding is the floor under that centring rather
+     than the space you actually see. */
+  padding: var(--ds-space-5) var(--ds-space-6);
   background-color: var(--surface-brand-soft);
   text-align: center;
   align-content: center;
@@ -34,6 +37,35 @@
   color: var(--fg-tertiary);
 }
 
+/* The same context as .header, held at the foot of the panel instead of over
+   it. `margin-top: auto` is what pins it: the sidebar's own container is a flex
+   column (see globals.css), so this takes up the slack under a short menu and
+   still follows the last item when the menu is long enough to scroll.
+
+   A min-height rather than the header's fixed one -- the name arrives after the
+   first paint, and reserving one line keeps the empty block from looking like a
+   gap without capping a name that needs two. */
+.footer {
+  margin-top: auto;
+  min-height: 64px;
+  display: grid;
+  align-content: center;
+  padding: var(--ds-space-6);
+  background-color: var(--surface-brand-soft);
+  border-top: 1px solid var(--border-default);
+  text-align: center;
+}
+
+.footer_text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--fs-15);
+  color: var(--fg-primary);
+}
+
 /* The menu sticks below the header, not to the top of the viewport.
 
    With `top: 0` the menu slid upward as the page scrolled, so its position
@@ -60,8 +92,12 @@ aside.sidebar {
   padding: var(--ds-space-8) var(--content-pad);
 }
 
+/* Collapsed to the 72px icon rail, neither block fits: both are a fixed
+   sidebar-width wide and would spill out of it. Same breakpoint the layout
+   collapses at. */
 @media (max-width: 768px) {
-  .header {
+  .header,
+  .footer {
     display: none;
   }
 

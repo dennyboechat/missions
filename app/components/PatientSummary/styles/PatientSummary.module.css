@@ -22,6 +22,30 @@
   justify-content: space-between;
   gap: var(--ds-space-5);
   margin-bottom: var(--ds-space-6);
+  /* The count and the link sit at the end of the title's line until there is no
+     room for them, which on a phone is often. */
+  flex-wrap: wrap;
+}
+
+/* The count and the link travel together at the end of the heading. Without
+   this they became two more space-between children and drifted apart across the
+   width of the card. */
+.section_meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-5);
+}
+
+.section_action {
+  font-size: var(--fs-14);
+  color: var(--fg-link);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.section_action:hover {
+  color: var(--fg-link-hover);
+  text-decoration: underline;
 }
 
 .section_title {

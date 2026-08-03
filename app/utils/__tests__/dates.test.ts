@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 
 import { getFormattedIsoDate } from "../getFormattedIsoDate";
-import { getLocaleFormattedDate } from "../getLocaleFormattedDate";
 import { getAge } from "../getAge";
 import { isDentistryAdult } from "../isDentistryAdult";
 import { subtractDaysFromIsoDate } from "../subtractDaysFromIsoDate";
@@ -44,27 +43,6 @@ describe("getFormattedIsoDate", () => {
     expect(getFormattedIsoDate({})).toBe("");
     expect(getFormattedIsoDate({ date: "" })).toBe("");
     expect(getFormattedIsoDate({ date: "not-a-date" })).toBe("not-a-date");
-  });
-});
-
-describe("getLocaleFormattedDate", () => {
-  it("renders a readable date", () => {
-    expect(getLocaleFormattedDate({ date: "2026-03-23" })).toBe("Mar 23, 2026");
-  });
-
-  // The original bug: a date stored at midnight UTC formatted with no timeZone
-  // showed the previous day from anywhere west of Greenwich.
-  it("shows the stored day regardless of the viewer's timezone", () => {
-    for (const tz of ["Pacific/Kiritimati", "Pacific/Fiji", "UTC", "America/New_York", "Pacific/Midway"]) {
-      inTimezone(tz, () => {
-        expect(getLocaleFormattedDate({ date: "2006-02-25" })).toBe("Feb 25, 2006");
-      });
-    }
-  });
-
-  it("handles missing and malformed input", () => {
-    expect(getLocaleFormattedDate({})).toBe("");
-    expect(getLocaleFormattedDate({ date: "nope" })).toBe("nope");
   });
 });
 

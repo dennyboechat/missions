@@ -53,7 +53,14 @@ export default function ProjectLayout({
     let isCurrent = true;
 
     const syncProject = async () => {
-      if (!projectId || project?.projectId === projectId) return;
+      // Re-fetch a project that arrived without a rank as well as one for the
+      // wrong id. The dashboard fills this context, so a project cached by an
+      // older build would otherwise keep an admin out of Users and Settings for
+      // the whole session with no way to recover but clearing storage.
+      const isCurrentProject =
+        project?.projectId === projectId && project?.viewerRole !== undefined;
+
+      if (!projectId || isCurrentProject) return;
 
       const loaded = actionData(await getProject({ projectId }));
 
@@ -67,7 +74,7 @@ export default function ProjectLayout({
     return () => {
       isCurrent = false;
     };
-  }, [projectId, project?.projectId, setProject]);
+  }, [projectId, project?.projectId, project?.viewerRole, setProject]);
 
   // "/project" with no id is the new-project form, which has no project yet.
   if (!projectId) {
@@ -82,7 +89,7 @@ export default function ProjectLayout({
           activeMenuItem={MENU_ITEM_BY_SEGMENT[segment]}
         />
       }
-      header={project?.projectName ?? ""}
+      footer={project?.projectName ?? ""}
     >
       {children}
     </SideMenuLayout>

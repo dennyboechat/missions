@@ -28,7 +28,7 @@ export const insertProjectUser = async ({
   userId: string;
 }): Promise<ActionResult<ProjectUser[]>> => {
   try {
-    await assertProjectAccess({ projectId }, { ownerOnly: true });
+    await assertProjectAccess({ projectId }, { requires: "admin" });
 
     // Needs migrations/005_unique_identities.sql: the conflict target below is
     // the unique index it creates, and without it this query does not run.

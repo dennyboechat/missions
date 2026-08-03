@@ -35,6 +35,16 @@ div[role="dialog"] .cl-cardBox {
   border: none;
 }
 
+/* A column so a panel can hold something at its foot -- the project name sits
+   below the menu rather than above it. The menu takes the space it needs and the
+   footer's own `margin-top: auto` claims what is left, which is what puts it at
+   the bottom on a short menu without pinning it over a long one. */
+.ps-sidebar-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
 .ps-menu-root ul {
   display: grid;
   gap: var(--ds-space-1);
@@ -76,12 +86,46 @@ div[role="dialog"] .cl-cardBox {
   font-weight: var(--fw-medium);
 }
 
-/* Collapsed, the menu is a 72px icon rail: the labels go, the icons centre. */
-.ps-collapsed .ps-menu-root ul {
-  padding: var(--ds-space-5) var(--ds-space-3);
-}
+/* Narrow, the menu is a 72px icon rail.
 
-.ps-collapsed .ps-menuitem-root .ps-menu-button {
-  justify-content: center;
-  padding: 0;
+   Driven by the media query rather than by react-pro-sidebar's .ps-collapsed,
+   so it is already right on the first paint. The library needs the same answer
+   as a prop and writes the width inline (see SideMenuLayout, which reads the
+   identical breakpoint through matchMedia) -- the sidebar used to render 248px
+   wide until that effect ran and then snap to 72px on every single load, which
+   is what the !important below puts a stop to. Keep the two breakpoints in step;
+   this rule is the one that decides how the rail looks. */
+@media (max-width: 768px) {
+  .ps-sidebar-root,
+  .ps-sidebar-root .ps-sidebar-container {
+    width: var(--sidebar-width-collapsed) !important;
+    min-width: var(--sidebar-width-collapsed) !important;
+  }
+
+  .ps-menu-root ul {
+    padding: var(--ds-space-5) var(--ds-space-3);
+  }
+
+  .ps-menuitem-root .ps-menu-button {
+    justify-content: center;
+    padding: 0;
+  }
+
+  /* Taken out of the flow rather than hidden. `display: none` would shrink the
+     button just as well, but it also strips the link's accessible name and
+     leaves a screen reader four unlabelled icons -- the button carries no other
+     text. Absolute positioning gives up the width without giving up the name.
+
+     Without this the label kept its 53px, the button measured 83px inside a
+     72px rail, and the rail showed a clipped "Patien" with the icon shoved off
+     centre. The rail is also where the label is least redundant, so each item
+     carries a title for the tooltip -- see ProjectMenuItems. */
+  .ps-menuitem-root .ps-menu-button .ps-menu-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }

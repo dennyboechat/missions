@@ -2,6 +2,7 @@
 
 // Components
 import { Badge, Text } from "@radix-ui/themes";
+import Link from "next/link";
 import { Icon } from "../../ui/Icon";
 
 // Types
@@ -22,6 +23,7 @@ export const SummarySection = ({
   title,
   count,
   noun,
+  href,
   sunken,
   children,
 }: {
@@ -30,6 +32,12 @@ export const SummarySection = ({
   /** Shown as a badge beside the title. Omitted for sections that are not a list. */
   count?: number;
   noun?: string;
+  /**
+   * The page this section summarises. Given one, the heading carries a link to
+   * it -- the summary is read-only, so it is also where someone realises they
+   * need to go and add or correct something.
+   */
+  href?: string;
   sunken?: boolean;
   children: ReactNode;
 }) => (
@@ -43,10 +51,27 @@ export const SummarySection = ({
         </span>
         {title}
       </h4>
-      {count !== undefined && (
-        <Badge>
-          {`${count} ${noun}${count === 1 ? "" : "s"}`}
-        </Badge>
+      {(count !== undefined || href) && (
+        <div className={styles.section_meta}>
+          {count !== undefined && (
+            <Badge>
+              {`${count} ${noun}${count === 1 ? "" : "s"}`}
+            </Badge>
+          )}
+          {href && (
+            // "Open" is enough beside its own heading, but a screen reader
+            // reaching this out of order would get four identical links, so the
+            // accessible name carries the section it belongs to.
+            <Link
+              href={href}
+              prefetch
+              aria-label={`Open ${title}`}
+              className={styles.section_action}
+            >
+              {"Open"}
+            </Link>
+          )}
+        </div>
       )}
     </div>
     {children}
@@ -88,7 +113,8 @@ export const SummaryVital = ({
   icon: IconName;
   label: string;
   value?: string | number;
-  unit?: string;
+  /** Text, or the measure's unit switch. */
+  unit?: ReactNode;
 }) => (
   <div className={styles.vital}>
     <span className={styles.vital_label}>

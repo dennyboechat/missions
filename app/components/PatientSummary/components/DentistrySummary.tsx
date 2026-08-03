@@ -23,10 +23,12 @@ import { PatientPersonalId } from "../../../types/PatientPersonalTypes";
 
 // Utils
 import { getDentalAppointmentsSummary } from "../utils/getDentalAppointmentsSummary";
-import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
+
+// Hooks
+import { useProjectFormats } from "../../../lib/useProjectFormats";
 
 /**
  * Teeth in one state, as the same squares the odontogram uses -- green
@@ -69,6 +71,7 @@ export const DentistrySummary = ({
 }: {
   patientPersonalId: PatientPersonalId;
 }) => {
+  const { formatDate } = useProjectFormats();
   const [patientDentalSummary, setPatientDentalSummary] =
     useState<PatientDentalSummary[]>();
 
@@ -96,6 +99,7 @@ export const DentistrySummary = ({
       title="Dental"
       count={dentalAppointments.length}
       noun="appointment"
+      href={`/patient-dentistry/${patientPersonalId}`}
       sunken
     >
       {dentalAppointments.length === 0 ? (
@@ -113,7 +117,7 @@ export const DentistrySummary = ({
           }) => (
             <article key={patientDentistryId} className={styles.appointment}>
               <Text className={styles.appointment_date}>
-                {getLocaleFormattedDate({ date: appointmentDate })}
+                {formatDate(appointmentDate)}
               </Text>
 
               <Teeth

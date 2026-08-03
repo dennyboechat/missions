@@ -21,16 +21,19 @@ import { PatientPersonalId } from "../../../types/PatientPersonalTypes";
 
 // Utils
 import { getGeneralAppointmentsSummary } from "../utils/getGeneralAppointmentsSummary";
-import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
+
+// Hooks
+import { useProjectFormats } from "../../../lib/useProjectFormats";
 
 export const GeneralSummary = ({
   patientPersonalId,
 }: {
   patientPersonalId: PatientPersonalId;
 }) => {
+  const { formatDate } = useProjectFormats();
   const [patientGeneralSummary, setPatientGeneralSummary] =
     useState<PatientGeneralSummary[]>();
 
@@ -58,6 +61,7 @@ export const GeneralSummary = ({
       title="General"
       count={generalAppointments.length}
       noun="appointment"
+      href={`/patient-general/${patientPersonalId}`}
       sunken
     >
       {generalAppointments.length === 0 ? (
@@ -74,7 +78,7 @@ export const GeneralSummary = ({
           }) => (
             <article key={patientGeneralId} className={styles.appointment}>
               <Text className={styles.appointment_date}>
-                {getLocaleFormattedDate({ date: appointmentDate })}
+                {formatDate(appointmentDate)}
               </Text>
 
               <GeneralSummaryDetails {...vitals} />

@@ -15,6 +15,21 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 // Database
 import { sql } from "@vercel/postgres";
 
+// Types
+import { ProjectRole } from "../../types/ProjectTypes";
+
+/**
+ * The ranks an action can demand, cheapest first:
+ *
+ * - `member` -- the clinical work: patients, appointments, prescriptions,
+ *   reports. What people are added to a project to do.
+ * - `admin` -- the project itself: its settings and its people. The owner and
+ *   the admins they appoint.
+ * - `owner` -- deleting the project. Cascades to every patient in it and
+ *   cannot be undone, so it is the one power that is not delegable.
+ */
+const RANK: Record<ProjectRole, number> = { member: 0, admin: 1, owner: 2 };
+
 export class AccessDeniedError extends Error {
   constructor(message: string) {
     super(message);
@@ -137,14 +152,19 @@ const PROJECT_ID_QUERY: Record<keyof ProjectScope, string> = {
     WHERE project_user_id = $1::uuid`,
 };
 
+export interface ProjectAccess {
+  /** The project the scope resolved to. */
+  projectId: string;
+  /** The caller's own standing, which is at least what was required. */
+  role: ProjectRole;
+}
+
 /**
- * Throws unless the caller may act on the project the scope belongs to.
+ * Throws unless the caller may act on the project the scope belongs to, and
+ * reports what they are to it.
  *
- * `ownerOnly` covers project administration -- deleting a project, editing its
- * settings, managing its users. Everything else is open to active members too,
- * since that is the clinical work they were added to do.
- *
- * Returns the resolved project id so callers can reuse it.
+ * Use this over assertProjectAccess only when the answer is wanted -- a screen
+ * that shows or hides by rank, say. Both cost the same.
  *
  * Resolving the caller and checking their access is one query rather than two.
  * Every action under app/database calls this before its own query, so a second
@@ -154,10 +174,10 @@ const PROJECT_ID_QUERY: Record<keyof ProjectScope, string> = {
  * single row still return one, so "no such user" and "no such project" stay
  * distinguishable without asking twice.
  */
-export const assertProjectAccess = async (
+export const assertProjectRole = async (
   scope: ProjectScope,
-  { ownerOnly = false }: { ownerOnly?: boolean } = {}
-): Promise<string> => {
+  { requires = "member" }: { requires?: ProjectRole } = {}
+): Promise<ProjectAccess> => {
   const entries = Object.entries(scope).filter(
     ([, value]) => value !== undefined && value !== null && value !== ""
   );
@@ -189,7 +209,17 @@ export const assertProjectAccess = async (
           JOIN caller ON caller.user_id = project_user.user_id
           WHERE project_user.project_id = project.project_id
             AND project_user.is_user_active = TRUE
-        ) AS is_member
+        ) AS is_member,
+        -- Admin only counts while active: deactivating someone has to take
+        -- away all of their access, not just the clinical part of it.
+        EXISTS (
+          SELECT 1
+          FROM project_user
+          JOIN caller ON caller.user_id = project_user.user_id
+          WHERE project_user.project_id = project.project_id
+            AND project_user.is_user_active = TRUE
+            AND project_user.is_user_admin = TRUE
+        ) AS is_admin
       FROM (SELECT 1) AS anchor
       LEFT JOIN scoped ON TRUE
       LEFT JOIN project ON project.project_id = scoped.project_id
@@ -202,6 +232,7 @@ export const assertProjectAccess = async (
     project_id: projectId,
     is_owner: isOwner,
     is_member: isMember,
+    is_admin: isAdmin,
   } = response.rows[0];
 
   if (callerCount === 0) {
@@ -212,13 +243,32 @@ export const assertProjectAccess = async (
     throw new AccessDeniedError(`No project found for ${key}`);
   }
 
-  if (ownerOnly ? !isOwner : !isOwner && !isMember) {
+  // Highest first: an owner who is also carrying an admin row is reported as
+  // the owner, which is the rank that actually decides what they can do.
+  const role: ProjectRole | undefined = isOwner
+    ? "owner"
+    : isAdmin
+      ? "admin"
+      : isMember
+        ? "member"
+        : undefined;
+
+  if (role === undefined || RANK[role] < RANK[requires]) {
     throw new AccessDeniedError(
-      `User ${clerkUserId} may not access project ${projectId}${
-        ownerOnly ? " as owner" : ""
-      }`
+      `User ${clerkUserId} may not access project ${projectId} as ${requires}`
     );
   }
 
-  return projectId;
+  return { projectId, role };
 };
+
+/**
+ * Throws unless the caller may act on the project the scope belongs to.
+ *
+ * Returns the resolved project id so callers can reuse it. The overwhelming
+ * majority of actions want exactly this and nothing about who the caller is.
+ */
+export const assertProjectAccess = async (
+  scope: ProjectScope,
+  options: { requires?: ProjectRole } = {}
+): Promise<string> => (await assertProjectRole(scope, options)).projectId;

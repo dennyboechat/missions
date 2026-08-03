@@ -2,17 +2,24 @@
 
 // Types
 import { PatientPersonalTypes } from "../types/PatientPersonalTypes";
+import { ProjectDateFormat } from "../types/ProjectTypes";
 
 // Utils
 import { getParsedCharacterText } from "./getParsedCharacterText";
-import { getLocaleFormattedDate } from "./getLocaleFormattedDate";
+import { formatProjectDate } from "./projectFormats";
 
 export const getFilteredPatientPersonals = ({
   patientPersonals,
   filterText,
+  dateFormat,
 }: {
   patientPersonals: PatientPersonalTypes[];
   filterText?: string;
+  /**
+   * The project's date order. Search matches against the date as displayed, so
+   * typing "03/04" has to find whatever the list is actually showing.
+   */
+  dateFormat: ProjectDateFormat;
 }): PatientPersonalTypes[] => {
   let sortedPatientPersonals: PatientPersonalTypes[] = [];
 
@@ -34,8 +41,9 @@ export const getFilteredPatientPersonals = ({
           patientPersonal.filterOrder = 2;
           sortedPatientPersonals.push(patientPersonal);
         } else if (
-          getLocaleFormattedDate({
+          formatProjectDate({
             date: patientPersonal.patientDateOfBirth,
+            dateFormat,
           }).includes(filterText.toLowerCase())
         ) {
           patientPersonal.filterOrder = 3;

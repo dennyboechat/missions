@@ -15,7 +15,8 @@ export interface InputTextFieldProps {
   type?: "text" | "number";
   max?: number;
   min?: number;
-  prefix?: string;
-  suffix?: string;
+  prefix?: React.ReactNode;
+  /** Text, or a small control -- the measurement fields put their unit switch here. */
+  suffix?: React.ReactNode;
   className?: string;
 }

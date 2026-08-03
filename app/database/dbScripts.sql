@@ -23,9 +23,22 @@ CREATE TABLE IF NOT EXISTS project (
     -- Reports group appointments by the calendar day in this zone, so that a
     -- report reads the same no matter where it is opened from.
     project_timezone VARCHAR(64) NOT NULL DEFAULT 'UTC',
+    -- How this mission writes down what it measures. Display only: heights are
+    -- always stored in centimetres and temperatures in Celsius, so switching a
+    -- unit never rewrites a patient's record. See
+    -- migrations/008_project_units_and_date_format.sql.
+    project_length_unit VARCHAR(2) NOT NULL DEFAULT 'cm',
+    project_weight_unit VARCHAR(2) NOT NULL DEFAULT 'kg',
+    project_temperature_unit VARCHAR(1) NOT NULL DEFAULT 'C',
+    project_date_format VARCHAR(10) NOT NULL DEFAULT 'mm/dd/yyyy',
     owner_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_owner FOREIGN KEY(owner_id) REFERENCES app_user(user_id) ON DELETE CASCADE
+    CONSTRAINT fk_owner FOREIGN KEY(owner_id) REFERENCES app_user(user_id) ON DELETE CASCADE,
+    CONSTRAINT chk_project_length_unit CHECK (project_length_unit IN ('cm', 'in')),
+    CONSTRAINT chk_project_weight_unit CHECK (project_weight_unit IN ('kg', 'lb')),
+    CONSTRAINT chk_project_temperature_unit CHECK (project_temperature_unit IN ('C', 'F')),
+    CONSTRAINT chk_project_date_format
+      CHECK (project_date_format IN ('mm/dd/yyyy', 'dd/mm/yyyy'))
 );
 
 CREATE TABLE IF NOT EXISTS project_user (
@@ -33,6 +46,10 @@ CREATE TABLE IF NOT EXISTS project_user (
     project_id UUID NOT NULL,
     user_id UUID NOT NULL,
     is_user_active BOOLEAN NOT NULL,
+    -- Everything the owner can do except delete the project. Only counts while
+    -- is_user_active, so deactivating someone withdraws all of their access and
+    -- not merely the clinical part. See migrations/007_project_admins.sql.
+    is_user_admin BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_project FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE,
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES app_user(user_id) ON DELETE CASCADE

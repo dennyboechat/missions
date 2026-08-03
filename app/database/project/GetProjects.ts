@@ -26,14 +26,35 @@ export const getProjects = async (): Promise<ActionResult<Project[]>> => {
     // for this session, since duplicates do not share memberships.
     const userIds = await getAuthenticatedUserIds();
 
+    // The rank travels with each project, and it has to: picking a project on
+    // the dashboard is what fills the context the sidebar reads, and the project
+    // layout does not re-fetch a project it already holds. Left out here, an
+    // admin arrived at their project with no rank attached and lost the Users
+    // and Settings menu they had just been given.
+    //
+    // Both flags are functionally determined by project_id, so they do not
+    // widen the DISTINCT above.
     const query = `
       SELECT
         DISTINCT project.project_id,
         project.project_name,
         project.project_description,
         project.project_timezone,
+        project.project_length_unit,
+        project.project_weight_unit,
+        project.project_temperature_unit,
+        project.project_date_format,
         project.owner_id,
-        project.created_at
+        project.created_at,
+        (project.owner_id = ANY($1::uuid[])) AS is_owner,
+        EXISTS (
+          SELECT 1
+          FROM project_user caller_membership
+          WHERE caller_membership.project_id = project.project_id
+            AND caller_membership.user_id = ANY($1::uuid[])
+            AND caller_membership.is_user_active = TRUE
+            AND caller_membership.is_user_admin = TRUE
+        ) AS is_admin
       FROM
         project
       LEFT JOIN
@@ -55,7 +76,14 @@ export const getProjects = async (): Promise<ActionResult<Project[]>> => {
       projectName: row.project_name,
       projectDescription: row.project_description,
       projectTimezone: row.project_timezone,
+      projectLengthUnit: row.project_length_unit,
+      projectWeightUnit: row.project_weight_unit,
+      projectTemperatureUnit: row.project_temperature_unit,
+      projectDateFormat: row.project_date_format,
       ownerId: row.owner_id,
+      // Same precedence as assertProjectRole: owner outranks admin. Only rows
+      // the caller may see are returned at all, so the fallback is membership.
+      viewerRole: row.is_owner ? "owner" : row.is_admin ? "admin" : "member",
     }));
 
     return actionOk(projects);

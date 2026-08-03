@@ -10,6 +10,44 @@ import { SelectField } from "../../ui/SelectField";
 import { ProjectFieldsProps } from "../types/ProjectFieldsProps";
 import { AutocompleteItem } from "../../ui/Autocomplete/types/AutocompleteItem";
 import { SelectFieldItem } from "../../ui/SelectField/types/SelectFieldProps";
+import {
+  ProjectLengthUnit,
+  ProjectWeightUnit,
+  ProjectTemperatureUnit,
+  ProjectDateFormat,
+} from "../../../types/ProjectTypes";
+
+// Utils
+import { getDateFormatExample } from "../../../utils/projectFormats";
+
+// Spelled out rather than abbreviated: "in" alone in a dropdown reads as the
+// preposition, and the example under each date order is what actually settles
+// which one someone wants.
+const LENGTH_UNIT_ITEMS: SelectFieldItem[] = [
+  { value: "cm", label: "Centimetres (cm)" },
+  { value: "in", label: "Inches (in)" },
+];
+
+const WEIGHT_UNIT_ITEMS: SelectFieldItem[] = [
+  { value: "kg", label: "Kilograms (kg)" },
+  { value: "lb", label: "Pounds (lb)" },
+];
+
+const TEMPERATURE_UNIT_ITEMS: SelectFieldItem[] = [
+  { value: "C", label: "Celsius (°C)" },
+  { value: "F", label: "Fahrenheit (°F)" },
+];
+
+const DATE_FORMAT_ITEMS: SelectFieldItem[] = [
+  {
+    value: "mm/dd/yyyy",
+    label: `Month first — mm/dd/yyyy (${getDateFormatExample("mm/dd/yyyy")})`,
+  },
+  {
+    value: "dd/mm/yyyy",
+    label: `Day first — dd/mm/yyyy (${getDateFormatExample("dd/mm/yyyy")})`,
+  },
+];
 
 // Database
 import { updateProject } from "../../../database/project/UpdateProject";
@@ -36,9 +74,17 @@ export const ProjectFields = ({
   projectName,
   projectDescription,
   projectTimezone,
+  projectLengthUnit,
+  projectWeightUnit,
+  projectTemperatureUnit,
+  projectDateFormat,
   onProjectNameChange,
   onProjectDescriptionChange,
   onProjectTimezoneChange,
+  onProjectLengthUnitChange,
+  onProjectWeightUnitChange,
+  onProjectTemperatureUnitChange,
+  onProjectDateFormatChange,
   showPlaceholders,
   projectId,
   isProjectNameInvalid,
@@ -156,6 +202,42 @@ export const ProjectFields = ({
     }
   };
 
+  /**
+   * The notation settings save the same way as the timezone: immediately
+   * on an existing project, and only into local state while a new one is still
+   * being filled in (there is no row to write to yet).
+   *
+   * None of them touches a patient's stored figures -- see
+   * utils/projectFormats.ts -- so switching one is reversible and needs no
+   * confirmation.
+   */
+  const saveProjectSetting = async <Value extends string>({
+    field,
+    value,
+    current,
+    onChange,
+  }: {
+    field: string;
+    value: Value;
+    current: Value;
+    onChange: (value: Value) => void;
+  }) => {
+    onChange(value);
+
+    if (projectId && current !== value) {
+      const updatedProject = await save(() =>
+        updateProject({ projectId, field, value })
+      );
+
+      // Straight into context: every screen reads its units and date order from
+      // the project there, so without this the change shows on this page and
+      // nowhere else until a reload.
+      if (updatedProject && setProject) {
+        setProject(updatedProject);
+      }
+    }
+  };
+
   const onCountrySearch = (keyword: string) => {
     if (keyword.trim()) {
       return;
@@ -251,6 +333,65 @@ export const ProjectFields = ({
           {`Time zone: ${getTimezoneLabel({ timezone: projectTimezone })}`}
         </Text>
       )}
+
+      {/* How this mission writes things down, not what it records: the figures
+          are stored in centimetres and Celsius either way, so these can be
+          changed at any point without altering a single patient's record. */}
+      <Text size="2" weight="medium">
+        {"Units and dates"}
+      </Text>
+      <SelectField
+        label="Height and length"
+        items={LENGTH_UNIT_ITEMS}
+        value={projectLengthUnit}
+        onChange={(value) =>
+          saveProjectSetting({
+            field: "project_length_unit",
+            value: value as ProjectLengthUnit,
+            current: projectLengthUnit,
+            onChange: onProjectLengthUnitChange,
+          })
+        }
+      />
+      <SelectField
+        label="Weight"
+        items={WEIGHT_UNIT_ITEMS}
+        value={projectWeightUnit}
+        onChange={(value) =>
+          saveProjectSetting({
+            field: "project_weight_unit",
+            value: value as ProjectWeightUnit,
+            current: projectWeightUnit,
+            onChange: onProjectWeightUnitChange,
+          })
+        }
+      />
+      <SelectField
+        label="Temperature"
+        items={TEMPERATURE_UNIT_ITEMS}
+        value={projectTemperatureUnit}
+        onChange={(value) =>
+          saveProjectSetting({
+            field: "project_temperature_unit",
+            value: value as ProjectTemperatureUnit,
+            current: projectTemperatureUnit,
+            onChange: onProjectTemperatureUnitChange,
+          })
+        }
+      />
+      <SelectField
+        label="Date format"
+        items={DATE_FORMAT_ITEMS}
+        value={projectDateFormat}
+        onChange={(value) =>
+          saveProjectSetting({
+            field: "project_date_format",
+            value: value as ProjectDateFormat,
+            current: projectDateFormat,
+            onChange: onProjectDateFormatChange,
+          })
+        }
+      />
     </Grid>
   );
 };

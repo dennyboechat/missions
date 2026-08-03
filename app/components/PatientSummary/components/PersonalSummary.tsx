@@ -5,18 +5,21 @@ import { SummaryRow, SummarySection } from "./SummarySection";
 
 // Utils
 import { getGenderLabel } from "../../../utils/getGenderLabel";
-import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 import { getAge } from "../../../utils/getAge";
 import { getYearsOldLabel } from "../../../utils/getYearsOldLabel";
 
 // Types
 import { PatientPersonalSummary } from "../../../types/PatientPersonalSummary";
 
+// Hooks
+import { useProjectFormats } from "../../../lib/useProjectFormats";
+
 export const PersonalSummary = ({
   patientPersonalSummary,
 }: {
   patientPersonalSummary?: PatientPersonalSummary;
 }) => {
+  const { formatDate } = useProjectFormats();
   if (!patientPersonalSummary) {
     return null;
   }
@@ -30,9 +33,7 @@ export const PersonalSummary = ({
 
   const patientAge = getAge({ date: patientDateOfBirth });
   const patientAgeLabel = getYearsOldLabel({ age: patientAge ?? 0 });
-  const formattedDateOfBirth = getLocaleFormattedDate({
-    date: patientDateOfBirth,
-  });
+  const formattedDateOfBirth = formatDate(patientDateOfBirth);
 
   return (
     <SummarySection icon="personal" title="Personal">

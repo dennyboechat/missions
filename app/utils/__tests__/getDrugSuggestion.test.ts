@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 
 import { getDrugSuggestion } from "../getDrugSuggestion";
-import { getMostCommonDentalDrugs } from "../getMostCommonDentalDrugs";
+import { getDrugOptions } from "../drugs";
 
-const drugs = getMostCommonDentalDrugs();
+const drugs = getDrugOptions();
 
 describe("getDrugSuggestion", () => {
   it("has nothing to ask about when the drug is on the list", () => {

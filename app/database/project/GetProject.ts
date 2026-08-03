@@ -7,7 +7,7 @@ import { sql } from "@vercel/postgres";
 import { Project, ProjectId } from "../../types/ProjectTypes";
 
 // Auth
-import { assertProjectAccess } from "../auth/projectAccess";
+import { assertProjectRole } from "../auth/projectAccess";
 
 // Types
 import {
@@ -25,7 +25,9 @@ export const getProject = async ({
   projectId: ProjectId;
 }): Promise<ActionResult<Project>> => {
   try {
-    await assertProjectAccess({ projectId });
+    // The role comes back from the check that was happening anyway, so every
+    // screen learns what the caller is to this project for no extra query.
+    const { role } = await assertProjectRole({ projectId });
 
     const query = `
       SELECT
@@ -33,6 +35,10 @@ export const getProject = async ({
         project_name,
         project_description,
         project_timezone,
+        project_length_unit,
+        project_weight_unit,
+        project_temperature_unit,
+        project_date_format,
         owner_id
       FROM
         project
@@ -47,7 +53,12 @@ export const getProject = async ({
       projectName: row.project_name,
       projectDescription: row.project_description,
       projectTimezone: row.project_timezone,
+      projectLengthUnit: row.project_length_unit,
+      projectWeightUnit: row.project_weight_unit,
+      projectTemperatureUnit: row.project_temperature_unit,
+      projectDateFormat: row.project_date_format,
       ownerId: row.owner_id,
+      viewerRole: role,
     }));
 
     return projects.length > 0

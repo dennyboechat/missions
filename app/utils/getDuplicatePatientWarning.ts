@@ -1,9 +1,10 @@
 // Utils
-import { getLocaleFormattedDate } from "./getLocaleFormattedDate";
+import { formatProjectDate } from "./projectFormats";
 import { joinWithAnd } from "./joinWithAnd";
 
 // Types
 import { PatientPersonalTypes } from "../types/PatientPersonalTypes";
+import { ProjectDateFormat } from "../types/ProjectTypes";
 
 /**
  * Wording for the "this name is already registered" warning shown while a new
@@ -16,16 +17,19 @@ import { PatientPersonalTypes } from "../types/PatientPersonalTypes";
 export const getDuplicatePatientWarning = ({
   patientFullName,
   duplicatePatientPersonals,
+  dateFormat,
 }: {
   patientFullName?: string;
   duplicatePatientPersonals: PatientPersonalTypes[];
+  /** The project's date order, so the warning reads like the rest of the app. */
+  dateFormat: ProjectDateFormat;
 }) => {
   if (!patientFullName || duplicatePatientPersonals.length === 0) {
     return "";
   }
 
   const datesOfBirth = duplicatePatientPersonals.map(({ patientDateOfBirth }) =>
-    getLocaleFormattedDate({ date: patientDateOfBirth })
+    formatProjectDate({ date: patientDateOfBirth, dateFormat })
   );
 
   if (datesOfBirth.length === 1) {

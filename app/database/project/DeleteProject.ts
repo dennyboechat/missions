@@ -26,7 +26,7 @@ export const deleteProject = async ({
 }) => {
   try {
     // Cascades to every patient, appointment and prescription in the project.
-    await assertProjectAccess({ projectId }, { ownerOnly: true });
+    await assertProjectAccess({ projectId }, { requires: "owner" });
 
     const query = `
       DELETE FROM 

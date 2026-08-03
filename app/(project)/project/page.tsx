@@ -24,6 +24,13 @@ import styles from "../../styles/content.module.css";
 
 // Types
 import { actionData } from "../../types/ActionResult";
+import {
+  ProjectLengthUnit,
+  ProjectWeightUnit,
+  ProjectTemperatureUnit,
+  ProjectDateFormat,
+  DEFAULT_PROJECT_FORMATS,
+} from "../../types/ProjectTypes";
 
 const ProjectNew = () => {
   const router = useRouter();
@@ -32,6 +39,16 @@ const ProjectNew = () => {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [projectTimezone, setProjectTimezone] = useState("");
+  // Defaults so the form always shows a choice; a new project has no row to
+  // read them back from yet.
+  const [projectLengthUnit, setProjectLengthUnit] =
+    useState<ProjectLengthUnit>(DEFAULT_PROJECT_FORMATS.lengthUnit);
+  const [projectWeightUnit, setProjectWeightUnit] =
+    useState<ProjectWeightUnit>(DEFAULT_PROJECT_FORMATS.weightUnit);
+  const [projectTemperatureUnit, setProjectTemperatureUnit] =
+    useState<ProjectTemperatureUnit>(DEFAULT_PROJECT_FORMATS.temperatureUnit);
+  const [projectDateFormat, setProjectDateFormat] =
+    useState<ProjectDateFormat>(DEFAULT_PROJECT_FORMATS.dateFormat);
   const [isProjectNameInvalid, setIsProjectNameInvalid] = useState(false);
   const [isProjectTimezoneInvalid, setIsProjectTimezoneInvalid] =
     useState(false);
@@ -67,6 +84,10 @@ const ProjectNew = () => {
           projectName: projectName,
           projectDescription: projectDescription,
           projectTimezone: projectTimezone,
+          projectLengthUnit,
+          projectWeightUnit,
+          projectTemperatureUnit,
+          projectDateFormat,
           ownerId: userId,
         }),
       );
@@ -95,6 +116,14 @@ const ProjectNew = () => {
             setProjectDescription(e.target.value)
           }
           onProjectTimezoneChange={setProjectTimezone}
+          projectLengthUnit={projectLengthUnit}
+          projectWeightUnit={projectWeightUnit}
+          projectTemperatureUnit={projectTemperatureUnit}
+          projectDateFormat={projectDateFormat}
+          onProjectLengthUnitChange={setProjectLengthUnit}
+          onProjectWeightUnitChange={setProjectWeightUnit}
+          onProjectTemperatureUnitChange={setProjectTemperatureUnit}
+          onProjectDateFormatChange={setProjectDateFormat}
           isProjectNameInvalid={isProjectNameInvalid}
           isProjectTimezoneInvalid={isProjectTimezoneInvalid}
           showPlaceholders

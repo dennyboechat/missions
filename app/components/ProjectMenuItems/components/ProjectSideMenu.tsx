@@ -13,13 +13,15 @@ import { useAppUser } from "../../../lib/AppUserContext";
 import { useProject } from "../../../lib/ProjectContext";
 import { useMenuNavigation } from "../../../lib/useMenuNavigation";
 
-// Users and Settings answer for who may see and change the project, so only
-// its owner gets them.
+// Users and Settings answer for who may see and change the project, so they
+// need the project's own rank: its owner, or an admin the owner appointed.
+// Deleting the project still asks for the owner, but that lives inside Settings
+// rather than being a menu item of its own.
 const ITEMS = [
-  { key: "project-patients", label: "Patients", icon: "users", ownerOnly: false },
-  { key: "project-reports", label: "Reports", icon: "reports", ownerOnly: false },
-  { key: "project-users", label: "Users", icon: "user-access", ownerOnly: true },
-  { key: "project", label: "Settings", icon: "settings", ownerOnly: true },
+  { key: "project-patients", label: "Patients", icon: "users", adminOnly: false },
+  { key: "project-reports", label: "Reports", icon: "reports", adminOnly: false },
+  { key: "project-users", label: "Users", icon: "user-access", adminOnly: true },
+  { key: "project", label: "Settings", icon: "settings", adminOnly: true },
 ] as const;
 
 export const ProjectMenuItems = ({
@@ -34,11 +36,17 @@ export const ProjectMenuItems = ({
     return null;
   }
 
-  const isProjectEditable = project.ownerId === appUser.userId;
+  // The server resolves the rank, but an owner reading a project saved before
+  // viewerRole existed would otherwise lose their own menu, so the ownerId
+  // comparison stays as the floor.
+  const isProjectAdministrable =
+    project.ownerId === appUser.userId ||
+    project.viewerRole === "owner" ||
+    project.viewerRole === "admin";
 
   return (
     <>
-      {ITEMS.filter(({ ownerOnly }) => !ownerOnly || isProjectEditable).map(
+      {ITEMS.filter(({ adminOnly }) => !adminOnly || isProjectAdministrable).map(
         ({ key, label, icon }) => {
           const href = `/${key}/${projectId}`;
 
@@ -47,7 +55,14 @@ export const ProjectMenuItems = ({
               key={key}
               icon={<Icon name={icon} />}
               component={
-                <Link href={href} prefetch onClick={navigate(href, key)} />
+                // Collapsed to the icon rail the label is off screen, so the
+                // title is the only thing naming the icon on hover.
+                <Link
+                  href={href}
+                  prefetch
+                  title={label}
+                  onClick={navigate(href, key)}
+                />
               }
               active={activeItem === key}
             >

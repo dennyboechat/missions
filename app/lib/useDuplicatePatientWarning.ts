@@ -2,6 +2,7 @@
 
 // Hooks
 import { useState, useEffect, useCallback } from "react";
+import { useProjectFormats } from "./useProjectFormats";
 
 // Database
 import { getPatientPersonalsByFullName } from "../database/patient-personal/GetPatientPersonalsByFullName";
@@ -35,6 +36,7 @@ export const useDuplicatePatientWarning = ({
   patientFullName?: string;
   excludePatientPersonalId?: string;
 }) => {
+  const { dateFormat } = useProjectFormats();
   const [duplicatePatientPersonals, setDuplicatePatientPersonals] = useState<
     PatientPersonalTypes[]
   >([]);
@@ -113,6 +115,7 @@ export const useDuplicatePatientWarning = ({
       ? getDuplicatePatientWarning({
           patientFullName,
           duplicatePatientPersonals,
+          dateFormat,
         })
       : "",
     hasCheckedCurrentName,

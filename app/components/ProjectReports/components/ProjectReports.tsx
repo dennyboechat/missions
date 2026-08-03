@@ -10,6 +10,7 @@ import { ProjectReportsMedication } from "../../ProjectReportsMedication";
 // Hooks
 import { useProject } from "../../../lib/ProjectContext";
 import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useProjectFormats } from "../../../lib/useProjectFormats";
 import { useState, useEffect, useRef } from "react";
 
 // Styles
@@ -18,6 +19,7 @@ import styles from "../../../styles/content.module.css";
 // Utils
 import { isReportStartDateValid } from "../utils/isReportStartDateValid";
 import { isReportEndDateValid } from "../utils/isReportEndDateValid";
+import { isReportEndDateInPast } from "../utils/isReportEndDateInPast";
 import { getCurrentDateTime } from "../../../utils/getCurrentDateTime";
 import { subtractDaysToDate } from "../../../utils/subtractDaysToDate";
 import { subtractDaysFromIsoDate } from "../../../utils/subtractDaysFromIsoDate";
@@ -42,15 +44,21 @@ import { PopupMessageType } from "../../../lib/types/PopupMessageContextType";
 export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
   const { setMessage, setMessageType } = usePopupMessage();
+  const { formatDate } = useProjectFormats();
   const currentDate = getCurrentDateTime();
   const startDateFilter = getFormattedDate({
     date: subtractDaysToDate({ date: currentDate, days: 14 }),
     format: "yyyy-MM-dd",
   });
+  const todayFilter = getFormattedDate({
+    date: currentDate,
+    format: "yyyy-MM-dd",
+  });
   const [startDate, setStartDate] = useState<string>(startDateFilter);
-  const [endDate, setEndDate] = useState<string>(
-    getFormattedDate({ date: currentDate, format: "yyyy-MM-dd" }),
-  );
+  const [endDate, setEndDate] = useState<string>(todayFilter);
+  // The mission's today, which is what the end date is measured against. Starts
+  // as the browser's until the project's timezone arrives.
+  const [projectToday, setProjectToday] = useState<string>(todayFilter);
   const [isStartDateInvalid, setIsStartDateInvalid] = useState(false);
   const [isEndDateInvalid, setIsEndDateInvalid] = useState(false);
   const [isLoadingMedicationReport, setIsLoadingMedicationReport] =
@@ -76,13 +84,23 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
     const applyProjectDates = async () => {
       const timeZone = actionData(await getProjectTimezone({ projectId }));
 
-      if (!timeZone || hasAppliedProjectDates.current) {
+      if (!timeZone) {
+        return;
+      }
+
+      const today = getTodayInTimezone({ timeZone });
+
+      // Worth knowing even after the user has taken the dates over: the ref
+      // below guards their choices, not the day those choices are judged
+      // against.
+      setProjectToday(today);
+
+      if (hasAppliedProjectDates.current) {
         return;
       }
 
       hasAppliedProjectDates.current = true;
 
-      const today = getTodayInTimezone({ timeZone });
       setEndDate(today);
       setStartDate(subtractDaysFromIsoDate({ date: today, days: 14 }));
     };
@@ -148,8 +166,14 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
       // A download that produces no file looks broken, so the empty period is
       // spelled out rather than the button doing nothing.
       if (allData.length === 0) {
+        // Prose, so it reads in the project's order. The date inputs and the
+        // CSV stay ISO on purpose: type="date" requires YYYY-MM-DD, and a
+        // spreadsheet needs one unambiguous, sortable notation rather than the
+        // reader's preferred one.
         showMessage(
-          `No data to download between ${startDate} and ${endDate}.`,
+          `No data to download between ${formatDate(startDate)} and ${formatDate(
+            endDate,
+          )}.`,
           "regular",
         );
         return;
@@ -165,6 +189,7 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
           dentalAppointmentDate: row.dentalAppointmentDate ?? "",
         })),
         headers: [
+          { key: "appointmentType", label: "Appointment Type" },
           { key: "patientFullName", label: "Patient Name" },
           { key: "patientDateOfBirth", label: "Date of Birth" },
           { key: "patientPhoneNumber", label: "Phone Number" },
@@ -174,6 +199,8 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
             label: "General Appointment Date",
           },
           { key: "generalNotes", label: "General Notes" },
+          { key: "generalHasReferral", label: "General Has Referral" },
+          { key: "generalReferral", label: "General Referral" },
           {
             key: "generalPrescribedMedications",
             label: "General Prescribed Medications",
@@ -185,16 +212,38 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
           { key: "patientPulse", label: "Pulse" },
           { key: "patientOxygenSaturation", label: "Oxygen Saturation" },
           {
+            key: "patientBloodPressureSystolic",
+            label: "Blood Pressure Systolic",
+          },
+          {
             key: "patientBloodPressureDiastolic",
             label: "Blood Pressure Diastolic",
           },
+          {
+            key: "patientVisionLeftNormalDistance",
+            label: "Vision Left Normal Distance",
+          },
+          {
+            key: "patientVisionLeftTestedDistance",
+            label: "Vision Left Tested Distance",
+          },
+          {
+            key: "patientVisionRightNormalDistance",
+            label: "Vision Right Normal Distance",
+          },
+          {
+            key: "patientVisionRightTestedDistance",
+            label: "Vision Right Tested Distance",
+          },
           { key: "dentalAppointmentDate", label: "Dental Appointment Date" },
           { key: "dentalNotes", label: "Dental Notes" },
+          { key: "dentalHasReferral", label: "Dental Has Referral" },
+          { key: "dentalReferral", label: "Dental Referral" },
           {
             key: "dentalPrescribedMedications",
             label: "Dental Prescribed Medications",
           },
-          { key: "teethNames", label: "Teeth Names" },
+          { key: "teeth", label: "Teeth" },
         ],
         filename: `report_${startDate}_${endDate}.csv`,
       });
@@ -222,6 +271,10 @@ export const ProjectReports = ({ params }: { params: { id: string } }) => {
         isEndDateInvalid={isEndDateInvalid}
         onGenerateReports={onGenerateReports}
         onDownloadAllData={onDownloadAllData}
+        isEndDateInPast={isReportEndDateInPast({
+          endDate,
+          today: projectToday,
+        })}
       />
       <Grid gap="16px" columns={{ sm: "2" }} align="start">
         <ProjectReportsAppointments

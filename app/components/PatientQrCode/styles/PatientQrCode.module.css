@@ -1,0 +1,23 @@
+/* The code sits on its own white plate rather than straight on the panel's
+   brand wash. Two reasons, both about the camera: a QR is read off the contrast
+   between dark modules and a light field, and the standard asks for a quiet
+   margin of clear space around the code before the field is allowed to become
+   anything else. The plate is that margin. */
+.qr_code {
+  display: grid;
+  justify-items: center;
+  /* The name, the date of birth and the sex are one stack read together; this
+     is a separate thing that happens to be about the same patient, so it gets a
+     gap rather than the 2px that holds those three lines together. */
+  margin-top: var(--ds-space-5);
+}
+
+.plate {
+  display: grid;
+  place-items: center;
+  /* Four modules' worth of clear space at the size the code is drawn at. */
+  padding: var(--ds-space-4);
+  border-radius: var(--ds-radius-sm);
+  border: 1px solid var(--border-default);
+  background-color: var(--white);
+}

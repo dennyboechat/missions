@@ -22,6 +22,7 @@ describe("getDuplicatePatientWarning", () => {
       getDuplicatePatientWarning({
         patientFullName: "Ana Silva",
         duplicatePatientPersonals: [],
+        dateFormat: "mm/dd/yyyy",
       }),
     ).toBe("");
   });
@@ -31,6 +32,7 @@ describe("getDuplicatePatientWarning", () => {
       getDuplicatePatientWarning({
         patientFullName: "",
         duplicatePatientPersonals: [patientWithDateOfBirth("1990-03-23")],
+        dateFormat: "mm/dd/yyyy",
       }),
     ).toBe("");
   });
@@ -39,10 +41,11 @@ describe("getDuplicatePatientWarning", () => {
     const warning = getDuplicatePatientWarning({
       patientFullName: "  Ana Silva  ",
       duplicatePatientPersonals: [patientWithDateOfBirth("1990-03-23")],
+      dateFormat: "mm/dd/yyyy",
     });
 
     expect(warning).toContain('"Ana Silva"');
-    expect(warning).toContain("Mar 23, 1990");
+    expect(warning).toContain("03/23/1990");
   });
 
   it("lists every date of birth when several patients share the name", () => {
@@ -53,11 +56,12 @@ describe("getDuplicatePatientWarning", () => {
         patientWithDateOfBirth("1990-03-23"),
         patientWithDateOfBirth("2001-12-31"),
       ],
+      dateFormat: "mm/dd/yyyy",
     });
 
     expect(warning).toContain("3 patients");
     expect(warning).toContain(
-      "dates of birth Jan 2, 1988, Mar 23, 1990 and Dec 31, 2001",
+      "dates of birth 01/02/1988, 03/23/1990 and 12/31/2001",
     );
   });
 });

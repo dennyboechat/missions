@@ -8,6 +8,8 @@ export interface ProjectReportsFilterProps {
   endDate?: string;
   setEndDate: Dispatch<SetStateAction<string>>;
   isEndDateInvalid?: boolean;
+  /** Warns, but does not block: the window is valid, just already closed. */
+  isEndDateInPast?: boolean;
   onGenerateReports: () => void;
   onDownloadAllData: () => void;
 }

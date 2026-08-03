@@ -35,7 +35,7 @@ export const getProjectUsersByName = async ({
   userName: string;
 }): Promise<ActionResult<ProjectUser[]>> => {
   try {
-    await assertProjectAccess({ projectId }, { ownerOnly: true });
+    await assertProjectAccess({ projectId }, { requires: "admin" });
 
     const trimmedUserName = userName.trim();
 
@@ -49,6 +49,7 @@ export const getProjectUsersByName = async ({
         project_user.project_id,
         project_user.user_id,
         project_user.is_user_active,
+        project_user.is_user_admin,
         app_user.user_name,
         app_user.user_email
       FROM
@@ -71,6 +72,7 @@ export const getProjectUsersByName = async ({
       userName: row.user_name,
       userEmail: row.user_email,
       isUserActive: row.is_user_active,
+      isUserAdmin: row.is_user_admin,
     }));
 
     return actionOk(projectUsers);

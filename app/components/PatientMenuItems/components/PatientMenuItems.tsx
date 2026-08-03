@@ -34,7 +34,14 @@ export const PatientMenuItems = ({
             key={key}
             icon={<Icon name={icon} />}
             component={
-              <Link href={href} prefetch onClick={navigate(href, key)} />
+              // Collapsed to the icon rail the label is off screen, so the
+              // title is the only thing naming the icon on hover.
+              <Link
+                href={href}
+                prefetch
+                title={label}
+                onClick={navigate(href, key)}
+              />
             }
             active={activeItem === key}
           >

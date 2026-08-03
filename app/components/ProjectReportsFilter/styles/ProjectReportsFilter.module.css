@@ -1,3 +1,9 @@
+/* The controls and anything said about them travel together, so the gap to the
+   panels below stays the same whether or not a warning is showing. */
+.filter_group {
+  margin-bottom: var(--ds-space-9);
+}
+
 /* Dates and actions on one baseline: the pair of dates is a single decision,
    and the buttons act on it. */
 .filter {
@@ -5,7 +11,6 @@
   flex-wrap: wrap;
   align-items: flex-end;
   gap: var(--ds-space-6);
-  margin-bottom: var(--ds-space-9);
 }
 
 .date_field {

@@ -4,6 +4,7 @@ import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { AppUserProvider } from "./lib/AppUserContext";
 import { ProjectProvider } from "./lib/ProjectContext";
+import { UnitPreferenceProvider } from "./lib/UnitPreferenceContext";
 import { PopupMessageProvider } from "./lib/PopupMessage";
 
 // Components
@@ -77,11 +78,13 @@ export default function RootLayout({
           >
             <AppUserProvider>
               <ProjectProvider>
-                <PopupMessageProvider>
-                  <HeaderPanel />
-                  {children}
-                  <PopupMessage />
-                </PopupMessageProvider>
+                <UnitPreferenceProvider>
+                  <PopupMessageProvider>
+                    <HeaderPanel />
+                    {children}
+                    <PopupMessage />
+                  </PopupMessageProvider>
+                </UnitPreferenceProvider>
               </ProjectProvider>
             </AppUserProvider>
           </Theme>

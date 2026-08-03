@@ -6,19 +6,20 @@ import { Tabs } from "@radix-ui/themes";
 // Types
 import { PatientGeneralTypes } from "../../../types/PatientGeneralTypes";
 
+// Hooks
+import { useProjectFormats } from "../../../lib/useProjectFormats";
+
 // Utils
-import { getLocaleFormattedDate } from "../../../utils/getLocaleFormattedDate";
 
 export const GeneralAppointmentList = ({
   patientGeneral,
 }: {
   patientGeneral: PatientGeneralTypes;
 }) => {
+  const { formatDate } = useProjectFormats();
   const { patientGeneralId, appointmentDate } = patientGeneral;
 
-  const formattedAppointmentDate = getLocaleFormattedDate({
-    date: appointmentDate,
-  });
+  const formattedAppointmentDate = formatDate(appointmentDate);
 
   return (
     <Tabs.Trigger key={patientGeneralId} value={patientGeneralId}>

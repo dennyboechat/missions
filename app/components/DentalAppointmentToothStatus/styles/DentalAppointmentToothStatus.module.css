@@ -1,0 +1,33 @@
+/* The Extracted button says what colour a tooth will turn, so it has to be that
+   colour. Radix's own `bronze` is a browner, greyer hue than the clay the map
+   paints an extracted tooth, which left the control and the odontogram
+   disagreeing about the same clinical state.
+
+   Rather than restyle the button by hand, this re-points the accent scale it
+   already reads at the clay ramp, so solid, outline, hover, active and the
+   tablet tap outline all follow from the map's own tokens. The `color` prop
+   stays on the button: Radix stamps data-accent-color from it, which is what
+   keeps the neutral secondary-button rule in styles/radix-bridge.css off this
+   one.
+
+   The class is doubled so this outranks Radix's own [data-accent-color] block,
+   which sets the same variables at the same specificity — stylesheet order is
+   not something a component should have to depend on. */
+:global(.radix-themes) .extracted_button.extracted_button {
+  /* Selected: the fill the tooth carries on the map, ink and all. */
+  --accent-9: var(--tooth-extracted-bg);
+  --accent-contrast: var(--tooth-extracted-fg);
+  /* One step down under the cursor and while held. */
+  --accent-10: var(--clay-500);
+
+  /* Unselected: white with a clay edge and clay text, the same shape the
+     destructive button takes in rose. */
+  --accent-a8: var(--clay-300);
+  --accent-a11: var(--clay-600);
+  --accent-a2: var(--clay-50);
+  --accent-a3: var(--clay-100);
+
+  /* The halo Radix throws on a coarse-pointer tap — these get pressed on a
+     tablet, so it is clay too, not bronze. */
+  --accent-a4: rgba(215, 144, 29, 0.29);
+}

@@ -1,0 +1,48 @@
+/* Two options in the space the unit caption used to take, so a field gains a
+   choice without gaining a row. Sized off the caption it replaces -- 12px, the
+   secondary grey -- so a panel of measurements still scans as numbers with
+   units rather than as a row of buttons. */
+.unit_switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 1px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-sm);
+  background: var(--surface-page);
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.option {
+  appearance: none;
+  border: none;
+  padding: 2px 5px;
+  border-radius: calc(var(--ds-radius-sm) - 1px);
+  background: transparent;
+  color: var(--fg-tertiary);
+  font-family: inherit;
+  font-size: var(--fs-12);
+  line-height: 1.4;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition-control);
+}
+
+.option:hover {
+  color: var(--fg-primary);
+  background: var(--surface-hover);
+}
+
+/* The one in use. A fill rather than a colour change alone, so which of the two
+   is active survives being read in bad light on a laptop in a field clinic. */
+.option[aria-pressed="true"] {
+  background: var(--sky-50);
+  color: var(--sky-800);
+  font-weight: var(--fw-medium);
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--sky-600);
+  outline-offset: 1px;
+}
