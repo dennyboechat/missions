@@ -19,23 +19,43 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 export const deletePatientGeneral = async ({
   patientGeneralId,
 }: {
   patientGeneralId: PatientGeneralId;
 }) => {
   try {
-    await assertProjectAccess({ patientGeneralId });
+    const projectId = await assertProjectAccess({ patientGeneralId });
 
     const query = `
       DELETE FROM 
         patient_general 
       WHERE 
-        patient_general_id = $1`;
+        patient_general_id = $1
+      RETURNING
+        patient_personal_id`;
 
-    await sql.query(query, [patientGeneralId]);
+    const response = await sql.query(query, [patientGeneralId]);
+    const [deleted] = response.rows;
 
-    return actionOk('deleted');
+    // Nothing removed means nothing happened, so there is nothing to record
+    // -- and the caller hears that the record was already gone.
+    if (!deleted) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "deleted",
+      entity: "general appointment",
+      entityId: patientGeneralId,
+      patientPersonalId: deleted.patient_personal_id,
+    });
+
+    return actionOk("deleted");
   } catch (error) {
     return toActionFailure(error);
   }

@@ -23,6 +23,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 export const insertPatientGeneralMedication = async ({
   patientGeneralId,
   medication,
@@ -31,7 +34,7 @@ export const insertPatientGeneralMedication = async ({
   medication: InsertPatientGeneralMedication;
 }): Promise<ActionResult<GeneralPrescribedMedication>> => {
   try {
-    await assertProjectAccess({ patientGeneralId });
+    const projectId = await assertProjectAccess({ patientGeneralId });
 
     const { drug, dose, quantity, instructions } = medication;
 
@@ -70,9 +73,22 @@ export const insertPatientGeneralMedication = async ({
         instructions: row.instructions_usage,
       }));
 
-    return generalPrescribedMedications.length > 0
-      ? actionOk(generalPrescribedMedications[0])
-      : actionFailed("not_found");
+    if (generalPrescribedMedications.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "added",
+      patientGeneralId,
+      entity: "general prescription",
+      entityId: generalPrescribedMedications[0].patientGeneralPrescribedMedicationId,
+      // The drug is what makes the line readable: "added a prescription" alone
+      // says nothing a reader can check.
+      valueAfter: generalPrescribedMedications[0].drug,
+    });
+
+    return actionOk(generalPrescribedMedications[0]);
   } catch (error) {
     return toActionFailure(error);
   }

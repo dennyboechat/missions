@@ -20,6 +20,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 
 // `field` is interpolated into the statement, so it has to come from a fixed set.
 const UPDATABLE_FIELDS = [
@@ -35,21 +38,31 @@ export const updatePatientDentistryMedication = async ({
   value,
 }: UpdatePatientDentistryMedication): Promise<ActionResult<DentistryPrescribedMedication>> => {
   try {
-    await assertProjectAccess({ patientDentistryPrescribedMedicationId });
+    const projectId = await assertProjectAccess({ patientDentistryPrescribedMedicationId });
 
     if (!UPDATABLE_FIELDS.includes(field)) {
       throw new Error(`Field not updatable: ${field}`);
     }
 
     const query = `
+      WITH previous AS (
+        SELECT
+          ${field} AS value_before
+        FROM
+          patient_dentistry_prescribed_medication
+        WHERE
+          patient_dentistry_prescribed_medication_id = $2
+      )
       UPDATE
         patient_dentistry_prescribed_medication 
       SET  
         ${field} = $1
       WHERE
         patient_dentistry_prescribed_medication_id = $2
-      RETURNING 
-        patient_dentistry_prescribed_medication_id, patient_dentistry_id, drug_name, dose, quantity, instructions_usage
+      RETURNING
+        patient_dentistry_prescribed_medication_id, patient_dentistry_id, drug_name, dose, quantity, instructions_usage,
+        (SELECT value_before FROM previous)::text AS value_before,
+        (SELECT patient_dentistry.patient_personal_id FROM patient_dentistry WHERE patient_dentistry.patient_dentistry_id = patient_dentistry_prescribed_medication.patient_dentistry_id) AS patient_personal_id
     `;
 
     const validatedValue = typeof value === "string" ? value.trim() : value;
@@ -70,9 +83,22 @@ export const updatePatientDentistryMedication = async ({
         instructions: row.instructions_usage,
       }));
 
-    return dentistryPrescribedMedications.length > 0
-      ? actionOk(dentistryPrescribedMedications[0])
-      : actionFailed("not_found");
+    if (dentistryPrescribedMedications.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "changed",
+      entity: "dental prescription",
+      entityId: patientDentistryPrescribedMedicationId,
+      patientPersonalId: response.rows[0].patient_personal_id,
+      field,
+      valueBefore: response.rows[0].value_before,
+      valueAfter: validatedValue,
+    });
+
+    return actionOk(dentistryPrescribedMedications[0]);
   } catch (error) {
     return toActionFailure(error);
   }

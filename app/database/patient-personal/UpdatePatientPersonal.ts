@@ -16,6 +16,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 // Types
 import {
   PatientPersonalTypes,
@@ -60,21 +63,30 @@ export const updatePatientPersonal = async ({
   value,
 }: UpdatePatientPersonal): Promise<ActionResult<PatientPersonalTypes>> => {
   try {
-    await assertProjectAccess({ patientPersonalId });
+    const projectId = await assertProjectAccess({ patientPersonalId });
 
     if (!UPDATABLE_FIELDS.includes(field)) {
       throw new Error(`Field not updatable: ${field}`);
     }
 
     const query = `
+      WITH previous AS (
+        SELECT
+          ${field} AS value_before
+        FROM
+          patient_personal
+        WHERE
+          patient_personal_id = $2
+      )
       UPDATE 
         patient_personal 
       SET 
         ${field} = $1
       WHERE 
         patient_personal_id = $2
-      RETURNING 
-        patient_personal_id, project_id, patient_full_name, is_patient_male, TO_CHAR(patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth, patient_phone_number
+      RETURNING
+        patient_personal_id, project_id, patient_full_name, is_patient_male, TO_CHAR(patient_date_of_birth, 'YYYY-MM-DD') AS patient_date_of_birth, patient_phone_number,
+        (SELECT value_before FROM previous)::text AS value_before
     `;
 
     const validatedValue = VALIDATE_FIELD[field](value);
@@ -94,9 +106,22 @@ export const updatePatientPersonal = async ({
       })
     );
 
-    return patientPersonals.length > 0
-      ? actionOk(patientPersonals[0])
-      : actionFailed("not_found");
+    if (patientPersonals.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "changed",
+      entity: "patient",
+      entityId: patientPersonalId,
+      patientPersonalId: response.rows[0].patient_personal_id,
+      field,
+      valueBefore: response.rows[0].value_before,
+      valueAfter: validatedValue,
+    });
+
+    return actionOk(patientPersonals[0]);
   } catch (error) {
     return toActionFailure(error);
   }

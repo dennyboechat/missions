@@ -16,6 +16,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 // Types
 import {
   PatientGeneral,
@@ -48,7 +51,7 @@ export const updatePatientGeneral = async ({
   value,
 }: UpdatePatientGeneral): Promise<ActionResult<PatientGeneral>> => {
   try {
-    await assertProjectAccess({ patientGeneralId });
+    const projectId = await assertProjectAccess({ patientGeneralId });
 
     if (!UPDATABLE_FIELDS.includes(field)) {
       throw new Error(`Field not updatable: ${field}`);
@@ -56,8 +59,21 @@ export const updatePatientGeneral = async ({
 
     // Wrapped in a CTE so the returned appointment date can be resolved
     // against the project's timezone, matching how it is read everywhere else.
+    //
+    // `previous` reads the column before the update: the CTEs share one snapshot,
+    // so it sees the old value even though the UPDATE beside it is writing the
+    // new one. That is what lets the audit trail record what a figure changed
+    // from without a second round trip to fetch it first.
     const query = `
-      WITH updated AS (
+      WITH previous AS (
+        SELECT
+          ${field} AS value_before
+        FROM
+          patient_general
+        WHERE
+          patient_general_id = $2
+      ),
+      updated AS (
         UPDATE
           patient_general
         SET
@@ -75,7 +91,8 @@ export const updatePatientGeneral = async ({
         TO_CHAR(
           (updated.appointment_date AT TIME ZONE project.project_timezone)::date,
           'YYYY-MM-DD'
-        ) AS appointment_date
+        ) AS appointment_date,
+        (SELECT value_before FROM previous)::text AS value_before
       FROM
         updated
       INNER JOIN
@@ -97,9 +114,22 @@ export const updatePatientGeneral = async ({
       appointmentDate: row.appointment_date,
     }));
 
-    return patientGeneral.length > 0
-      ? actionOk(patientGeneral[0])
-      : actionFailed("not_found");
+    if (patientGeneral.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "changed",
+      entity: "general appointment",
+      entityId: patientGeneralId,
+      patientPersonalId: patientGeneral[0].patientPersonalId,
+      field,
+      valueBefore: response.rows[0].value_before,
+      valueAfter: validatedValue,
+    });
+
+    return actionOk(patientGeneral[0]);
   } catch (error) {
     return toActionFailure(error);
   }

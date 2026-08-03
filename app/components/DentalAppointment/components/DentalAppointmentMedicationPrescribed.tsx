@@ -10,16 +10,20 @@ import styles from "../styles/DentalAppointment.module.css";
 
 // Types
 import { Medication } from "../../../types/Medication";
+import { DentistryPrescribedMedication } from "../../../types/DentistryPrescribedMedication";
 import { PatientDentistryId } from "../../../types/PatientDentistryTypes";
 import { databaseRetries } from "../../../types/DatabaseRetries";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { usePopupMessage } from "../../../lib/PopupMessage";
+import { useLiveData } from "../../../lib/useLiveData";
 
 // Utils
-import { getNewMedicationRecord } from "../../ui/MedicationTable/utils/getNewMedicationRecord";
-import { generateUID } from "../../../utils/generateUID";
+import {
+  mergeMedicationRows,
+  toMedicationRows,
+} from "../../ui/MedicationTable/utils/mergeMedicationRows";
 
 // Database
 import { getPatientDentistryMedications } from "../../../database/patient-dentistry-medication/GetPatientDentistryMedications";
@@ -38,6 +42,37 @@ export const DentalAppointmentMedicationPrescribed = ({
   const { setMessage, setMessageType } = usePopupMessage();
   const [medications, setMedications] = useState<Medication[]>([]);
 
+  // Whether the cursor is in this table. A refresh that landed while someone was
+  // choosing a drug or halfway through an instruction would take the row out from
+  // under them -- and would do it to the row whose insert is still in flight,
+  // which is the one that cannot be rebuilt from the database yet.
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  const isBeingEdited = () => {
+    const focused = document.activeElement;
+
+    return Boolean(focused && tableRef.current?.contains(focused));
+  };
+
+  // The id is the only thing this table names differently from the general one, so
+  // it is renamed here and everything downstream is shared.
+  const toRows = (records: DentistryPrescribedMedication[]) =>
+    records.map(
+      ({
+        patientDentistryPrescribedMedicationId,
+        drug,
+        dose,
+        quantity,
+        instructions,
+      }) => ({
+        medicationUid: patientDentistryPrescribedMedicationId,
+        drug,
+        dose,
+        quantity,
+        instructions,
+      }),
+    );
+
   useEffect(() => {
     const updatePatientMedications = async () => {
       if (patientDentistryId) {
@@ -46,29 +81,7 @@ export const DentalAppointmentMedicationPrescribed = ({
         }));
 
         if (dentistryMedications) {
-          const retrievedMedications: Medication[] = [];
-
-          dentistryMedications.map(
-            ({
-              patientDentistryPrescribedMedicationId,
-              drug,
-              dose,
-              quantity,
-              instructions,
-            }) => {
-              retrievedMedications.push({
-                rowId: generateUID(),
-                medicationUid: patientDentistryPrescribedMedicationId,
-                drug,
-                dose,
-                quantity,
-                instructions,
-              });
-            }
-          );
-
-          retrievedMedications.push(getNewMedicationRecord());
-          setMedications(retrievedMedications);
+          setMedications(toMedicationRows(toRows(dentistryMedications)));
         } else {
           console.log(
             `Error to get patient dentistry medications with id ${patientDentistryId}`
@@ -79,6 +92,29 @@ export const DentalAppointmentMedicationPrescribed = ({
 
     updatePatientMedications();
   }, [patientDentistryId]);
+
+  // Read once when the tab opened, and never again -- so a colleague's
+  // prescription never arrived. The chair and the dispensary are two people.
+  const refreshMedications = useCallback(
+    () => getPatientDentistryMedications({ patientDentistryId }),
+    [patientDentistryId],
+  );
+
+  useLiveData({
+    load: refreshMedications,
+    apply: (result) => {
+      const records = actionData(result);
+
+      if (!records || isBeingEdited()) {
+        return;
+      }
+
+      setMedications((current) =>
+        mergeMedicationRows({ current, incoming: toRows(records) }),
+      );
+    },
+    enabled: Boolean(patientDentistryId),
+  });
 
   const insertMedication = async (
     drug: string,
@@ -155,13 +191,17 @@ export const DentalAppointmentMedicationPrescribed = ({
         {"Prescribed medication"}
       </Text>
       <Space height={8} />
-      <MedicationTable
-        medications={medications}
-        setMedications={setMedications}
-        insertMedication={insertMedication}
-        updateMedication={updateMedication}
-        deleteMedication={deleteMedication}
-      />
+      {/* The ref is what tells a refresh to wait: everything the user can put a
+          cursor in is inside this element. */}
+      <div ref={tableRef}>
+        <MedicationTable
+          medications={medications}
+          setMedications={setMedications}
+          insertMedication={insertMedication}
+          updateMedication={updateMedication}
+          deleteMedication={deleteMedication}
+        />
+      </div>
     </Box>
   );
 };

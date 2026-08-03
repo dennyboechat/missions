@@ -26,6 +26,7 @@ const MENU_ITEM_BY_SEGMENT: Record<string, ActiveMenuItem> = {
   "project-patient": "project-patients",
   "project-reports": "project-reports",
   "project-users": "project-users",
+  "project-audit": "project-audit",
   "project-user": "project-users",
   project: "project",
 };

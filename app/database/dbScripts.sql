@@ -149,10 +149,14 @@ CREATE TABLE IF NOT EXISTS patient_general_prescribed_medication (
     CONSTRAINT fk_patient_general_id FOREIGN KEY(patient_general_id) REFERENCES patient_general(patient_general_id) ON DELETE CASCADE
 );
 
--- Who is looking at what, right now, so the header can name the other people
--- in a record before two of them overwrite each other. One row per user per
--- resource, forgotten after thirty seconds of silence. See
--- migrations/006_page_presence.sql.
+-- Who is looking at what, right now, so the header can name the other people on
+-- a page before two of them overwrite each other. One row per user per resource,
+-- forgotten after thirty seconds of silence. See migrations/006_page_presence.sql
+-- -- which describes resource_key as one key per patient record, spanning its
+-- four tabs. That is no longer how the key is built: a tab is its own room, so
+-- the key is '<segment>:<uuid>' and someone who leaves Summary for General leaves
+-- the Summary roster. The column is unchanged; only what the app writes into it
+-- is. See utils/getPagePresenceTarget.
 CREATE TABLE IF NOT EXISTS page_presence (
     user_id UUID NOT NULL,
     project_id UUID NOT NULL,
@@ -166,8 +170,36 @@ CREATE TABLE IF NOT EXISTS page_presence (
       FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE
 );
 
+-- Who changed what, and what it was before. One row per write, including each
+-- field save, readable only by the project's admins. Before and after values are
+-- kept, so a deleted record's figures outlive it here -- see
+-- migrations/011_audit_event.sql, which also explains why retention is left to
+-- whoever runs the deployment.
+CREATE TABLE IF NOT EXISTS audit_event (
+    audit_event_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    project_id UUID NOT NULL,
+    actor_user_id UUID,
+    actor_name VARCHAR(255),
+    action VARCHAR(8) NOT NULL,
+    entity VARCHAR(48) NOT NULL,
+    entity_id UUID,
+    patient_personal_id UUID,
+    patient_name VARCHAR(255),
+    field VARCHAR(64),
+    value_before TEXT,
+    value_after TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_audit_event_action
+      CHECK (action IN ('added', 'changed', 'deleted')),
+    CONSTRAINT fk_audit_event_project
+      FOREIGN KEY(project_id) REFERENCES project(project_id) ON DELETE CASCADE,
+    CONSTRAINT fk_audit_event_actor
+      FOREIGN KEY(actor_user_id) REFERENCES app_user(user_id) ON DELETE SET NULL
+);
+
 -- Clean up
--- DROP TABLE IF EXISTS page_presence,
+-- DROP TABLE IF EXISTS audit_event,
+-- page_presence,
 -- patient_general_prescribed_medication,
 -- patient_general,
 -- patient_dentistry_prescribed_medication,
@@ -304,3 +336,5 @@ CREATE INDEX IF NOT EXISTS idx_patient_dentistry_tooth_dentistry_id ON patient_d
 CREATE INDEX IF NOT EXISTS idx_patient_general_appointment_date ON patient_general (appointment_date);
 CREATE INDEX IF NOT EXISTS idx_patient_dentistry_appointment_date ON patient_dentistry (appointment_date);
 CREATE INDEX IF NOT EXISTS idx_page_presence_resource_last_seen ON page_presence (resource_key, last_seen_at);
+CREATE INDEX IF NOT EXISTS idx_audit_event_project_created ON audit_event (project_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_event_patient_created ON audit_event (patient_personal_id, created_at DESC);

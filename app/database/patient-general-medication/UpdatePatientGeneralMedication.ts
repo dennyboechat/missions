@@ -20,6 +20,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 
 // `field` is interpolated into the statement, so it has to come from a fixed set.
 const UPDATABLE_FIELDS = [
@@ -35,21 +38,31 @@ export const updatePatientGeneralMedication = async ({
   value,
 }: UpdatePatientGeneralMedication): Promise<ActionResult<GeneralPrescribedMedication>> => {
   try {
-    await assertProjectAccess({ patientGeneralPrescribedMedicationId });
+    const projectId = await assertProjectAccess({ patientGeneralPrescribedMedicationId });
 
     if (!UPDATABLE_FIELDS.includes(field)) {
       throw new Error(`Field not updatable: ${field}`);
     }
 
     const query = `
+      WITH previous AS (
+        SELECT
+          ${field} AS value_before
+        FROM
+          patient_general_prescribed_medication
+        WHERE
+          patient_general_prescribed_medication_id = $2
+      )
       UPDATE
         patient_general_prescribed_medication 
       SET  
         ${field} = $1
       WHERE
         patient_general_prescribed_medication_id = $2
-      RETURNING 
-        patient_general_prescribed_medication_id, patient_general_id, drug_name, dose, quantity, instructions_usage
+      RETURNING
+        patient_general_prescribed_medication_id, patient_general_id, drug_name, dose, quantity, instructions_usage,
+        (SELECT value_before FROM previous)::text AS value_before,
+        (SELECT patient_general.patient_personal_id FROM patient_general WHERE patient_general.patient_general_id = patient_general_prescribed_medication.patient_general_id) AS patient_personal_id
     `;
 
     const validatedValue = typeof value === "string" ? value.trim() : value;
@@ -70,9 +83,22 @@ export const updatePatientGeneralMedication = async ({
         instructions: row.instructions_usage,
       }));
 
-    return generalPrescribedMedications.length > 0
-      ? actionOk(generalPrescribedMedications[0])
-      : actionFailed("not_found");
+    if (generalPrescribedMedications.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "changed",
+      entity: "general prescription",
+      entityId: patientGeneralPrescribedMedicationId,
+      patientPersonalId: response.rows[0].patient_personal_id,
+      field,
+      valueBefore: response.rows[0].value_before,
+      valueAfter: validatedValue,
+    });
+
+    return actionOk(generalPrescribedMedications[0]);
   } catch (error) {
     return toActionFailure(error);
   }

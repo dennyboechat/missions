@@ -16,6 +16,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 // Types
 import {
   PatientDental,
@@ -36,7 +39,7 @@ export const updatePatientDentistry = async ({
   value,
 }: UpdatePatientDentistry): Promise<ActionResult<PatientDental>> => {
   try {
-    await assertProjectAccess({ patientDentistryId });
+    const projectId = await assertProjectAccess({ patientDentistryId });
 
     if (!UPDATABLE_FIELDS.includes(field)) {
       throw new Error(`Field not updatable: ${field}`);
@@ -45,7 +48,15 @@ export const updatePatientDentistry = async ({
     // Wrapped in a CTE so the returned appointment date can be resolved
     // against the project's timezone, matching how it is read everywhere else.
     const query = `
-      WITH updated AS (
+      WITH previous AS (
+        SELECT
+          ${field} AS value_before
+        FROM
+          patient_dentistry
+        WHERE
+          patient_dentistry_id = $2
+      ),
+      updated AS (
         UPDATE
           patient_dentistry
         SET
@@ -63,7 +74,8 @@ export const updatePatientDentistry = async ({
         TO_CHAR(
           (updated.appointment_date AT TIME ZONE project.project_timezone)::date,
           'YYYY-MM-DD'
-        ) AS appointment_date
+        ) AS appointment_date,
+        (SELECT value_before FROM previous)::text AS value_before
       FROM
         updated
       INNER JOIN
@@ -88,9 +100,22 @@ export const updatePatientDentistry = async ({
       appointmentDate: row.appointment_date,
     }));
 
-    return patientDentistries.length > 0
-      ? actionOk(patientDentistries[0])
-      : actionFailed("not_found");
+    if (patientDentistries.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "changed",
+      entity: "dental appointment",
+      entityId: patientDentistryId,
+      patientPersonalId: response.rows[0].patient_personal_id,
+      field,
+      valueBefore: response.rows[0].value_before,
+      valueAfter: validatedValue,
+    });
+
+    return actionOk(patientDentistries[0]);
   } catch (error) {
     return toActionFailure(error);
   }

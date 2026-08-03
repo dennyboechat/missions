@@ -16,7 +16,13 @@
 }
 
 /* Back, then who else is in this record. Both belong to "where am I", so they
-   sit together at the left of the column rather than pushing apart. */
+   sit together at the left of the column rather than pushing apart.
+
+   The row itself comes from the Radix Flex this class is on, not from here: a
+   module class ties with .rt-Box at one class each and loses on stylesheet
+   order, so a Box with `display: flex` set here stayed block and stacked the two.
+   The declaration is kept so the rule still describes a row on its own, for
+   whenever this stops being a Radix component. */
 .header_context {
   display: flex;
   align-items: center;
@@ -27,6 +33,22 @@
 a.header_logo_link {
   justify-self: start;
   display: inline-flex;
+}
+
+/* Above the collapse breakpoint the logo's column is exactly the width of the
+   side menu, so the wordmark can sit over the menu's centre line rather than at
+   the far left of the column -- which read as off-centre, because it was.
+
+   The negative margin is the header's own side padding, cancelled. Centring
+   inside the column alone would land the logo 20px right of the menu's centre:
+   the column starts where the padding ends, but the menu starts at the edge of
+   the page. Nothing else in the header wants that padding removed, so it comes
+   off this one item rather than off the header. */
+@media (min-width: 769px) {
+  a.header_logo_link {
+    justify-self: center;
+    margin-left: calc(-1 * var(--ds-space-7));
+  }
 }
 
 a.header_logo_link:hover {

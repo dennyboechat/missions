@@ -20,6 +20,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 export const insertProjectUser = async ({
   projectId,
   userId,
@@ -43,7 +46,8 @@ export const insertProjectUser = async ({
         ($1::UUID, $2::UUID, $3)
       ON CONFLICT (project_id, user_id) DO NOTHING
       RETURNING
-        project_user_id, project_id, user_id, is_user_active
+        project_user_id, project_id, user_id, is_user_active,
+        (SELECT user_name FROM app_user WHERE app_user.user_id = $2::UUID) AS user_name
     `;
 
     const response = await sql.query(query, [projectId, userId, true]);
@@ -58,9 +62,19 @@ export const insertProjectUser = async ({
     // Inserting nothing used to be returned as success, so adding someone who
     // was already on the project looked like it had worked. It is a refusal,
     // and the caller says so.
-    return projectUsers.length > 0
-      ? actionOk(projectUsers)
-      : actionFailed("invalid", "User is already on this project");
+    if (projectUsers.length === 0) {
+      return actionFailed("invalid", "User is already on this project");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "added",
+      entity: "project user",
+      entityId: projectUsers[0].projectUserId,
+      valueAfter: response.rows[0].user_name,
+    });
+
+    return actionOk(projectUsers);
   } catch (error) {
     return toActionFailure(error);
   }

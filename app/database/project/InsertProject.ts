@@ -34,6 +34,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 export const insertProject = async ({
   projectName,
   projectDescription,
@@ -102,9 +105,19 @@ export const insertProject = async ({
       ownerId: row.owner_id,
     }));
 
-    return projects.length > 0
-      ? actionOk(projects[0])
-      : actionFailed("not_found");
+    if (projects.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId: projects[0].projectId,
+      action: "added",
+      entity: "project",
+      entityId: projects[0].projectId,
+      valueAfter: projects[0].projectName,
+    });
+
+    return actionOk(projects[0]);
   } catch (error) {
     return toActionFailure(error);
   }

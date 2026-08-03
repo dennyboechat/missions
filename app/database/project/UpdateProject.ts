@@ -29,6 +29,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 // `field` is interpolated into the statement, so it has to come from a fixed set.
 const UPDATABLE_FIELDS = [
   "project_name",
@@ -83,6 +86,14 @@ export const updateProject = async ({
     }
 
     const query = `
+      WITH previous AS (
+        SELECT
+          ${field} AS value_before
+        FROM
+          project
+        WHERE
+          project_id = $2
+      )
       UPDATE
         project
       SET
@@ -93,7 +104,8 @@ export const updateProject = async ({
         project_id, project_name, project_description, project_timezone,
         project_length_unit, project_weight_unit, project_temperature_unit,
         project_date_format,
-        owner_id
+        owner_id,
+        (SELECT value_before FROM previous)::text AS value_before
     `;
 
     const response = await sql.query(query, [validatedValue, projectId]);
@@ -110,9 +122,23 @@ export const updateProject = async ({
       ownerId: row.owner_id,
     }));
 
-    return projects.length > 0
-      ? actionOk(projects[0])
-      : actionFailed("not_found");
+    if (projects.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    // A project-level event: no patient, so the trail files it under the
+    // project itself rather than under somebody’s record.
+    await recordAuditEvent({
+      projectId,
+      action: "changed",
+      entity: "project",
+      entityId: projectId,
+      field,
+      valueBefore: response.rows[0].value_before,
+      valueAfter: validatedValue,
+    });
+
+    return actionOk(projects[0]);
   } catch (error) {
     return toActionFailure(error);
   }

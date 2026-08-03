@@ -10,6 +10,14 @@
   line-height: var(--lh-normal);
 }
 
+/* The error tone. The system's rose, at the same weight the warning carries its
+   sun: the palest tint behind it and the dark step for the text, so the two read
+   as one device in two colours rather than as two components. */
+.error {
+  background-color: var(--surface-danger);
+  color: var(--rose-700);
+}
+
 /* The glyph sits on the first line of text rather than centred against the
    whole block, which is where the eye expects it when the message wraps. */
 .icon {

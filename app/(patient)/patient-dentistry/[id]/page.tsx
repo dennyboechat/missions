@@ -5,6 +5,8 @@ import { Container, Button } from "@radix-ui/themes";
 import { ContentHeader } from "../../../components/ContentHeader";
 import { Icon } from "../../../components/ui/Icon";
 import { DentalAppointment } from "../../../components/DentalAppointment";
+import { RemoteUpdateNotice } from "../../../components/ui/RemoteUpdateNotice";
+import { Space } from "../../../components/ui/Space";
 
 // Styles
 import styles from "../../../styles/content.module.css";
@@ -95,10 +97,13 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
     [patientPersonalId],
   );
 
-  useLiveData({
+  const { hasRemoteChange, acknowledgeRemoteChange } = useLiveData({
     load: refreshPatientDentistries,
     apply: (result) => applyPatientDentistries(actionData(result)),
     enabled: Boolean(patientPersonalId),
+    // Charting is the case this was built for: a tooth turning colour under
+    // someone's eyes is worth a line saying why.
+    detectChanges: true,
   });
 
   if (!patientDentistries || !lastestAppointment) {
@@ -171,6 +176,12 @@ const PatientDentistry = ({ params }: { params: Promise<{ id: string }> }) => {
           </Button>
         }
       />
+      {hasRemoteChange && (
+        <>
+          <Space />
+          <RemoteUpdateNotice onDismiss={acknowledgeRemoteChange} />
+        </>
+      )}
       {lastestAppointment.patientDentistryId && (
         <DentalAppointment
           patientDentistries={patientDentistries}

@@ -9,6 +9,15 @@
   letter-spacing: var(--ls-wide);
 }
 
+/* "upper" and "lower" name the arch above and below them, so they are placed by
+   their own centre: left puts the midline under the middle of the word rather
+   than under its first letter. Which means the two labels agree with each other
+   and with the teeth however wide the words render -- at another size, in another
+   face, or translated. */
+.arch_label {
+  transform: translateX(-50%);
+}
+
 /* The line between the arches. This used to be a run of underscore characters,
    which drew at whatever width the font gave it and sat on the text baseline
    rather than in the gap. */

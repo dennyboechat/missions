@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSaveField } from "../../../lib/useSaveField";
 import { usePopupMessage } from "../../../lib/PopupMessage";
-import { useDuplicateUserWarnings } from "../../../lib/useDuplicateUserWarnings";
+import { useNewProjectUserChecks } from "../../../lib/useNewProjectUserChecks";
 
 // Database
 import { insertAppUser } from "../../../database/app-user/InsertAppUser";
@@ -51,15 +51,19 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
       userEmail: "",
     });
 
-  // Warns as soon as a field is filled in, rather than making the user reach
-  // the Confirm button to find out the name is taken or the email is somebody
-  // else's account.
-  const { duplicateWarnings, hasCheckedCurrentValues, checkForDuplicates } =
-    useDuplicateUserWarnings({
-      projectId: params.id,
-      userName: projectUserFields.userName,
-      userEmail: projectUserFields.userEmail,
-    });
+  // Speaks up as soon as a field is filled in, rather than making the user reach
+  // the Confirm button to find out the name is taken or the person is already
+  // here.
+  const {
+    duplicateWarnings,
+    existingUserError,
+    hasCheckedCurrentValues,
+    runChecks,
+  } = useNewProjectUserChecks({
+    projectId: params.id,
+    userName: projectUserFields.userName,
+    userEmail: projectUserFields.userEmail,
+  });
 
   const reportError = (message: string) => {
     if (setMessage && setMessageType) {
@@ -82,10 +86,23 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
 
     if (isValidUserName && isValidUserEmail) {
       // The form may have been filled in and confirmed faster than the lookups
-      // could answer. Adding the wrong person without the warning ever
-      // appearing is the case this guards against; once a warning is on screen
-      // the user has seen it and this click goes through.
-      if (!hasCheckedCurrentValues && (await checkForDuplicates())) {
+      // could answer, which is the one way an add can get past a check that had
+      // something to say. Only the error stops the click: a warning stops it once
+      // -- long enough to be read -- and the button that comes back says
+      // "Confirm anyway".
+      if (!hasCheckedCurrentValues) {
+        const { blocked, hasWarning } = await runChecks();
+
+        if (blocked || hasWarning) {
+          setIsCreatingUser(false);
+          return;
+        }
+      }
+
+      // Already answered, and the answer was that this person is here. The button
+      // is disabled in that state, so this is the race where the lookup landed
+      // between the render and the click.
+      if (existingUserError) {
         setIsCreatingUser(false);
         return;
       }
@@ -153,6 +170,12 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
         isProjectUserNameInvalid={isProjectUserNameInvalid}
         isProjectUserEmailInvalid={isProjectUserEmailInvalid}
       />
+      {existingUserError && (
+        <div>
+          <Space />
+          <WarningContainer message={existingUserError} tone="error" />
+        </div>
+      )}
       {duplicateWarnings.map((duplicateWarning) => (
         <div key={duplicateWarning}>
           <Space />
@@ -162,7 +185,9 @@ export const ProjectUser = ({ params }: { params: { id: string } }) => {
       <Space />
       <Button
         onClick={onConfirmButtonClick}
-        disabled={isCreatingUser}
+        // Nothing to confirm while the error is up: the project already holds
+        // this account, and the only way forward is a different address.
+        disabled={isCreatingUser || existingUserError !== ""}
         variant="outline"
       >
         {duplicateWarnings.length > 0 ? "Confirm anyway" : "Confirm"}

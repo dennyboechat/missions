@@ -6,7 +6,9 @@ export type IconName =
   | "chevron-down"
   | "dental"
   | "download"
+  | "error"
   | "general"
+  | "history"
   | "glucose"
   | "height"
   | "info"
@@ -28,6 +30,13 @@ export type IconName =
   | "warning"
   | "weight"
   | "x";
+
+/**
+ * What every glyph in the set takes. Lucide's own props, re-exported from here so
+ * the one hand-drawn glyph in Icon.tsx is typed against the same contract as the
+ * 2000 imported ones rather than against a shape of its own.
+ */
+export type { LucideProps } from "lucide-react";
 
 export interface IconProps {
   name: IconName;

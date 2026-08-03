@@ -41,13 +41,23 @@ import { exportToCsv } from "../../../utils/exportToCsv";
 import { actionData } from "../../../types/ActionResult";
 import { PopupMessageType } from "../../../lib/types/PopupMessageContextType";
 
+/**
+ * How far back the report reaches before anyone touches the filter.
+ *
+ * A month rather than the fortnight this used to be: a mission runs for weeks,
+ * and the question the report is opened to answer -- what have we prescribed,
+ * who did we see -- is asked about the run so far, not about the last two weeks
+ * of it. Both dates stay editable; this only decides what is already filled in.
+ */
+const DEFAULT_REPORT_DAYS = 30;
+
 export const ProjectReports = ({ params }: { params: { id: string } }) => {
   const { project } = useProject();
   const { setMessage, setMessageType } = usePopupMessage();
   const { formatDate } = useProjectFormats();
   const currentDate = getCurrentDateTime();
   const startDateFilter = getFormattedDate({
-    date: subtractDaysToDate({ date: currentDate, days: 14 }),
+    date: subtractDaysToDate({ date: currentDate, days: DEFAULT_REPORT_DAYS }),
     format: "yyyy-MM-dd",
   });
   const todayFilter = getFormattedDate({

@@ -7,5 +7,6 @@ export interface ProjectMenuItemsProps {
     | "project-patients"
     | "project"
     | "project-users"
-    | "project-reports";
+    | "project-reports"
+    | "project-audit";
 }

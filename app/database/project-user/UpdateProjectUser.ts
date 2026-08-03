@@ -22,13 +22,19 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 export const updateProjectUser = async ({
   projectUserId,
   isUserActive,
   isUserAdmin,
 }: UpdateProjectUser): Promise<ActionResult<ProjectUser>> => {
   try {
-    await assertProjectAccess({ projectUserId }, { requires: "admin" });
+    const projectId = await assertProjectAccess(
+      { projectUserId },
+      { requires: "admin" },
+    );
 
     // Nobody edits their own membership row, admin or not.
     //
@@ -58,6 +64,15 @@ export const updateProjectUser = async ({
     // COALESCE so an unspecified flag keeps whatever is on the row, rather than
     // being nulled out by a caller that only meant to change the other one.
     const query = `
+      WITH previous AS (
+        SELECT
+          is_user_active,
+          is_user_admin
+        FROM
+          project_user
+        WHERE
+          project_user_id = $3
+      )
       UPDATE
         project_user
       SET
@@ -66,7 +81,9 @@ export const updateProjectUser = async ({
       WHERE
         project_user_id = $3
       RETURNING
-        project_user_id, project_id, user_id, is_user_active, is_user_admin
+        project_user_id, project_id, user_id, is_user_active, is_user_admin,
+        (SELECT is_user_active FROM previous) AS was_user_active,
+        (SELECT is_user_admin FROM previous) AS was_user_admin
     `;
 
     const response = await sql.query(query, [
@@ -83,9 +100,33 @@ export const updateProjectUser = async ({
       isUserAdmin: row.is_user_admin,
     }));
 
-    return projectUsers.length > 0
-      ? actionOk(projectUsers[0])
-      : actionFailed("not_found");
+    if (projectUsers.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    const [updated] = response.rows;
+
+    // One statement, but up to two decisions -- who may sign in and who may
+    // administer -- and an audit trail that merged them would lose which of the
+    // two an admin actually made. Only a value that moved is recorded.
+    const changes = [
+      { field: "is_user_active", before: updated.was_user_active, after: updated.is_user_active },
+      { field: "is_user_admin", before: updated.was_user_admin, after: updated.is_user_admin },
+    ].filter(({ before, after }) => before !== after);
+
+    for (const { field, before, after } of changes) {
+      await recordAuditEvent({
+        projectId,
+        action: "changed",
+        entity: "project user",
+        entityId: projectUserId,
+        field,
+        valueBefore: before,
+        valueAfter: after,
+      });
+    }
+
+    return actionOk(projectUsers[0]);
   } catch (error) {
     return toActionFailure(error);
   }

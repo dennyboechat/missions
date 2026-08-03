@@ -1,7 +1,7 @@
 "use client";
 
 // Components
-import { Grid, Box, Button } from "@radix-ui/themes";
+import { Grid, Flex, Button } from "@radix-ui/themes";
 import Link from "next/link";
 import { SignUpDialog } from "../../../auth/signUp";
 import { SignInDialog } from "../../../auth/signIn";
@@ -163,10 +163,13 @@ export const HeaderPanel = () => {
         </Link>
         {/* Back and the roster share the middle column: both answer "what am I
             looking at", and the column was empty to the right of the button. */}
-        <Box className={styles.header_context}>
+        {/* A Flex, not a Box: .rt-Box sets display:block at the same specificity
+            as the class below, and wins on stylesheet order -- which is what put
+            the roster on its own line under Back instead of beside it. */}
+        <Flex align="center" className={styles.header_context}>
           {backButton}
           <PagePresence viewers={viewers} />
-        </Box>
+        </Flex>
         <SignButtons onSignInClick={onSignIn} onSignUpClick={onSignUp} />
       </Grid>
       {showSignUp && <SignUpDialog onClose={() => setShowSignUp(false)} />}

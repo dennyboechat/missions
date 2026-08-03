@@ -21,6 +21,7 @@ const ITEMS = [
   { key: "project-patients", label: "Patients", icon: "users", adminOnly: false },
   { key: "project-reports", label: "Reports", icon: "reports", adminOnly: false },
   { key: "project-users", label: "Users", icon: "user-access", adminOnly: true },
+  { key: "project-audit", label: "Audit", icon: "history", adminOnly: true },
   { key: "project", label: "Settings", icon: "settings", adminOnly: true },
 ] as const;
 

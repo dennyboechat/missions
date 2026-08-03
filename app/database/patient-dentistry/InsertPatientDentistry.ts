@@ -23,13 +23,16 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 export const insertPatientDentistry = async ({
   patientPersonalId,
 }: {
   patientPersonalId: PatientPersonalId;
 }): Promise<ActionResult<PatientDental>> => {
   try {
-    await assertProjectAccess({ patientPersonalId });
+    const projectId = await assertProjectAccess({ patientPersonalId });
 
     const currentDate = getCurrentDateTime();
 
@@ -77,9 +80,19 @@ export const insertPatientDentistry = async ({
       appointmentDate: row.appointment_date,
     }));
 
-    return patientDentistries.length > 0
-      ? actionOk(patientDentistries[0])
-      : actionFailed("not_found");
+    if (patientDentistries.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "added",
+      entity: "dental appointment",
+      entityId: patientDentistries[0].patientDentistryId,
+      patientPersonalId,
+    });
+
+    return actionOk(patientDentistries[0]);
   } catch (error) {
     return toActionFailure(error);
   }

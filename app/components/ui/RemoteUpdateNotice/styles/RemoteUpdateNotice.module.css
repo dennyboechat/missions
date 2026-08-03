@@ -1,0 +1,52 @@
+/* Information, not a problem: the page already holds the new records, and the
+   line exists so the reader knows the figure in front of them moved while they
+   were looking at it. So it takes the brand wash the side panel uses for context
+   rather than the warning's sun or the error's rose. */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-4) var(--ds-space-6);
+  border-radius: var(--ds-radius-md);
+  background-color: var(--surface-brand-soft);
+  color: var(--sky-800);
+  font-size: var(--fs-13);
+  line-height: var(--lh-normal);
+}
+
+.icon {
+  flex: none;
+  display: inline-flex;
+}
+
+.message {
+  min-width: 0;
+}
+
+/* Pushed to the far end, so dismissing is available without competing with the
+   sentence for attention. */
+.dismiss {
+  margin-left: auto;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: var(--ds-radius-full);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: var(--transition-control);
+}
+
+.dismiss:hover {
+  background-color: var(--sky-100);
+}
+
+.dismiss:focus-visible {
+  outline: 2px solid var(--border-brand);
+  outline-offset: 1px;
+}

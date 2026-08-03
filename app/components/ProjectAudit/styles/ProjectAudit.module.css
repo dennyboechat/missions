@@ -1,0 +1,132 @@
+/* The trail is a list read from the top and followed down, not a table compared
+   across columns -- so it sets as lines of prose with the figures beneath, and the
+   time is what aligns. */
+.events {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-md);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.event {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--ds-space-2) var(--ds-space-6);
+  padding: var(--ds-space-5) var(--ds-space-6);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.event:first-child {
+  border-top: none;
+}
+
+/* Times are measurements, so they set in the mono face with tabular figures like
+   every other number in the product -- which is also what lets a run of events a
+   second apart line up. */
+.when {
+  grid-row: span 2;
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: var(--fs-12);
+  color: var(--fg-tertiary);
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+.summary {
+  font-size: var(--fs-14);
+  color: var(--fg-primary);
+}
+
+.subject {
+  font-size: var(--fs-12);
+  color: var(--fg-secondary);
+}
+
+/* The before and after. The arrow does the work, so neither value needs a label,
+   and both set in the numeric face because most of them are numbers. */
+.change {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--ds-space-3);
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: var(--fs-13);
+}
+
+.before {
+  color: var(--fg-tertiary);
+  text-decoration: line-through;
+  text-decoration-color: var(--gray-300);
+}
+
+.arrow {
+  color: var(--fg-tertiary);
+}
+
+.after {
+  color: var(--fg-primary);
+  font-weight: var(--fw-medium);
+}
+
+/* Three kinds of event, and the difference matters at a glance: a deletion is the
+   one that cannot be undone. Colour alone does not carry it -- the word is in the
+   sentence beside it. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px var(--ds-space-3);
+  border-radius: var(--ds-radius-full);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-snug);
+  text-transform: lowercase;
+}
+
+.badge_added {
+  background: var(--green-50);
+  color: var(--green-700);
+}
+
+.badge_changed {
+  background: var(--sky-50);
+  color: var(--sky-800);
+}
+
+.badge_deleted {
+  background: var(--rose-50);
+  color: var(--rose-700);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-5);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-5);
+  padding-top: var(--ds-space-5);
+}
+
+.count {
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: var(--fs-12);
+  color: var(--fg-tertiary);
+}
+
+.empty {
+  padding: var(--ds-space-10) var(--ds-space-6);
+  text-align: center;
+  color: var(--fg-secondary);
+  font-size: var(--fs-14);
+}

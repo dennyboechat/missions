@@ -23,13 +23,16 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 export const insertPatientGeneral = async ({
   patientPersonalId,
 }: {
   patientPersonalId: PatientPersonalId;
 }): Promise<ActionResult<PatientGeneral>> => {
   try {
-    await assertProjectAccess({ patientPersonalId });
+    const projectId = await assertProjectAccess({ patientPersonalId });
 
     const currentDate = getCurrentDateTime();
 
@@ -77,9 +80,19 @@ export const insertPatientGeneral = async ({
       appointmentDate: row.appointment_date,
     }));
 
-    return patientGeneral.length > 0
-      ? actionOk(patientGeneral[0])
-      : actionFailed("not_found");
+    if (patientGeneral.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "added",
+      entity: "general appointment",
+      entityId: patientGeneral[0].patientGeneralId,
+      patientPersonalId,
+    });
+
+    return actionOk(patientGeneral[0]);
   } catch (error) {
     return toActionFailure(error);
   }

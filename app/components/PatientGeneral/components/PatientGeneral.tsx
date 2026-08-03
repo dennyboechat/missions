@@ -5,6 +5,8 @@ import { Container, Button } from "@radix-ui/themes";
 import { ContentHeader } from "../../ContentHeader";
 import { Icon } from "../../ui/Icon";
 import { GeneralAppointment } from "../../GeneralAppointment";
+import { RemoteUpdateNotice } from "../../ui/RemoteUpdateNotice";
+import { Space } from "../../ui/Space";
 
 // Styles
 import styles from "../../../styles/content.module.css";
@@ -93,10 +95,13 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
     [patientPersonalId],
   );
 
-  useLiveData({
+  const { hasRemoteChange, acknowledgeRemoteChange } = useLiveData({
     load: refreshPatientGeneral,
     apply: (result) => applyPatientGeneral(actionData(result)),
     enabled: Boolean(patientPersonalId),
+    // A vital that moves on its own needs saying so. Fields being edited here
+    // hold their ground either way; this is about the ones that did not.
+    detectChanges: true,
   });
 
   if (!patientGeneral || !lastestAppointment) {
@@ -161,6 +166,12 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
           </Button>
         }
       />
+      {hasRemoteChange && (
+        <>
+          <Space />
+          <RemoteUpdateNotice onDismiss={acknowledgeRemoteChange} />
+        </>
+      )}
       {lastestAppointment.patientGeneralId && (
         <GeneralAppointment
           patientGeneral={patientGeneral}

@@ -3,6 +3,7 @@
 // Hooks
 import { useCallback } from "react";
 import { usePopupMessage } from "./PopupMessage";
+import { markLocalWrite } from "./localWrites";
 
 // Types
 import { ActionResult, ActionFailureReason } from "../types/ActionResult";
@@ -76,6 +77,10 @@ export const useSaveField = () => {
     const result = await run();
 
     if (result.ok) {
+      // Every write in the app comes through here, which is what lets a page
+      // tell a colleague's change from the echo of its own. See localWrites.
+      markLocalWrite();
+
       const successMessage =
         options?.successMessage === null
           ? null

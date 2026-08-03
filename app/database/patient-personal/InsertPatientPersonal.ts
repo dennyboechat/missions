@@ -16,6 +16,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 // Types
 import {
   PatientPersonalTypes,
@@ -87,9 +90,19 @@ export const insertPatientPersonal = async ({
       })
     );
 
-    return patientPersonals.length > 0
-      ? actionOk(patientPersonals[0])
-      : actionFailed("not_found");
+    if (patientPersonals.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "added",
+      entity: "patient",
+      entityId: patientPersonals[0].patientPersonalId,
+      patientPersonalId: patientPersonals[0].patientPersonalId,
+    });
+
+    return actionOk(patientPersonals[0]);
   } catch (error) {
     return toActionFailure(error);
   }

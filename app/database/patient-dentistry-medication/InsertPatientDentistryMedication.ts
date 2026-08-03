@@ -23,6 +23,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 export const insertPatientDentistryMedication = async ({
   patientDentistryId,
   medication,
@@ -31,7 +34,7 @@ export const insertPatientDentistryMedication = async ({
   medication: InsertPatientDentistryMedication;
 }): Promise<ActionResult<DentistryPrescribedMedication>> => {
   try {
-    await assertProjectAccess({ patientDentistryId });
+    const projectId = await assertProjectAccess({ patientDentistryId });
 
     const { drug, dose, quantity, instructions } = medication;
 
@@ -70,9 +73,20 @@ export const insertPatientDentistryMedication = async ({
         instructions: row.instructions_usage,
       }));
 
-    return dentistryPrescribedMedications.length > 0
-      ? actionOk(dentistryPrescribedMedications[0])
-      : actionFailed("not_found");
+    if (dentistryPrescribedMedications.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "added",
+      patientDentistryId,
+      entity: "dental prescription",
+      entityId: dentistryPrescribedMedications[0].patientDentistryPrescribedMedicationId,
+      valueAfter: dentistryPrescribedMedications[0].drug,
+    });
+
+    return actionOk(dentistryPrescribedMedications[0]);
   } catch (error) {
     return toActionFailure(error);
   }

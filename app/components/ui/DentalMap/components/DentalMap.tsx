@@ -59,6 +59,21 @@ const LOWER_TEETH = [
 
 const MIDLINE_TOP = 209;
 
+/**
+ * Where the midline falls, horizontally.
+ *
+ * Read off the two central incisors rather than the container: 8 and 9 sit at
+ * left 103 and 135, each 32px wide, so the arch is centred on
+ * (103 + 135 + 32) / 2. The Box is 247px wide, so its own centre is 123.5 -- 11px
+ * to the left of the teeth, which is why nothing here is centred with a
+ * percentage.
+ *
+ * The two labels used to be pinned by their left edge at 112px, which centred
+ * whichever string happened to be about 46px wide. "upper" and "lower" are about
+ * 34px, so both sat some 6px left of the teeth they name.
+ */
+const ARCH_MIDLINE_LEFT = (103 + 135 + 32) / 2;
+
 export const DentalMap = ({
   selectedTooth,
   toothDetails,
@@ -78,7 +93,10 @@ export const DentalMap = ({
         isSelected={selectedTooth === id}
       />
     ))}
-    <Text className={styles.text} style={{ top: "137px", left: "112px" }}>
+    <Text
+      className={`${styles.text} ${styles.arch_label}`}
+      style={{ top: "137px", left: `${ARCH_MIDLINE_LEFT}px` }}
+    >
       {"upper"}
     </Text>
     <Text
@@ -101,8 +119,8 @@ export const DentalMap = ({
       {"L"}
     </Text>
     <Text
-      className={styles.text}
-      style={{ top: `${238 + ARCH_GAP}px`, left: "112px" }}
+      className={`${styles.text} ${styles.arch_label}`}
+      style={{ top: `${238 + ARCH_GAP}px`, left: `${ARCH_MIDLINE_LEFT}px` }}
     >
       {"lower"}
     </Text>

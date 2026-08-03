@@ -1,7 +1,10 @@
 "use client";
 
 // Hooks
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+// Lib
+import { getLocalWriteCount } from "./localWrites";
 
 /**
  * How often an open page re-reads its records.
@@ -20,7 +23,35 @@ interface UseLiveDataOptions<T> {
   /** Skip polling until the page knows what it is looking at. */
   enabled?: boolean;
   intervalMs?: number;
+  /**
+   * Watch for a refresh that brought different records than the one before it,
+   * and raise `hasRemoteChange` when it was not this tab's own doing.
+   *
+   * Opt-in, because "the answer changed" only means "somebody edited something"
+   * for a caller reading records. The presence roster changes every time a
+   * colleague opens or closes a page, which is not news about the data.
+   */
+  detectChanges?: boolean;
 }
+
+/**
+ * What a payload has to say, reduced to something two refreshes can be compared
+ * on. JSON rather than a field-by-field diff: the callers pass whole action
+ * results, the shapes are built by hand in the database layer so the key order is
+ * stable, and nothing in them is generated per request -- no timestamps of the
+ * read itself, no ids minted on the way out. A false positive here would be a
+ * notice about a change nobody made.
+ */
+const fingerprint = (data: unknown) => {
+  try {
+    return JSON.stringify(data) ?? "undefined";
+  } catch {
+    // A payload that will not serialise cannot be compared, so it is treated as
+    // unchanged rather than as changed. Silence beats crying wolf every ten
+    // seconds.
+    return undefined;
+  }
+};
 
 /**
  * Keeps a page's records in step with the database while it sits open.
@@ -48,16 +79,28 @@ export const useLiveData = <T,>({
   apply,
   enabled = true,
   intervalMs = LIVE_DATA_INTERVAL_MS,
+  detectChanges = false,
 }: UseLiveDataOptions<T>) => {
   // Read through refs so that a caller passing inline functions -- which is
   // every caller -- does not tear the timer down and rebuild it on each render.
   const loadRef = useRef(load);
   const applyRef = useRef(apply);
+  const detectChangesRef = useRef(detectChanges);
 
   useEffect(() => {
     loadRef.current = load;
     applyRef.current = apply;
+    detectChangesRef.current = detectChanges;
   });
+
+  const [hasRemoteChange, setHasRemoteChange] = useState(false);
+  // What the last refresh returned, and the write count at that moment. The
+  // baseline starts empty: the page's own first load does not come through here,
+  // so the first refresh sets the baseline and says nothing. A colleague's edit
+  // inside that first interval is therefore absorbed silently -- the alternative
+  // is announcing a change on arrival at every page.
+  const fingerprintRef = useRef<string>(undefined);
+  const seenWriteCountRef = useRef(getLocalWriteCount());
 
   // Bumped whenever the effect is torn down, so a reply that arrives after the
   // page moved on is dropped rather than written over the new records.
@@ -79,6 +122,28 @@ export const useLiveData = <T,>({
 
       if (generation === generationRef.current) {
         applyRef.current(data);
+
+        if (detectChangesRef.current) {
+          const previous = fingerprintRef.current;
+          const current = fingerprint(data);
+
+          // Read after the await, so a save made while this request was in
+          // flight counts as ours rather than as somebody else's.
+          const writeCount = getLocalWriteCount();
+          const isOurOwnWrite = writeCount !== seenWriteCountRef.current;
+
+          fingerprintRef.current = current;
+          seenWriteCountRef.current = writeCount;
+
+          if (
+            previous !== undefined &&
+            current !== undefined &&
+            current !== previous &&
+            !isOurOwnWrite
+          ) {
+            setHasRemoteChange(true);
+          }
+        }
       }
     } catch (error) {
       // A failed refresh is not worth interrupting anyone over -- the records
@@ -135,5 +200,11 @@ export const useLiveData = <T,>({
     };
   }, [enabled, intervalMs, refresh]);
 
-  return { refresh };
+  return {
+    refresh,
+    /** True once a refresh brought records this tab did not write. */
+    hasRemoteChange,
+    /** Read and understood. The next change raises it again. */
+    acknowledgeRemoteChange: useCallback(() => setHasRemoteChange(false), []),
+  };
 };

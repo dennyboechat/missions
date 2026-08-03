@@ -16,6 +16,9 @@ import {
 // Auth
 import { toActionFailure } from "../auth/toActionFailure";
 
+// Audit
+import { recordAuditEvent } from "../audit/recordAuditEvent";
+
 // Types
 import {
   PatientDentistryTooth,
@@ -29,7 +32,7 @@ export const insertPatientTooth = async ({
   toothNotes,
 }: InsertPatientTooth): Promise<ActionResult<PatientDentistryTooth>> => {
   try {
-    await assertProjectAccess({ patientDentistryId });
+    const projectId = await assertProjectAccess({ patientDentistryId });
 
     const query = `
       INSERT INTO
@@ -57,9 +60,21 @@ export const insertPatientTooth = async ({
       })
     );
 
-    return patientDentistryTooth.length > 0
-      ? actionOk(patientDentistryTooth[0])
-      : actionFailed("not_found");
+    if (patientDentistryTooth.length === 0) {
+      return actionFailed("not_found");
+    }
+
+    await recordAuditEvent({
+      projectId,
+      action: "added",
+      patientDentistryId,
+      entity: "tooth",
+      entityId: patientDentistryTooth[0].patientDentistryToothId,
+      field: "tooth_status",
+      valueAfter: patientDentistryTooth[0].toothStatus,
+    });
+
+    return actionOk(patientDentistryTooth[0]);
   } catch (error) {
     return toActionFailure(error);
   }
