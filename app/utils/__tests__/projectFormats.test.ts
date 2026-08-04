@@ -3,6 +3,9 @@ import { describe, it, expect } from "vitest";
 import {
   formatProjectDate,
   getDateFormatExample,
+  getOtherLengthUnit,
+  getOtherWeightUnit,
+  getOtherTemperatureUnit,
   getLengthUnitLabel,
   getTemperatureUnitLabel,
   getWeightUnitLabel,
@@ -16,6 +19,13 @@ import {
   toDisplayWeightBounds,
   toStoredWeight,
 } from "../projectFormats";
+
+// Types
+import {
+  PROJECT_LENGTH_UNITS,
+  PROJECT_WEIGHT_UNITS,
+  PROJECT_TEMPERATURE_UNITS,
+} from "../../types/ProjectTypes";
 
 describe("length", () => {
   it("leaves centimetres alone", () => {
@@ -255,5 +265,126 @@ describe("dates", () => {
     // the whole point of the hint in the settings.
     expect(getDateFormatExample("mm/dd/yyyy")).toBe("03/04/2026");
     expect(getDateFormatExample("dd/mm/yyyy")).toBe("04/03/2026");
+  });
+});
+
+describe("the other unit", () => {
+  it("names the opposite of each unit", () => {
+    expect(getOtherLengthUnit("cm")).toBe("in");
+    expect(getOtherLengthUnit("in")).toBe("cm");
+    expect(getOtherWeightUnit("kg")).toBe("lb");
+    expect(getOtherWeightUnit("lb")).toBe("kg");
+    expect(getOtherTemperatureUnit("C")).toBe("F");
+    expect(getOtherTemperatureUnit("F")).toBe("C");
+  });
+
+  // What makes the viewer's switch a switch rather than a picker: asking twice
+  // is asking for the unit the project already uses. A third unit would break
+  // this, and the toggle would have to become a list.
+  it("comes back to where it started when asked twice", () => {
+    for (const unit of PROJECT_LENGTH_UNITS) {
+      expect(getOtherLengthUnit(getOtherLengthUnit(unit))).toBe(unit);
+    }
+    for (const unit of PROJECT_WEIGHT_UNITS) {
+      expect(getOtherWeightUnit(getOtherWeightUnit(unit))).toBe(unit);
+    }
+    for (const unit of PROJECT_TEMPERATURE_UNITS) {
+      expect(getOtherTemperatureUnit(getOtherTemperatureUnit(unit))).toBe(unit);
+    }
+  });
+
+  it("never names the unit it was given", () => {
+    for (const unit of PROJECT_LENGTH_UNITS) {
+      expect(getOtherLengthUnit(unit)).not.toBe(unit);
+    }
+    for (const unit of PROJECT_WEIGHT_UNITS) {
+      expect(getOtherWeightUnit(unit)).not.toBe(unit);
+    }
+    for (const unit of PROJECT_TEMPERATURE_UNITS) {
+      expect(getOtherTemperatureUnit(unit)).not.toBe(unit);
+    }
+  });
+
+  it("only ever names a unit the app knows how to convert", () => {
+    for (const unit of PROJECT_LENGTH_UNITS) {
+      expect(PROJECT_LENGTH_UNITS).toContain(getOtherLengthUnit(unit));
+    }
+    for (const unit of PROJECT_WEIGHT_UNITS) {
+      expect(PROJECT_WEIGHT_UNITS).toContain(getOtherWeightUnit(unit));
+    }
+    for (const unit of PROJECT_TEMPERATURE_UNITS) {
+      expect(PROJECT_TEMPERATURE_UNITS).toContain(getOtherTemperatureUnit(unit));
+    }
+  });
+
+  // The viewer's switch reads the record in the other notation. It must not be
+  // able to alter what is stored: nothing here goes near a write, and reading a
+  // height in inches and back has to give the centimetres it started as.
+  it("shows a record in the other unit without changing it", () => {
+    // Within the same rounding bounds the round-trip suites above establish: a
+    // third of a millimetre, thirty grams, a twentieth of a degree. The switch
+    // changes the notation and nothing else.
+    const asInches = getOtherLengthUnit("cm");
+    const backToCentimetres = toStoredLength({
+      value: toDisplayLength({ centimetres: 178, unit: asInches }),
+      unit: asInches,
+    }) as number;
+
+    expect(Math.abs(backToCentimetres - 178)).toBeLessThanOrEqual(0.05 * 2.54 + 0.005);
+
+    const asPounds = getOtherWeightUnit("kg");
+    const backToKilograms = toStoredWeight({
+      value: toDisplayWeight({ kilograms: 64, unit: asPounds }),
+      unit: asPounds,
+    }) as number;
+
+    expect(Math.abs(backToKilograms - 64)).toBeLessThanOrEqual(
+      0.05 * 0.45359237 + 0.005
+    );
+
+    const asFahrenheit = getOtherTemperatureUnit("C");
+    const backToCelsius = toStoredTemperature({
+      value: toDisplayTemperature({ celsius: 36.8, unit: asFahrenheit }),
+      unit: asFahrenheit,
+    }) as number;
+
+    expect(Math.abs(backToCelsius - 36.8)).toBeLessThanOrEqual(0.06);
+  });
+});
+
+describe("values that are easy to lose", () => {
+  // The database returns a numeric column as a string. `Number(...)` covers it,
+  // but the guard has to run before the conversion or a height arrives as NaN.
+  it("reads a measurement that arrived from the database as text", () => {
+    expect(toDisplayLength({ centimetres: "178", unit: "cm" })).toBe(178);
+    expect(toDisplayLength({ centimetres: "177.8", unit: "in" })).toBe(70);
+    expect(toDisplayWeight({ kilograms: "64", unit: "kg" })).toBe(64);
+    expect(toDisplayTemperature({ celsius: "36.8", unit: "C" })).toBe(36.8);
+  });
+
+  it("does not mistake a zero for a field nobody filled in", () => {
+    // `if (!value)` would discard all of these. A zero weight is not plausible,
+    // but discarding it silently is how an implausible record stops being
+    // visible enough to correct.
+    expect(toDisplayLength({ centimetres: 0, unit: "cm" })).toBe(0);
+    expect(toDisplayLength({ centimetres: "0", unit: "in" })).toBe(0);
+    expect(toDisplayWeight({ kilograms: 0, unit: "lb" })).toBe(0);
+    expect(toStoredLength({ value: 0, unit: "in" })).toBe(0);
+    expect(toStoredWeight({ value: 0, unit: "lb" })).toBe(0);
+  });
+
+  it("has nothing to show for text that is not a number", () => {
+    expect(toDisplayWeight({ kilograms: "nope", unit: "lb" })).toBeUndefined();
+    expect(toDisplayTemperature({ celsius: "nope", unit: "F" })).toBeUndefined();
+    expect(toStoredLength({ value: NaN, unit: "in" })).toBeUndefined();
+    expect(toStoredWeight({ value: NaN, unit: "lb" })).toBeUndefined();
+    expect(toStoredTemperature({ value: NaN, unit: "F" })).toBeUndefined();
+  });
+
+  it("shows a negative temperature, which is a reading and not an error", () => {
+    // Not a body temperature. It is a room, a fridge holding vaccines, or a
+    // typo -- and all three are better seen than swallowed.
+    expect(toDisplayTemperature({ celsius: -5, unit: "F" })).toBe(23);
+    expect(toStoredTemperature({ value: 23, unit: "F" })).toBe(-5);
   });
 });
