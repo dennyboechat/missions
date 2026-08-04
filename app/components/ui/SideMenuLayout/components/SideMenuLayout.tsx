@@ -92,22 +92,30 @@ export const SideMenuLayout = ({
                   ? HEADER_WITH_SUB_HEADER_HEIGHT
                   : HEADER_HEIGHT
             }px`}
-            className={styles.header}
+            className={`${styles.header} ${
+              headerExtra ? styles.header_with_extra : ""
+            }`}
           >
-            <Text
-              weight={isBoldHeader ? "bold" : "medium"}
-              className={styles.header_text}
-            >
-              {header}
-            </Text>
-            {subHeader && (
-              <Text className={styles.header_sub_text}>{subHeader}</Text>
-            )}
-            {subHeaderFooter && (
-              <Text className={styles.header_sub_text_footer}>
-                {subHeaderFooter}
+            {/* The three text lines are one group so that whatever is below
+                them does not sit in the flow after them. They arrive with the
+                record, a line at a time, and anything sharing their flow is
+                pushed down each time one does. */}
+            <div className={styles.header_stack}>
+              <Text
+                weight={isBoldHeader ? "bold" : "medium"}
+                className={styles.header_text}
+              >
+                {header}
               </Text>
-            )}
+              {subHeader && (
+                <Text className={styles.header_sub_text}>{subHeader}</Text>
+              )}
+              {subHeaderFooter && (
+                <Text className={styles.header_sub_text_footer}>
+                  {subHeaderFooter}
+                </Text>
+              )}
+            </div>
             {headerExtra}
           </Box>
         )}

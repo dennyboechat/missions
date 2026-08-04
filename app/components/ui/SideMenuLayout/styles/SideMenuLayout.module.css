@@ -13,6 +13,31 @@
   align-content: center;
 }
 
+/* Two rows when something sits under the text: the text takes the slack and
+   whatever follows is held against the floor of the block.
+
+   The block's height is fixed from the first paint, so a row pinned to its
+   bottom edge is at a known position before the record has loaded -- which is
+   the point. A QR code is a target: it is looked at, then turned towards someone
+   or scanned. It arrives with the id in the URL, well before the name and the
+   date of birth, and while those were in the flow above it every line that
+   landed shifted it downward. Anchored here it does not move, whether the lines
+   above it are absent, present, or a name long enough to wrap to two.
+
+   That fits: of the 192px inside the padding, the plate and its gap take 104,
+   leaving 88 for the stack -- three lines need 62, and 84 with the name wrapped. */
+.header_with_extra {
+  grid-template-rows: 1fr auto;
+}
+
+/* Centred in whatever the row leaves it, so a name on its own sits where a name
+   with a date of birth under it sits, rather than against the top edge. */
+.header_stack {
+  display: grid;
+  gap: var(--ds-space-1);
+  align-content: center;
+}
+
 .header_text {
   display: -webkit-box;
   -webkit-box-orient: vertical;
