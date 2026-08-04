@@ -1,0 +1,209 @@
+/* The card, at the size it is printed.
+
+   Everything here is in millimetres and points rather than pixels, because this
+   element has a physical size: 86 by 54 is ID-1, the shape of every bank card,
+   which is the one rectangle already known to fit in the pocket a patient will
+   put it in. On screen the same figures come out at roughly the same size, so
+   the dialog is showing the card rather than a picture of it. */
+.card {
+  box-sizing: border-box;
+  width: 86mm;
+  height: 54mm;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4mm;
+  align-items: center;
+  padding: 5mm;
+  background-color: var(--white);
+  color: var(--gray-900);
+  /* Where the scissors go. Dashed rather than solid so it reads as an
+     instruction and not as a border the card is supposed to keep. */
+  border: 1px dashed var(--gray-500);
+  border-radius: 2mm;
+  /* Ink, not decoration: browsers drop backgrounds and borders from a print by
+     default, and the cut line is the one border that has to survive. */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.details {
+  min-width: 0;
+}
+
+.mission {
+  font-size: 6pt;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  margin-bottom: 1mm;
+  /* One line. A long mission name is context, and context does not get to push
+     the patient's name off the card. */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* The one thing read from across a room, so it gets the size and the two lines
+   a name that needs them. */
+.name {
+  font-size: 12pt;
+  font-weight: var(--fw-semibold);
+  line-height: 1.15;
+  margin-bottom: 2mm;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* Label above value would cost a line each; side by side, the labels form a
+   column the eye can skip once it knows the order. */
+.fields {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8mm 2mm;
+  align-items: baseline;
+  margin: 0;
+}
+
+.field_label {
+  font-size: 6.5pt;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.field_value {
+  font-size: 8pt;
+  margin: 0;
+}
+
+/* Dates and phone numbers are figures, so they set in the mono face with
+   tabular figures, the same as every other number in the product. A phone
+   number read aloud off a proportional face is where digits get transposed. */
+.field_value_numeric {
+  font-family: var(--numeric-font);
+  font-feature-settings: var(--numeric-feature);
+  font-size: 8pt;
+  margin: 0;
+}
+
+.plate {
+  display: grid;
+  place-items: center;
+  /* Four modules' worth of clear field at the size below. */
+  padding: 2mm;
+  background-color: var(--white);
+}
+
+/* The SVG carries a viewBox, so the drawn size is whatever is asked for here,
+   and this is the figure a scan actually depends on: 30mm across the 41 modules
+   this URL needs at error-correction Q puts each module at 0.73mm. Paper is not
+   a screen -- ink spreads, the card creases, the camera is hand-held -- and
+   below about 0.6mm a phone starts needing several attempts. */
+.qr_code {
+  width: 30mm;
+  height: 30mm;
+}
+
+/* What the dialog shows around the card: the card itself is the preview, so all
+   this does is stand it on something and centre it. */
+.preview {
+  display: grid;
+  justify-items: center;
+  padding: var(--ds-space-5) 0;
+}
+
+/* The QR code in the sidebar, once it opens this. A button rather than a click
+   handler on the div: it is reached by keyboard, it says what it does to a
+   screen reader, and it shows the pointer that tells a mouse there is something
+   here at all. */
+.trigger {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  /* The plate inside brings its own box. This only has to not add one. */
+  font: inherit;
+  color: inherit;
+}
+
+.trigger:disabled {
+  cursor: default;
+}
+
+/* The product's focus ring, the same one every field and button wears. */
+.trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--ds-radius-sm);
+}
+
+@media print {
+  /* The sheet holds the card and nothing else.
+
+     Hidden by visibility rather than by display, and set on the body rather than
+     on a list of things to hide: the dialog is a portal at body level with an
+     overlay over the whole page, and the card is somewhere inside it. Reaching
+     down that tree to hide each ancestor would mean naming Radix's internals and
+     re-naming them at the next upgrade. This says "none of it", then says which
+     part comes back -- and visibility, unlike display, leaves the card's own
+     ancestors laid out, which is what lets it be lifted onto the page below. */
+  body {
+    visibility: hidden;
+  }
+
+  .card,
+  .card * {
+    visibility: visible;
+  }
+
+  /* A transform on any ancestor would become the containing block for the fixed
+     card below, and it would be laid out against the dialog box instead of the
+     page -- a card printed somewhere near a corner, with nothing wrong on screen
+     to explain it. This version of Radix centres the dialog with flex and no
+     transform, so nothing is broken today; the declaration is here so that a
+     Radix release which goes back to translate centring cannot quietly move the
+     card on paper. It costs a line and it fails loudly nowhere. */
+  .dialog {
+    transform: none;
+    filter: none;
+    perspective: none;
+  }
+
+  /* Off the dialog and into the top-left corner of the paper.
+
+     Cornered rather than centred so the rest of the sheet survives. A card cut
+     out of the middle leaves two useless offcuts; taken out of the corner, what
+     is left is one piece big enough to feed again for the next patient. In a
+     mission the paper is as finite as the toner.
+
+     The inset is the printer's, not the design's: no consumer printer reaches its
+     own paper edge, and a cut line that falls in that dead band prints as three
+     sides of a rectangle. 5mm clears the unprintable margin on the laser and
+     inkjet hardware this is likely to meet, and is itself part of what gets cut
+     away. */
+  .card {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: auto;
+    bottom: auto;
+    margin: 5mm;
+    box-shadow: none;
+  }
+
+  /* No page margin, which is what takes the browser's own furniture off the
+     sheet: the date, the page title and the URL are drawn in the margin band, so
+     a band of zero leaves them nowhere to go. CSS has no direct switch for them
+     -- this is the whole of the available lever, and it is why the card carries
+     its own inset above rather than leaning on a page margin.
+
+     A browser whose "Headers and footers" box is ticked explicitly may still draw
+     them; that box, in the print dialog, is the only other place they live. */
+  @page {
+    margin: 0;
+  }
+}

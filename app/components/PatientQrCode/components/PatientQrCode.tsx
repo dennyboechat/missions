@@ -1,8 +1,10 @@
 "use client";
 
 // Multivariate Dependencies
-import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+
+// Hooks
+import { useOrigin } from "../../../lib/useOrigin";
 
 // Types
 import { PatientQrCodeProps } from "../types/PatientQrCodeProps";
@@ -50,9 +52,7 @@ export const PatientQrCode = ({
   patientPersonalId,
   patientFullName,
 }: PatientQrCodeProps) => {
-  const [origin, setOrigin] = useState<string>();
-
-  useEffect(() => setOrigin(window.location.origin), []);
+  const origin = useOrigin();
 
   if (!patientPersonalId) return null;
 

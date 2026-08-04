@@ -17,6 +17,7 @@ export type IconName =
   | "oxygen"
   | "personal"
   | "plus"
+  | "print"
   | "pulse"
   | "reports"
   | "search"
