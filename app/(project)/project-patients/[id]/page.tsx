@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useProject } from "../../../lib/ProjectContext";
 import { useProjectFormats } from "../../../lib/useProjectFormats";
 import { useLiveData } from "../../../lib/useLiveData";
+import { rememberPatientSummaries } from "../../../lib/patientSummaryRequest";
 
 // Database
 import { getPatientPersonals } from "../../../database/patient-personal/GetPatientPersonals";
@@ -84,6 +85,20 @@ const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
   // state claims a mission has no patients while its patients are in flight.
   const [isLoadingPatients, setIsLoadingPatients] = useState(true);
 
+  /**
+   * Takes a set of patients, however it arrived, and keeps them for the records
+   * they link to.
+   *
+   * Every field the patient sidebar shows is already in these rows. Handing them
+   * over means a record opened from this list has its name and date of birth on
+   * the first paint rather than a second and a half later -- see
+   * rememberPatientSummaries.
+   */
+  const applyPatients = useCallback((patients?: PatientPersonalTypes[]) => {
+    setPatientPersonals(patients ?? []);
+    rememberPatientSummaries(patients ?? []);
+  }, []);
+
   useEffect(() => {
     const fetchProjects = async () => {
       if (project) {
@@ -93,13 +108,13 @@ const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
             projectId: projectId,
           }),
         );
-        setPatientPersonals(projectPersonalsData ?? []);
+        applyPatients(projectPersonalsData);
         setIsLoadingPatients(false);
       }
     };
 
     fetchProjects();
-  }, [project]);
+  }, [project, applyPatients]);
 
   // Patients are registered at the door while this list is open on someone
   // else's screen, so it re-reads itself rather than waiting for a refresh.
@@ -117,7 +132,7 @@ const ProjectPatients = ({ params }: { params: Promise<{ id: string }> }) => {
       const projectPersonalsData = actionData(result);
 
       if (projectPersonalsData) {
-        setPatientPersonals(projectPersonalsData);
+        applyPatients(projectPersonalsData);
       }
     },
     enabled: Boolean(project?.projectId),
