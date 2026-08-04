@@ -115,11 +115,23 @@ export const ProjectAudit = ({ params }: { params: { id: string } }) => {
 
   /* Time of day to the second, because a run of field saves is seconds apart and
      the order within a minute is the thing being read. The date follows the
-     project's own format, like every other date in the product. */
+     project's own format, like every other date in the product.
+
+     Both halves are read off the same local Date. An event is stored as a UTC
+     timestamp, and formatDate takes a plain calendar date -- handing it the
+     timestamp put the whole tail of the string where the day belongs, and the
+     UTC day it names is the wrong one anyway for a reader whose evening is the
+     next day in UTC. */
   const formatWhen = (occurredAt: string) => {
     const when = new Date(occurredAt);
 
-    return `${formatDate(occurredAt)} ${when.toLocaleTimeString([], {
+    const localDate = [
+      when.getFullYear(),
+      String(when.getMonth() + 1).padStart(2, "0"),
+      String(when.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    return `${formatDate(localDate)} ${when.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",

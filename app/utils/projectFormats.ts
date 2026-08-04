@@ -243,8 +243,18 @@ export const formatProjectDate = ({
   const [year, month, day] = date.split("-");
 
   // Unparseable input is handed back untouched: whatever it is, it is more
-  // informative on screen than an empty cell.
-  if (!year || !month || !day || Number.isNaN(Number(year))) {
+  // informative on screen than an empty cell. Every part is checked, not just
+  // the year -- a full timestamp splits into a numeric year and month with the
+  // entire rest of the string as its day, and reordering that produced a date
+  // with "03T22:54:54.182Z" where the day belongs.
+  if (
+    !year ||
+    !month ||
+    !day ||
+    Number.isNaN(Number(year)) ||
+    Number.isNaN(Number(month)) ||
+    Number.isNaN(Number(day))
+  ) {
     return date;
   }
 

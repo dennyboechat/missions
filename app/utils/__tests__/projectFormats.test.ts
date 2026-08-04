@@ -237,6 +237,19 @@ describe("dates", () => {
     );
   });
 
+  // This takes a calendar date, not a timestamp. A timestamp used to split into
+  // a numeric year and month with the whole rest of the string as its day, and
+  // came out reordered as "03T22:54:54.182Z/08/2026". Handing it back unchanged
+  // is at least readable, and says plainly that the caller passed the wrong thing.
+  it("does not reorder a timestamp into nonsense", () => {
+    expect(
+      formatProjectDate({
+        date: "2026-08-03T22:54:54.182Z",
+        dateFormat: "dd/mm/yyyy",
+      })
+    ).toBe("2026-08-03T22:54:54.182Z");
+  });
+
   it("shows an example that distinguishes the two orders", () => {
     // The 4th of March: the one date that reads differently either way, which is
     // the whole point of the hint in the settings.
