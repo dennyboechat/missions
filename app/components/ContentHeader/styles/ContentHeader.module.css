@@ -22,8 +22,13 @@
   color: var(--fg-primary);
 }
 
+/* The line-height is stated rather than inherited so that the reservation below
+   can be exactly one line of it. An em here resolves against this element's own
+   font size, so the two stay in step if the ramp moves. */
 .sub_title {
   font-size: var(--fs-14);
+  line-height: 1.45;
+  min-height: 1.45em;
   color: var(--fg-secondary);
 }
 

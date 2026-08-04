@@ -24,6 +24,7 @@ import { useLiveData } from "../../../lib/useLiveData";
 import { PatientGeneralTypes } from "../../../types/PatientGeneralTypes";
 
 // Utils
+import { getAppointmentCountLabel } from "../../../utils/getAppointmentCountLabel";
 
 // Types
 import { actionData } from "../../../types/ActionResult";
@@ -104,10 +105,6 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
     detectChanges: true,
   });
 
-  if (!patientGeneral || !lastestAppointment) {
-    return null;
-  }
-
   const updateAppointments = async () => {
     const patientGeneralData = actionData(
       await getPatientGeneral({
@@ -121,6 +118,13 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
   };
 
   const onCreateAppointment = async () => {
+    // The button is disabled until the appointments are in, so this is only
+    // reachable by a click that raced the query. Nothing to build the new
+    // appointment from yet, and nothing worth telling anyone about.
+    if (!lastestAppointment) {
+      return;
+    }
+
     const patientGeneralData = await save(() =>
       insertPatientGeneral({ patientPersonalId: patientPersonalId }),
     );
@@ -148,19 +152,31 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
   // The query LEFT JOINs the appointment onto the patient, so a patient with
   // no general record still comes back as one row with a null appointment id.
   // Counting rows would announce an appointment that does not exist.
-  const appointmentCount = patientGeneral.filter(
+  //
+  // Undefined until the query is back, which is not the same as zero -- see
+  // getAppointmentCountLabel.
+  const appointmentCount = patientGeneral?.filter(
     ({ patientGeneralId }) => patientGeneralId,
   ).length;
 
+  /* The heading and the action are on screen from the first paint.
+   *
+   * This used to return null until the appointments arrived, which meant a second
+   * of nothing at all after clicking General -- and nothing is indistinguishable
+   * from a page that failed. None of what is above the appointments comes out of
+   * the database: the title is the tab you clicked, and the button does not need
+   * to know what it is adding to. Only the figure in the sub-heading and the
+   * appointments themselves have to wait, so only they do. */
   return (
     <Container className={styles.content}>
       <ContentHeader
         text="General"
-        subText={`${appointmentCount} ${
-          appointmentCount === 1 ? "appointment" : "appointments"
-        } on this mission.`}
+        subText={getAppointmentCountLabel({ count: appointmentCount })}
         actions={
-          <Button onClick={onCreateAppointment}>
+          // Disabled rather than hidden: a button that appears a second late is
+          // a button someone is already reaching for. It has to exist first and
+          // become usable second, not the other way round.
+          <Button onClick={onCreateAppointment} disabled={!lastestAppointment}>
             <Icon name="plus" size={17} />
             {"Create appointment"}
           </Button>
@@ -172,7 +188,7 @@ export const PatientGeneral = ({ params }: { params: { id: string } }) => {
           <RemoteUpdateNotice onDismiss={acknowledgeRemoteChange} />
         </>
       )}
-      {lastestAppointment.patientGeneralId && (
+      {patientGeneral && lastestAppointment?.patientGeneralId && (
         <GeneralAppointment
           patientGeneral={patientGeneral}
           setPatientGeneral={setPatientGeneral}
