@@ -197,4 +197,39 @@ describe("exportToCsv", () => {
 
     expect(await downloadedText()).toContain("José Ramírez");
   });
+
+  it("defuses a value a spreadsheet would run as a formula", async () => {
+    exportToCsv({
+      data: [
+        { patientFullName: '=HYPERLINK("http://x","y")', drugName: "@SUM(1)" },
+        { patientFullName: "+SUM(1)", drugName: "-A1" },
+      ],
+      headers: HEADERS,
+      filename: "medications.csv",
+    });
+
+    const [, first, second] = await rows();
+    expect(first).toBe(`"'=HYPERLINK(""http://x"",""y"")",'@SUM(1)`);
+    expect(second).toBe("'+SUM(1),'-A1");
+  });
+
+  it("leaves a negative number alone", async () => {
+    exportToCsv({
+      data: [{ patientFullName: "Ana Costa", drugName: -2 }],
+      headers: HEADERS,
+      filename: "medications.csv",
+    });
+
+    expect((await rows())[1]).toBe("Ana Costa,-2");
+  });
+
+  it("leaves an international phone number as typed", async () => {
+    exportToCsv({
+      data: [{ patientFullName: "Ana Costa", drugName: "+55 11 91234-5678" }],
+      headers: HEADERS,
+      filename: "medications.csv",
+    });
+
+    expect((await rows())[1]).toBe("Ana Costa,+55 11 91234-5678");
+  });
 });

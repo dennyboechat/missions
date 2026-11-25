@@ -16,6 +16,7 @@ import { useLiveData } from "../lib/useLiveData";
 import { useProjectFormats } from "../lib/useProjectFormats";
 import { useProject } from "../lib/ProjectContext";
 import {
+  forgetPatientSummary,
   recallPatientSummary,
   startPatientSummary,
 } from "../lib/patientSummaryRequest";
@@ -27,7 +28,11 @@ import { getProject } from "../database/project/GetProject";
 // Types
 import { PatientPersonalSummary } from "../types/PatientPersonalSummary";
 import { PatientMenuItemsProps } from "../components/PatientMenuItems/types/PatientMenuItemsProps";
-import { actionData } from "../types/ActionResult";
+import { ActionResult, actionData } from "../types/ActionResult";
+
+/** The server said no, or that the record is gone -- not a passing failure. */
+const isRefusal = (result: ActionResult<unknown>) =>
+  !result.ok && (result.reason === "denied" || result.reason === "not_found");
 
 // Utils
 import { getSideMenuSubHeader } from "../utils/getSideMenuSubHeader";
@@ -84,6 +89,11 @@ export default function PatientLayout({
    * the only thing anyone is still waiting for. */
   const hasPatient = patient?.patientPersonalId === patientPersonalId;
 
+  /* The record the server last refused or reported gone. Without it the sidebar
+   * fell back to what the patients list remembered, so a denied record kept its
+   * name, date of birth and printable label on screen. */
+  const [refusedPatientId, setRefusedPatientId] = useState<string>();
+
   /* Held in a ref, and this is the part that matters: exactly one read per record,
    * however many times this renders.
    *
@@ -124,7 +134,9 @@ export default function PatientLayout({
    * record. */
   const shownPatient = hasPatient
     ? patient
-    : recallPatientSummary(patientPersonalId);
+    : refusedPatientId === patientPersonalId
+      ? undefined
+      : recallPatientSummary(patientPersonalId);
 
   // Which project this layout has already asked for, so a render while that
   // request is in flight does not start a second one.
@@ -146,15 +158,20 @@ export default function PatientLayout({
       // The request the render above already started, where there was one. Both
       // of development's two effect passes await the same promise, so the record
       // is read once either way.
-      const summary = actionData(
-        await (startedRequest ?? getPatientSummary({ patientPersonalId })),
-      );
+      const result = await (startedRequest ??
+        getPatientSummary({ patientPersonalId }));
+      const summary = actionData(result);
 
       // Ignore a response for a patient the user has already navigated away
       // from.
       if (isCurrent) {
         lastRemotePatientRef.current = summary;
         setPatient(summary);
+
+        if (isRefusal(result)) {
+          forgetPatientSummary(patientPersonalId);
+          setRefusedPatientId(patientPersonalId);
+        }
       }
     };
 
@@ -233,6 +250,16 @@ export default function PatientLayout({
     load: refreshPatient,
     apply: (result) => {
       const summary = actionData(result);
+
+      // Access taken away, or the record deleted, while it was open: stop
+      // showing it rather than keeping the last copy.
+      if (isRefusal(result)) {
+        forgetPatientSummary(patientPersonalId);
+        setRefusedPatientId(patientPersonalId);
+        lastRemotePatientRef.current = undefined;
+        setPatient(undefined);
+        return;
+      }
 
       if (!summary) return;
 

@@ -13,6 +13,8 @@ const {
   rememberPatientSummaries,
   recallPatientSummary,
   startPatientSummary,
+  forgetPatientSummary,
+  clearPatientSummaries,
 } = await import("../patientSummaryRequest");
 
 // Types
@@ -185,5 +187,28 @@ describe("startPatientSummary", () => {
 
     expect(await first).toBe(await second);
     expect(getPatientSummary).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("forgetting", () => {
+  it("drops one patient the server refused, and only that one", () => {
+    rememberPatientSummaries([summary("forget-1"), summary("forget-2")]);
+
+    forgetPatientSummary("forget-1");
+
+    expect(recallPatientSummary("forget-1")).toBeUndefined();
+    expect(recallPatientSummary("forget-2")).toBeDefined();
+  });
+
+  it("drops everything when the account changes", () => {
+    rememberPatientSummaries([summary("clear-1")]);
+    getPatientSummary.mockImplementation(() => new Promise(() => {}));
+    const pending = startPatientSummary("clear-2");
+
+    clearPatientSummaries();
+
+    expect(recallPatientSummary("clear-1")).toBeUndefined();
+    // The next reader asks again rather than sharing the last account's read.
+    expect(startPatientSummary("clear-2")).not.toBe(pending);
   });
 });

@@ -11,7 +11,12 @@ import {
 import { ProjectScope } from "../auth/projectAccess";
 
 // Auth
-import { assertProjectAccess, getClerkUserId } from "../auth/projectAccess";
+import {
+  assertProjectAccess,
+  getClerkUserId,
+  AccessDeniedError,
+} from "../auth/projectAccess";
+import { InvalidInputError } from "../validation/fieldGuards";
 import { toActionFailure } from "../auth/toActionFailure";
 
 // Types
@@ -40,6 +45,25 @@ export const touchPagePresence = async ({
 }): Promise<ActionResult<PageViewer[]>> => {
   try {
     const projectId = await assertProjectAccess(scope);
+
+    // The scope is what was authorised, so the room has to be that record's.
+    // Taken on trust, a member of one project could pass their own patient as
+    // the scope and another project's patient in the key -- and read who is in
+    // that record, and appear in it themselves.
+    const scopeId = Object.values(scope).find((id) => id);
+
+    if (
+      typeof resourceKey !== "string" ||
+      !/^[a-z-]+:/.test(resourceKey) ||
+      resourceKey.slice(resourceKey.indexOf(":") + 1) !== scopeId
+    ) {
+      throw new AccessDeniedError("Presence key does not match its scope");
+    }
+
+    if (typeof resourceLabel !== "string" || resourceLabel.length > 100) {
+      throw new InvalidInputError("Presence label is not valid");
+    }
+
     const clerkUserId = await getClerkUserId();
 
     const response = await sql.query(
@@ -65,6 +89,9 @@ export const touchPagePresence = async ({
         FROM page_presence
         JOIN app_user ON app_user.user_id = page_presence.user_id
         WHERE page_presence.resource_key = $3
+          -- Belt and braces with the key check above: never list anyone from
+          -- outside the project the caller was authorised against.
+          AND page_presence.project_id = $2::uuid
           AND page_presence.last_seen_at >
               CURRENT_TIMESTAMP - ($5 || ' seconds')::interval
           -- Every row belonging to this session, not just the primary one. A

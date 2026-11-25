@@ -51,6 +51,24 @@ export const rememberPatientSummaries = (
   }
 };
 
+/**
+ * Forgets one patient, for a record the server has just refused or reported
+ * gone: what the list knew must not outlive the server saying no.
+ */
+export const forgetPatientSummary = (patientPersonalId: string) => {
+  known.delete(patientPersonalId);
+};
+
+/**
+ * Forgets everything, for when the signed-in account changes. Clerk signs out
+ * without reloading the page, so on a shared mission laptop the next person in
+ * the same tab would otherwise inherit the last one's patients.
+ */
+export const clearPatientSummaries = () => {
+  known.clear();
+  requests.clear();
+};
+
 /** What the list knew about this patient, if the reader came in through it. */
 export const recallPatientSummary = (
   patientPersonalId?: string,

@@ -7,7 +7,11 @@ import { sql } from "@vercel/postgres";
 import { AppUser } from "../../types/AppUser";
 
 // Auth
-import { getClerkUserId, AccessDeniedError } from "../auth/projectAccess";
+import {
+  getClerkUserId,
+  getAuthenticatedUserId,
+  AccessDeniedError,
+} from "../auth/projectAccess";
 
 // Types
 import {
@@ -45,14 +49,26 @@ export const getAppUser = async ({
       throw new AccessDeniedError(`Field not searchable: ${field}`);
     }
 
-    // Only a Clerk session, not an app_user row: this runs during sign-up,
-    // before that row exists.
-    await getClerkUserId();
+    // Looking yourself up needs only a Clerk session, not an app_user row:
+    // this runs during sign-up, before that row exists. It is also the only
+    // Clerk id anyone may look up -- otherwise any visitor who signed up could
+    // read another person's name and email by their Clerk id.
+    //
+    // Looking someone up by email is for adding a collaborator, so it needs an
+    // established account, the same bar insertAppUser sets for inviting them.
+    if (field === "user_third_party_id") {
+      if (value !== (await getClerkUserId())) {
+        throw new AccessDeniedError("Cannot look up another session's user");
+      }
+    } else {
+      await getAuthenticatedUserId();
+    }
 
     const query = `
       SELECT
+        -- No Clerk id: no caller needs it, and an email lookup is of someone
+        -- else, whose Clerk id is theirs.
         user_id,
-        user_third_party_id,
         user_name,
         user_email
       FROM
@@ -65,7 +81,6 @@ export const getAppUser = async ({
 
     const users: AppUser[] = response.rows.map((row) => ({
       userId: row.user_id,
-      userThirdPartyId: row.user_third_party_id,
       userName: row.user_name,
       userEmail: row.user_email,
     }));

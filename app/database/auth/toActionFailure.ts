@@ -33,10 +33,10 @@ export const toActionFailure = <T>(error: unknown): ActionResult<T> => {
     reason = "invalid";
   }
 
-  // The message is for logs and developers, not for display: it can name
-  // internal ids and column names.
-  return actionFailed<T>(
-    reason,
-    error instanceof Error ? error.message : undefined
-  );
+  // The message stays in the server log above and never reaches the client: it
+  // can name internal ids, column names and raw database errors. A denial that
+  // named the project owning a record told anyone holding a patient's id --
+  // from a photographed QR code, say -- that the record exists and which
+  // mission it belongs to.
+  return actionFailed<T>(reason);
 };

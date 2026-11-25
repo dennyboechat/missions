@@ -9,8 +9,21 @@ export const exportToCsv = ({
 }) => {
   const escapeField = (value: unknown): string => {
     if (value == null) return "";
-    const str = String(value);
-    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+    let str = String(value);
+    // Spreadsheet formula injection: a cell that opens with one of these is
+    // run as a formula by Excel and Sheets, and every value here was typed by
+    // somebody -- a patient named =HYPERLINK(...) would be live in the export.
+    // A leading apostrophe makes the cell text. A value made only of digits
+    // and phone punctuation is left alone: it cannot call anything, and an
+    // international number like +55 11 91234-5678 must export as typed.
+    if (
+      typeof value === "string" &&
+      /^[=+\-@\t\r]/.test(str) &&
+      !/^[+-]?[\d\s().-]+$/.test(str)
+    ) {
+      str = `'${str}`;
+    }
+    if (/[",\n\r]/.test(str)) {
       return `"${str.replace(/"/g, '""')}"`;
     }
     return str;

@@ -1,7 +1,17 @@
 "use client";
 
 // Multivariate Dependencies
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
+import { useAuth } from "@clerk/nextjs";
+
+// Cache
+import { clearPatientSummaries } from "./patientSummaryRequest";
 
 // Types
 import { Project } from "../types/ProjectTypes";
@@ -37,6 +47,28 @@ export const ProjectProvider = ({
     // Drop the previous full-object cache left in existing browsers.
     localStorage.removeItem("project");
   }, []);
+
+  /* A different account in the same tab -- signed out, or signed out and the
+   * next person signed in. Clerk does this without reloading, so on a shared
+   * mission laptop the previous person's project, and the patients the list
+   * remembered, would otherwise carry straight over. Only a change is acted on:
+   * the first answer Clerk gives is the account the page was opened with. */
+  const { isLoaded, userId } = useAuth();
+  const seenUserIdRef = useRef<string | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const previous = seenUserIdRef.current;
+    seenUserIdRef.current = userId ?? null;
+
+    if (previous === undefined || previous === (userId ?? null)) return;
+
+    clearPatientSummaries();
+    setProjectState(undefined);
+    setProjectId(undefined);
+    localStorage.removeItem(STORAGE_KEY);
+  }, [isLoaded, userId]);
 
   useEffect(() => {
     let isCurrent = true;
